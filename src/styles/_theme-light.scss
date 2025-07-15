@@ -1,0 +1,93 @@
+// Ella Current Light Theme Variables
+// Based on Avenir Typography System
+
+// Base Colors from Style Guide
+$theme-primary: #FFFFFF;           // Primary: White
+$theme-secondary: #65928E;         // Secondary: Aqua Sea Green
+$theme-tertiary: #FCEE8B;          // Tertiary: Pale Yellow
+$theme-accent-1: #D0E2BF;          // Accent 1: Mint Green
+$theme-accent-2: #3F4732;          // Accent 2: Dark Olive Green
+
+// Background Colors
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #F8F9FA;
+$theme-bg-tertiary: lighten($theme-tertiary, 15%);  // Light pale yellow background
+$theme-bg-elevated: $theme-primary;
+$theme-bg-accent: lighten($theme-accent-1, 5%);     // Light mint green background
+
+// Text Colors
+$theme-text-primary: #0F0F0F;
+$theme-text-secondary: $theme-accent-2;
+$theme-text-muted: #6B7280;
+$theme-text-light: #9CA3AF;
+$theme-text-accent: $theme-secondary;
+$theme-text-tertiary: darken($theme-tertiary, 40%); // Darker yellow for text
+$theme-text-mint: darken($theme-accent-1, 30%);     // Darker mint for text
+
+// Border Colors
+$theme-border-primary: #E5E7EB;
+$theme-border-secondary: lighten($theme-secondary, 40%);
+$theme-border-light: #F3F4F6;
+$theme-border-accent: $theme-secondary;
+$theme-border-tertiary: lighten($theme-tertiary, 10%);
+$theme-border-mint: lighten($theme-accent-1, 10%);
+
+// Interactive Colors
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-hover: darken($theme-secondary, 10%);
+$theme-interactive-active: darken($theme-secondary, 15%);
+$theme-interactive-focus: rgba($theme-secondary, 0.2);
+$theme-interactive-tertiary: $theme-tertiary;
+$theme-interactive-tertiary-hover: darken($theme-tertiary, 10%);
+$theme-interactive-accent: $theme-accent-1;
+$theme-interactive-accent-hover: darken($theme-accent-1, 10%);
+
+// Status Colors
+$theme-success: $theme-accent-1;
+$theme-warning: $theme-tertiary;
+$theme-error: #EF4444;
+$theme-info: $theme-secondary;
+
+// Shadow Colors
+$theme-shadow-light: rgba(0, 0, 0, 0.05);
+$theme-shadow-medium: rgba(0, 0, 0, 0.1);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.2);
+$theme-shadow-tertiary: rgba($theme-tertiary, 0.15);
+$theme-shadow-accent: rgba($theme-accent-1, 0.15);
+
+// Component Specific
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-secondary;
+$theme-sidebar-accent: $theme-bg-accent;
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-secondary;
+$theme-header-accent: $theme-bg-tertiary;
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-primary;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-bg-accent;
+$theme-input-bg: $theme-bg-primary;
+$theme-input-border: $theme-border-secondary;
+$theme-input-accent: $theme-border-tertiary;
+$theme-dropdown-bg: $theme-bg-primary;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium;
+$theme-dropdown-accent: $theme-bg-accent;
+
+// Planning Assets Colors
+$theme-planning-bg: $theme-bg-tertiary;
+$theme-planning-border: $theme-border-tertiary;
+$theme-planning-text: $theme-text-tertiary;
+$theme-planning-hover: darken($theme-tertiary, 5%);
+
+// Marketing Assets Colors
+$theme-marketing-bg: $theme-bg-accent;
+$theme-marketing-border: $theme-border-mint;
+$theme-marketing-text: $theme-text-mint;
+$theme-marketing-hover: darken($theme-accent-1, 5%);
+
+// Strategy Documents Colors
+$theme-strategy-bg: lighten($theme-secondary, 45%);
+$theme-strategy-border: lighten($theme-secondary, 30%);
+$theme-strategy-text: $theme-text-secondary;
+$theme-strategy-hover: lighten($theme-secondary, 40%); 

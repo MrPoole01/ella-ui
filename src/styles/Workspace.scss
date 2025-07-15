@@ -1,0 +1,49 @@
+@import '../styles/variables';
+
+.workspace {
+  background: var(--theme-bg-primary);
+  display: flex;
+  width: 100vw;
+  align-items: stretch;
+  overflow: hidden;
+  flex-direction: column;
+  font-style: normal;
+  font-family: $font-primary;
+  font-size: $font-size-xl;
+  font-weight: $font-normal;
+  height: 100vh;
+
+  // Electric theme special effects - cyberpunk background
+  .theme-electric-dark & {
+    background: radial-gradient(ellipse at top, #0A0A0F 0%, #000 50%);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        linear-gradient(90deg, transparent 98%, rgba(0, 212, 255, 0.03) 100%),
+        linear-gradient(0deg, transparent 98%, rgba(168, 85, 247, 0.03) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex: 1;
+    height: calc(100vh - 51px);
+    position: relative;
+    z-index: 1;
+  }
+} 

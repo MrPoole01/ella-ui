@@ -1,0 +1,508 @@
+// Main Themes File
+// Conditionally loads theme variables based on body class
+
+@import 'theme-modern-dark';
+@import 'theme-modern-light';
+@import 'theme-citrus';
+@import 'theme-neomorphism';
+@import 'theme-neomorphism-dark';
+
+// Default theme (UI Theme) - uses existing variables
+.theme-ui {
+  // Keep existing color variables for UI Theme
+  --theme-bg-primary: #{$white};
+  --theme-bg-secondary: #{#F8F9FA};
+  --theme-bg-tertiary: #{#F1F3F4};
+  --theme-text-primary: #{$text-primary};
+  --theme-text-secondary: #{$text-secondary};
+  --theme-border-primary: #{$border-gray};
+  --theme-border-secondary: #{$border-medium};
+  --theme-interactive-primary: #{$primary-blue};
+  --theme-interactive-hover: #{#1d4ed8};
+  --theme-interactive-focus: #{rgba($primary-blue, 0.2)};
+  --theme-header-bg: #{$white};
+  --theme-header-border: #{$border-gray};
+  --theme-sidebar-bg: #{$white};
+  --theme-sidebar-border: #{$border-gray};
+  --theme-chat-bg: #{#F8F9FA};
+  --theme-chat-item-bg: #{$white};
+  --theme-chat-item-hover: #{#F1F3F4};
+  --theme-input-bg: #{$white};
+  --theme-input-border: #{rgb(134 134 134 / 70%)};
+  --theme-dropdown-bg: #{$white};
+  --theme-dropdown-border: #{$border-medium};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.1)};
+}
+
+// Ella Current Light theme
+.theme-light {
+  --theme-bg-primary: #{#FFFFFF};
+  --theme-bg-secondary: #{#F8F9FA};
+  --theme-bg-tertiary: #{#F1F3F4};
+  --theme-text-primary: #{#0F0F0F};
+  --theme-text-secondary: #{#4F4732};
+  --theme-text-accent: #{#659D5E};
+  --theme-border-primary: #{#E5E7EB};
+  --theme-border-secondary: #{#D1D5DB};
+  --theme-interactive-primary: #{#659D5E};
+  --theme-interactive-hover: #{darken(#659D5E, 10%)};
+  --theme-interactive-focus: #{rgba(#659D5E, 0.2)};
+  --theme-header-bg: #{#FFFFFF};
+  --theme-header-border: #{#E5E7EB};
+  --theme-sidebar-bg: #{#FFFFFF};
+  --theme-sidebar-border: #{#E5E7EB};
+  --theme-chat-bg: #{#F8F9FA};
+  --theme-chat-item-bg: #{#FFFFFF};
+  --theme-chat-item-hover: #{#F1F3F4};
+  --theme-input-bg: #{#FFFFFF};
+  --theme-input-border: #{#D1D5DB};
+  --theme-dropdown-bg: #{#FFFFFF};
+  --theme-dropdown-border: #{#D1D5DB};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.1)};
+  --theme-success: #{#90CE28};
+  --theme-warning: #{#FFCE8B};
+}
+
+// Ella Current Dark theme
+.theme-dark {
+  --theme-bg-primary: #{#0F0F0F};
+  --theme-bg-secondary: #{#1A1A1A};
+  --theme-bg-tertiary: #{#262626};
+  --theme-bg-elevated: #{#1F1F1F};
+  --theme-text-primary: #{#FFFFFF};
+  --theme-text-secondary: #{#B3B3B3};
+  --theme-text-accent: #{#659D5E};
+  --theme-border-primary: #{#333333};
+  --theme-border-secondary: #{#404040};
+  --theme-interactive-primary: #{#659D5E};
+  --theme-interactive-hover: #{lighten(#659D5E, 10%)};
+  --theme-interactive-focus: #{rgba(#659D5E, 0.3)};
+  --theme-header-bg: #{#0F0F0F};
+  --theme-header-border: #{#333333};
+  --theme-sidebar-bg: #{#0F0F0F};
+  --theme-sidebar-border: #{#333333};
+  --theme-chat-bg: #{#1A1A1A};
+  --theme-chat-item-bg: #{#1F1F1F};
+  --theme-chat-item-hover: #{#262626};
+  --theme-input-bg: #{#1F1F1F};
+  --theme-input-border: #{#404040};
+  --theme-dropdown-bg: #{#1F1F1F};
+  --theme-dropdown-border: #{#404040};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.4)};
+  --theme-success: #{#90CE28};
+  --theme-warning: #{#FFCE8B};
+}
+
+// Ella Web Light theme
+.theme-web-light {
+  --theme-bg-primary: #{#FFFFFF};
+  --theme-bg-secondary: #{#F8FAFC};
+  --theme-bg-tertiary: #{#F1F5F9};
+  --theme-bg-elevated: #{#FFFFFF};
+  --theme-text-primary: #{#0F172A};
+  --theme-text-secondary: #{#475569};
+  --theme-text-muted: #{#64748B};
+  --theme-text-light: #{#94A3B8};
+  --theme-text-accent: #{#2DABFF};
+  --theme-border-primary: #{#E2E8F0};
+  --theme-border-secondary: #{#CBD5E1};
+  --theme-border-light: #{#F1F5F9};
+  --theme-border-accent: #{#2DABFF};
+  --theme-interactive-primary: #{#2DABFF};
+  --theme-interactive-secondary: #{#FF3B80};
+  --theme-interactive-accent: #{#904ED0};
+  --theme-interactive-hover: #{darken(#2DABFF, 8%)};
+  --theme-interactive-focus: #{rgba(#2DABFF, 0.2)};
+  --theme-header-bg: #{#FFFFFF};
+  --theme-header-border: #{#E2E8F0};
+  --theme-header-accent: #{#2DABFF};
+  --theme-sidebar-bg: #{#FFFFFF};
+  --theme-sidebar-border: #{#E2E8F0};
+  --theme-sidebar-accent: #{#904ED0};
+  --theme-chat-bg: #{#F8FAFC};
+  --theme-chat-item-bg: #{#FFFFFF};
+  --theme-chat-item-hover: #{#F1F5F9};
+  --theme-chat-item-accent: #{#FF3B80};
+  --theme-input-bg: #{#FFFFFF};
+  --theme-input-border: #{#CBD5E1};
+  --theme-input-focus: #{#2DABFF};
+  --theme-dropdown-bg: #{#FFFFFF};
+  --theme-dropdown-border: #{#CBD5E1};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.08)};
+  --theme-dropdown-accent: #{#904ED0};
+  --theme-success: #{#10B981};
+  --theme-warning: #{#F59E0B};
+  --theme-error: #{#FF3B80};
+  --theme-info: #{#2DABFF};
+}
+
+// Ella Web Dark theme
+.theme-web-dark {
+  --theme-bg-primary: #{#1F1F1F};
+  --theme-bg-secondary: #{#2A2A2A};
+  --theme-bg-tertiary: #{#333333};
+  --theme-bg-elevated: #{#262626};
+  --theme-text-primary: #{#F8FAFC};
+  --theme-text-secondary: #{#CBD5E1};
+  --theme-text-muted: #{#94A3B8};
+  --theme-text-light: #{#64748B};
+  --theme-text-accent: #{#2DABFF};
+  --theme-border-primary: #{#404040};
+  --theme-border-secondary: #{#525252};
+  --theme-border-light: #{#333333};
+  --theme-border-accent: #{#2DABFF};
+  --theme-interactive-primary: #{#2DABFF};
+  --theme-interactive-secondary: #{#FF3B80};
+  --theme-interactive-accent: #{#904ED0};
+  --theme-interactive-hover: #{lighten(#2DABFF, 8%)};
+  --theme-interactive-focus: #{rgba(#2DABFF, 0.3)};
+  --theme-header-bg: #{#1F1F1F};
+  --theme-header-border: #{#404040};
+  --theme-header-accent: #{#2DABFF};
+  --theme-sidebar-bg: #{#1F1F1F};
+  --theme-sidebar-border: #{#404040};
+  --theme-sidebar-accent: #{#904ED0};
+  --theme-chat-bg: #{#2A2A2A};
+  --theme-chat-item-bg: #{#262626};
+  --theme-chat-item-hover: #{#333333};
+  --theme-chat-item-accent: #{#FF3B80};
+  --theme-input-bg: #{#262626};
+  --theme-input-border: #{#525252};
+  --theme-input-focus: #{#2DABFF};
+  --theme-dropdown-bg: #{#262626};
+  --theme-dropdown-border: #{#525252};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.4)};
+  --theme-dropdown-accent: #{#904ED0};
+  --theme-success: #{#10B981};
+  --theme-warning: #{#F59E0B};
+  --theme-error: #{#FF3B80};
+  --theme-info: #{#2DABFF};
+}
+
+// Ella Electric Dark theme - Cyberpunk/Retro-futuristic
+.theme-electric-dark {
+  --theme-bg-primary: #{#0A0A0F};
+  --theme-bg-secondary: #{#0F0F1A};
+  --theme-bg-tertiary: #{#1A1A2E};
+  --theme-bg-elevated: #{#16213E};
+  --theme-text-primary: #{#F0F8FF};
+  --theme-text-secondary: #{#B8C5D6};
+  --theme-text-muted: #{#7C8DB5};
+  --theme-text-light: #{#556B8D};
+  --theme-text-accent: #{#00D4FF};
+  --theme-border-primary: #{#2A2A40};
+  --theme-border-secondary: #{#3A3A55};
+  --theme-border-light: #{#1F1F35};
+  --theme-border-accent: #{#00D4FF};
+  --theme-interactive-primary: #{#00D4FF};
+  --theme-interactive-secondary: #{#FF3B80};
+  --theme-interactive-accent: #{#A855F7};
+  --theme-interactive-hover: #{lighten(#00D4FF, 10%)};
+  --theme-interactive-focus: #{rgba(#00D4FF, 0.4)};
+  --theme-header-bg: #{#0A0A0F};
+  --theme-header-border: #{#2A2A40};
+  --theme-header-accent: #{#00D4FF};
+  --theme-sidebar-bg: #{#0A0A0F};
+  --theme-sidebar-border: #{#2A2A40};
+  --theme-sidebar-accent: #{#A855F7};
+  --theme-chat-bg: #{#0F0F1A};
+  --theme-chat-item-bg: #{#16213E};
+  --theme-chat-item-hover: #{#1A1A2E};
+  --theme-chat-item-accent: #{#FF3B80};
+  --theme-input-bg: #{#16213E};
+  --theme-input-border: #{#3A3A55};
+  --theme-input-focus: #{#00D4FF};
+  --theme-dropdown-bg: #{#16213E};
+  --theme-dropdown-border: #{#3A3A55};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.7)};
+  --theme-dropdown-accent: #{#A855F7};
+  --theme-success: #{#00FF94};
+  --theme-warning: #{#FFB800};
+  --theme-error: #{#FF3B80};
+  --theme-info: #{#00D4FF};
+  
+  // Electric glow effects
+  --theme-glow-cyan: #{rgba(#00D4FF, 0.6)};
+  --theme-glow-pink: #{rgba(#FF3B80, 0.6)};
+  --theme-glow-purple: #{rgba(#A855F7, 0.6)};
+  --theme-shadow-electric: 0 0 20px var(--theme-glow-cyan);
+}
+
+// Ella Modern Dark theme - Data dashboard aesthetic
+.theme-modern-dark {
+  --theme-bg-primary: #{#1A1A1A};
+  --theme-bg-secondary: #{#202020};
+  --theme-bg-tertiary: #{#2A2A2A};
+  --theme-bg-elevated: #{#252525};
+  --theme-text-primary: #{#FFFFFF};
+  --theme-text-secondary: #{#E5E5E5};
+  --theme-text-muted: #{#B3B3B3};
+  --theme-text-light: #{#999999};
+  --theme-text-accent: #{#00BFFF};
+  --theme-border-primary: #{#333333};
+  --theme-border-secondary: #{#404040};
+  --theme-border-light: #{#2A2A2A};
+  --theme-border-accent: #{#00BFFF};
+  --theme-interactive-primary: #{#00BFFF};
+  --theme-interactive-secondary: #{#FF4D6D};
+  --theme-interactive-accent: #{#7C3AED};
+  --theme-interactive-hover: #{lighten(#00BFFF, 10%)};
+  --theme-interactive-focus: #{rgba(#00BFFF, 0.3)};
+  --theme-header-bg: #{#1A1A1A};
+  --theme-header-border: #{#333333};
+  --theme-header-accent: #{#00BFFF};
+  --theme-sidebar-bg: #{#1A1A1A};
+  --theme-sidebar-border: #{#333333};
+  --theme-sidebar-accent: #{#7C3AED};
+  --theme-chat-bg: #{#202020};
+  --theme-chat-item-bg: #{#252525};
+  --theme-chat-item-hover: #{#2A2A2A};
+  --theme-chat-item-accent: #{#FF4D6D};
+  --theme-input-bg: #{#252525};
+  --theme-input-border: #{#404040};
+  --theme-input-focus: #{#00BFFF};
+  --theme-dropdown-bg: #{#252525};
+  --theme-dropdown-border: #{#404040};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.2)};
+  --theme-dropdown-accent: #{#7C3AED};
+  --theme-success: #{#00FF88};
+  --theme-warning: #{#FFB800};
+  --theme-error: #{#FF4D6D};
+  --theme-info: #{#00BFFF};
+  
+  // Modern data dashboard effects
+  --theme-data-glow: #{rgba(#00BFFF, 0.3)};
+  --theme-accent-glow: #{rgba(#FF4D6D, 0.3)};
+  --theme-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --theme-shadow-data: 0 4px 20px rgba(0, 191, 255, 0.15);
+} 
+
+// Ella Modern Light theme - Data dashboard aesthetic (Light Mode - mirrors dark theme)
+.theme-modern-light {
+  --theme-bg-primary: #{#FFFFFF};
+  --theme-bg-secondary: #{#F8FAFC};
+  --theme-bg-tertiary: #{#F1F5F9};
+  --theme-bg-elevated: #{#FEFEFE};
+  --theme-text-primary: #{#1A1A1A};
+  --theme-text-secondary: #{#2A2A2A};
+  --theme-text-muted: #{#4A4A4A};
+  --theme-text-light: #{#666666};
+  --theme-text-accent: #{#00BFFF};
+  --theme-border-primary: #{#E2E8F0};
+  --theme-border-secondary: #{#CBD5E1};
+  --theme-border-light: #{#F1F5F9};
+  --theme-border-accent: #{#00BFFF};
+  --theme-interactive-primary: #{#00BFFF};
+  --theme-interactive-secondary: #{#FF4D6D};
+  --theme-interactive-accent: #{#7C3AED};
+  --theme-interactive-hover: #{darken(#00BFFF, 10%)};
+  --theme-interactive-focus: #{rgba(#00BFFF, 0.3)};
+  --theme-header-bg: #{#FFFFFF};
+  --theme-header-border: #{#E2E8F0};
+  --theme-header-accent: #{#00BFFF};
+  --theme-sidebar-bg: #{#FFFFFF};
+  --theme-sidebar-border: #{#E2E8F0};
+  --theme-sidebar-accent: #{#7C3AED};
+  --theme-chat-bg: #{#F8FAFC};
+  --theme-chat-item-bg: #{#FEFEFE};
+  --theme-chat-item-hover: #{#F1F5F9};
+  --theme-chat-item-accent: #{#FF4D6D};
+  --theme-input-bg: #{#FEFEFE};
+  --theme-input-border: #{#CBD5E1};
+  --theme-input-focus: #{#00BFFF};
+  --theme-dropdown-bg: #{#FEFEFE};
+  --theme-dropdown-border: #{#CBD5E1};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.12)};
+  --theme-dropdown-accent: #{#7C3AED};
+  --theme-success: #{#00FF88};
+  --theme-warning: #{#FFB800};
+  --theme-error: #{#FF4D6D};
+  --theme-info: #{#00BFFF};
+  
+  // Modern data dashboard effects (same glow intensity as dark theme)
+  --theme-data-glow: #{rgba(#00BFFF, 0.3)};
+  --theme-accent-glow: #{rgba(#FF4D6D, 0.3)};
+  --theme-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --theme-shadow-data: 0 4px 20px rgba(0, 191, 255, 0.2);
+} 
+
+// Ella Citrus Grove theme - Fresh oranges on rich teal
+.theme-citrus-grove {
+  --theme-bg-primary: #{#0F2626};
+  --theme-bg-secondary: #{#162929};
+  --theme-bg-tertiary: #{#1F3636};
+  --theme-bg-elevated: #{#1C3030};
+  --theme-text-primary: #{#FFFFFF};
+  --theme-text-secondary: #{#E8F4F0};
+  --theme-text-muted: #{#B8D5CE};
+  --theme-text-light: #{#8FC4B8};
+  --theme-text-accent: #{#FF7A00};
+  --theme-border-primary: #{#243C3C};
+  --theme-border-secondary: #{#2F4A4A};
+  --theme-border-light: #{#1A3030};
+  --theme-border-accent: #{#FF7A00};
+  --theme-interactive-primary: #{#FF7A00};
+  --theme-interactive-secondary: #{#FFA64D};
+  --theme-interactive-accent: #{#FF5722};
+  --theme-interactive-hover: #{lighten(#FF7A00, 6%)};
+  --theme-interactive-focus: #{rgba(#FF7A00, 0.4)};
+  --theme-header-bg: #{#0F2626};
+  --theme-header-border: #{#243C3C};
+  --theme-header-accent: #{#FF7A00};
+  --theme-sidebar-bg: #{#0F2626};
+  --theme-sidebar-border: #{#243C3C};
+  --theme-sidebar-accent: #{#FFA64D};
+  --theme-chat-bg: #{#162929};
+  --theme-chat-item-bg: #{#1C3030};
+  --theme-chat-item-hover: #{#1F3636};
+  --theme-chat-item-accent: #{#FFA64D};
+  --theme-input-bg: #{#1C3030};
+  --theme-input-border: #{#2F4A4A};
+  --theme-input-focus: #{#FF7A00};
+  --theme-dropdown-bg: #{#1C3030};
+  --theme-dropdown-border: #{#2F4A4A};
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.5)};
+  --theme-dropdown-accent: #{#FF5722};
+  --theme-success: #{#4CAF50};
+  --theme-warning: #{#FFA64D};
+  --theme-error: #{#FF3D32};
+  --theme-info: #{#FF7A00};
+  
+  // Award-winning luxury effects
+  --theme-citrus-glow: #{rgba(#FF7A00, 0.4)};
+  --theme-emerald-glow: #{rgba(#1B4D3E, 0.5)};
+  --theme-warm-shadow: #{rgba(#FF7A00, 0.2)};
+  --theme-shadow-citrus: 0 6px 25px rgba(255, 122, 0, 0.25);
+  --theme-shadow-emerald: 0 4px 20px rgba(27, 77, 62, 0.3);
+  
+  // Emerald accent colors
+  --theme-emerald-primary: #{#1B4D3E};
+  --theme-emerald-secondary: #{#2D5A4D};
+  --theme-text-emerald: #{#7FCDBA};
+} 
+
+// Ella Neumorphism theme - Soft, extruded design with neutral colors
+.theme-neumorphism {
+  --theme-bg-primary: #{#E0E5EC};
+  --theme-bg-secondary: #{#E8EDF4};
+  --theme-bg-tertiary: #{#F1F4F7};
+  --theme-bg-elevated: #{#FFFFFF};
+  --theme-bg-pressed: #{#D6DCE5};
+  --theme-text-primary: #{#1A202C};
+  --theme-text-secondary: #{#4A5568};
+  --theme-text-muted: #{#718096};
+  --theme-text-light: #{#A0AEC0};
+  --theme-text-accent: #{#667EEA};
+  --theme-border-primary: #{#CBD5E0};
+  --theme-border-secondary: #{#E2E8F0};
+  --theme-border-light: #{#F7FAFC};
+  --theme-border-accent: #{#667EEA};
+  --theme-interactive-primary: #{#667EEA};
+  --theme-interactive-secondary: #{#7C3AED};
+  --theme-interactive-accent: #{#5A67D8};
+  --theme-interactive-hover: #{lighten(#667EEA, 10%)};
+  --theme-interactive-focus: #{rgba(#667EEA, 0.2)};
+  --theme-header-bg: #{#E0E5EC};
+  --theme-header-border: transparent;
+  --theme-header-accent: #{#667EEA};
+  --theme-sidebar-bg: #{#E0E5EC};
+  --theme-sidebar-border: transparent;
+  --theme-sidebar-accent: #{#667EEA};
+  --theme-chat-bg: #{#E8EDF4};
+  --theme-chat-item-bg: #{#FFFFFF};
+  --theme-chat-item-hover: #{#F1F4F7};
+  --theme-chat-item-accent: #{#7C3AED};
+  --theme-input-bg: #{#FFFFFF};
+  --theme-input-border: transparent;
+  --theme-input-focus: #{#667EEA};
+  --theme-dropdown-bg: #{#FFFFFF};
+  --theme-dropdown-border: transparent;
+  --theme-dropdown-shadow: #{rgba(163, 177, 198, 0.4)};
+  --theme-dropdown-accent: #{#5A67D8};
+  --theme-success: #{#48BB78};
+  --theme-warning: #{#ED8936};
+  --theme-error: #{#F56565};
+  --theme-info: #{#667EEA};
+  
+  // Enhanced neumorphic shadow system
+  --theme-shadow-light: #{rgba(255, 255, 255, 1)};
+  --theme-shadow-dark: #{rgba(163, 177, 198, 0.6)};
+  --theme-shadow-medium: #{rgba(163, 177, 198, 0.4)};
+  --theme-shadow-heavy: #{rgba(163, 177, 198, 0.8)};
+  
+  // Softer neumorphic effects for better flow
+  --theme-neomorphic-raised: 6px 6px 12px rgba(163, 177, 198, 0.4), -6px -6px 12px rgba(255, 255, 255, 0.7);
+  --theme-neomorphic-pressed: inset 4px 4px 8px rgba(163, 177, 198, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.7);
+  --theme-neomorphic-flat: 3px 3px 6px rgba(163, 177, 198, 0.3), -3px -3px 6px rgba(255, 255, 255, 0.6);
+  --theme-neomorphic-subtle: 2px 2px 4px rgba(163, 177, 198, 0.2), -2px -2px 4px rgba(255, 255, 255, 0.5);
+  --theme-neomorphic-button: 4px 4px 8px rgba(163, 177, 198, 0.3), -4px -4px 8px rgba(255, 255, 255, 0.6);
+  --theme-neomorphic-button-pressed: inset 3px 3px 6px rgba(163, 177, 198, 0.3), inset -3px -3px 6px rgba(255, 255, 255, 0.6);
+  
+  // Cleaner neumorphic gradients
+  --theme-gradient-soft: linear-gradient(145deg, #E0E5EC, #E8EDF4);
+  --theme-gradient-elevated: linear-gradient(145deg, #FFFFFF, #F1F4F7);
+  --theme-gradient-pressed: linear-gradient(145deg, #D6DCE5, #E8EDF4);
+} 
+
+// Ella Neumorphism Dark theme - Dark mode soft, extruded design
+.theme-neumorphism-dark {
+  --theme-bg-primary: #{#2D2D30};
+  --theme-bg-secondary: #{#252528};
+  --theme-bg-tertiary: #{#333336};
+  --theme-bg-elevated: #{#3A3A3A};
+  --theme-bg-pressed: #{#1F1F22};
+  --theme-text-primary: #{#F7FAFC};
+  --theme-text-secondary: #{#E2E8F0};
+  --theme-text-muted: #{#A0AEC0};
+  --theme-text-light: #{#718096};
+  --theme-text-accent: #{#667EEA};
+  --theme-border-primary: #{#4A5568};
+  --theme-border-secondary: #{#2D3748};
+  --theme-border-light: #{#1A202C};
+  --theme-border-accent: #{#667EEA};
+  --theme-interactive-primary: #{#667EEA};
+  --theme-interactive-secondary: #{#7C3AED};
+  --theme-interactive-accent: #{#5A67D8};
+  --theme-interactive-hover: #{lighten(#667EEA, 10%)};
+  --theme-interactive-focus: #{rgba(#667EEA, 0.3)};
+  --theme-header-bg: #{#2D2D30};
+  --theme-header-border: transparent;
+  --theme-header-accent: #{#667EEA};
+  --theme-sidebar-bg: #{#2D2D30};
+  --theme-sidebar-border: transparent;
+  --theme-sidebar-accent: #{#667EEA};
+  --theme-chat-bg: #{#252528};
+  --theme-chat-item-bg: #{#3A3A3A};
+  --theme-chat-item-hover: #{#333336};
+  --theme-chat-item-accent: #{#7C3AED};
+  --theme-input-bg: #{#3A3A3A};
+  --theme-input-border: transparent;
+  --theme-input-focus: #{#667EEA};
+  --theme-dropdown-bg: #{#3A3A3A};
+  --theme-dropdown-border: transparent;
+  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.4)};
+  --theme-dropdown-accent: #{#5A67D8};
+  --theme-success: #{#48BB78};
+  --theme-warning: #{#ED8936};
+  --theme-error: #{#F56565};
+  --theme-info: #{#667EEA};
+  
+  // Dark neumorphic shadow system
+  --theme-shadow-light: #{rgba(255, 255, 255, 0.1)};
+  --theme-shadow-dark: #{rgba(0, 0, 0, 0.6)};
+  --theme-shadow-medium: #{rgba(0, 0, 0, 0.4)};
+  --theme-shadow-heavy: #{rgba(0, 0, 0, 0.8)};
+  
+  // Dark neumorphic effects - adapted for dark backgrounds
+  --theme-neomorphic-raised: 6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.08);
+  --theme-neomorphic-pressed: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.08);
+  --theme-neomorphic-flat: 3px 3px 6px rgba(0, 0, 0, 0.4), -3px -3px 6px rgba(255, 255, 255, 0.06);
+  --theme-neomorphic-subtle: 2px 2px 4px rgba(0, 0, 0, 0.3), -2px -2px 4px rgba(255, 255, 255, 0.05);
+  --theme-neomorphic-button: 4px 4px 8px rgba(0, 0, 0, 0.4), -4px -4px 8px rgba(255, 255, 255, 0.06);
+  --theme-neomorphic-button-pressed: inset 3px 3px 6px rgba(0, 0, 0, 0.4), inset -3px -3px 6px rgba(255, 255, 255, 0.06);
+  
+  // Dark neumorphic gradients
+  --theme-gradient-soft: linear-gradient(145deg, #2D2D30, #252528);
+  --theme-gradient-elevated: linear-gradient(145deg, #3A3A3A, #333336);
+  --theme-gradient-pressed: linear-gradient(145deg, #1F1F22, #252528);
+} 

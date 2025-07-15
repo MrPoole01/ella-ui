@@ -1,0 +1,84 @@
+// Ella Citrus Grove Theme Variables - DARK EDITION
+// Inspired by fresh oranges on very dark backgrounds - minimal and clean
+
+// Base Colors - Much darker and minimal
+$theme-primary: #0A0A0A;           // Very dark charcoal black
+$theme-secondary: #111111;         // Slightly lighter black
+$theme-tertiary: #FF7A00;          // Rich orange - keep the citrus accent
+$theme-accent: #FFA64D;            // Warm orange accent
+$theme-emerald: #1A1A1A;           // Dark gray instead of emerald
+$theme-forest: #0F0F0F;            // Very dark gray
+
+// Background Colors - Much darker, no green hints
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: $theme-secondary;      // Darker
+$theme-bg-tertiary: #181818;               // Dark gray
+$theme-bg-elevated: #151515;               // Slightly elevated dark
+$theme-bg-emerald: $theme-emerald;         // Dark gray for consistency
+
+// Text Colors - Clean high contrast
+$theme-text-primary: #FFFFFF;
+$theme-text-secondary: #CCCCCC;    // Clean light gray
+$theme-text-muted: #999999;        // Medium gray
+$theme-text-light: #666666;        // Darker gray
+$theme-text-accent: $theme-tertiary;
+$theme-text-emerald: #AAAAAA;      // Light gray instead of green
+
+// Border Colors - Minimal dark borders
+$theme-border-primary: #222222;
+$theme-border-secondary: #2A2A2A;
+$theme-border-light: #1A1A1A;
+$theme-border-accent: $theme-tertiary;
+$theme-border-emerald: #2A2A2A;
+
+// Interactive Colors - Clean orange accents
+$theme-interactive-primary: $theme-tertiary;     // Rich orange
+$theme-interactive-secondary: $theme-accent;     // Light orange
+$theme-interactive-accent: #FF5722;              // Deep orange-red
+$theme-interactive-emerald: #888888;             // Gray instead of emerald
+$theme-interactive-hover: lighten($theme-tertiary, 6%);
+$theme-interactive-active: darken($theme-tertiary, 6%);
+$theme-interactive-focus: rgba($theme-tertiary, 0.4);
+
+// Status Colors - Clean and minimal
+$theme-success: #4CAF50;                        // Clean green
+$theme-warning: $theme-accent;                  // Warm orange
+$theme-error: #FF3D32;                          // Bright red
+$theme-info: $theme-tertiary;                   // Rich orange
+
+// Shadow Colors - Minimal dark shadows
+$theme-shadow-light: rgba(0, 0, 0, 0.2);
+$theme-shadow-medium: rgba(0, 0, 0, 0.3);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.5);
+$theme-shadow-citrus: 0 2px 8px rgba(255, 122, 0, 0.1);
+$theme-shadow-emerald: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+// Component Specific - Clean minimal styling (no gradients)
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-primary;
+$theme-sidebar-accent: $theme-accent;
+
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-header-accent: $theme-interactive-primary;
+
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: $theme-border-secondary;
+$theme-input-focus: $theme-interactive-primary;
+
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium;
+$theme-dropdown-accent: $theme-interactive-accent;
+
+// Minimal effects - no complex gradients or glows
+$theme-citrus-glow: 0 0 8px rgba(255, 122, 0, 0.2);
+$theme-emerald-glow: 0 0 4px rgba(0, 0, 0, 0.2);
+$theme-warm-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+$theme-luxury-gradient: $theme-bg-primary;
+$theme-citrus-emerald-gradient: $theme-bg-primary; 

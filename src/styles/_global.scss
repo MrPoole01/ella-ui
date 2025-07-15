@@ -1,0 +1,118 @@
+@import 'variables';
+@import 'themes';
+
+// Global reset and base styles
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  font-family: $font-primary;
+  font-size: $font-size-xl;
+  font-weight: $font-normal;
+}
+
+.layer {
+  position: absolute;
+}
+
+.one-line {
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.multi-line-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.multi-line-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.multi-line-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.multi-line-5 {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.image {
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+}
+
+// Border utilities
+.inner-border {
+  position: relative;
+  border-radius: var(--border-radius, 0px);
+}
+
+.layer.inner-border {
+  position: absolute;
+}
+
+.inner-border::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-width: var(--border-width, 0px);
+  border-color: var(--border-color, transparent);
+  border-style: var(--border-style, solid);
+  border-radius: inherit;
+}
+
+.independent-inner-border {
+  position: relative;
+  border-radius: var(--border-radius-tl, 0px) var(--border-radius-tr, 0px)
+    var(--border-radius-br, 0px) var(--border-radius-bl, 0px);
+}
+
+.layer.independent-inner-border {
+  position: absolute;
+}
+
+.independent-inner-border::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  border-style: var(--border-style, solid);
+  border-color: var(--border-color, transparent);
+  border-width: var(--border-width-top, 0px) var(--border-width-right, 0px)
+    var(--border-width-bottom, 0px) var(--border-width-left, 0px);
+  border-radius: inherit;
+}
+
+// Electric theme special animations and effects
+.theme-electric-dark {
+  // Electric theme styling handled in component-specific files
+} 

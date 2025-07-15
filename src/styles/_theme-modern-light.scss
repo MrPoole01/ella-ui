@@ -1,0 +1,83 @@
+// Ella Modern Light Theme Variables
+// Based on modern data dashboard aesthetic with vibrant accent colors - Light Mode
+
+// Base Colors - Modern Light Data Dashboard Palette (mirrors dark theme)
+$theme-primary: #FFFFFF;           // Clean white background (inverted from dark #1A1A1A)
+$theme-secondary: #00BFFF;         // Vibrant cyan blue (data visualization) - same as dark
+$theme-tertiary: #FF4D6D;          // Hot pink/coral (alerts/critical data) - same as dark
+$theme-accent: #7C3AED;            // Purple accent (secondary data) - same as dark
+
+// Background Colors - Light with subtle variations (mirrors dark theme hierarchy)
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #F8FAFC;      // Light gray (mirrors dark #202020)
+$theme-bg-tertiary: #F1F5F9;       // Lighter gray (mirrors dark #2A2A2A)
+$theme-bg-elevated: #FEFEFE;       // Slightly off-white (mirrors dark #252525)
+
+// Text Colors - High contrast for data readability (inverted from dark)
+$theme-text-primary: #1A1A1A;      // Dark text (inverted from dark #FFFFFF)
+$theme-text-secondary: #2A2A2A;    // Medium dark (inverted from dark #E5E5E5)
+$theme-text-muted: #4A4A4A;        // Muted dark (inverted from dark #B3B3B3)
+$theme-text-light: #666666;        // Light dark (inverted from dark #999999)
+$theme-text-accent: $theme-secondary;
+
+// Border Colors - Subtle modern borders (mirrors dark theme)
+$theme-border-primary: #E2E8F0;    // Light border (inverted from dark #333333)
+$theme-border-secondary: #CBD5E1;  // Medium border (inverted from dark #404040)
+$theme-border-light: #F1F5F9;      // Lightest border (inverted from dark #2A2A2A)
+$theme-border-accent: $theme-secondary;
+
+// Interactive Colors - Data dashboard focused (same vibrant colors as dark)
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-secondary: $theme-tertiary;
+$theme-interactive-accent: $theme-accent;
+$theme-interactive-hover: darken($theme-secondary, 10%);
+$theme-interactive-active: darken($theme-secondary, 15%);
+$theme-interactive-focus: rgba($theme-secondary, 0.3);
+
+// Data Visualization Colors (same as dark theme)
+$theme-data-primary: $theme-secondary;     // Main data color (cyan)
+$theme-data-secondary: $theme-tertiary;    // Secondary data color (coral)
+$theme-data-accent: $theme-accent;         // Accent data color (purple)
+$theme-data-success: #00FF88;              // Success/positive data - same as dark
+$theme-data-warning: #FFB800;              // Warning data - same as dark
+$theme-data-error: $theme-tertiary;        // Error/critical data
+
+// Status Colors - Dashboard appropriate (same as dark)
+$theme-success: #00FF88;           // Bright green for positive metrics
+$theme-warning: #FFB800;           // Amber for warnings
+$theme-error: $theme-tertiary;     // Coral for errors
+$theme-info: $theme-secondary;     // Cyan for info
+
+// Shadow Colors - Light mode shadows (adapted for light backgrounds)
+$theme-shadow-light: rgba(0, 0, 0, 0.08);
+$theme-shadow-medium: rgba(0, 0, 0, 0.12);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.16);
+$theme-shadow-data: 0 4px 20px rgba(0, 191, 255, 0.2);
+
+// Component Specific - Modern dashboard styling (mirrors dark theme)
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-primary;
+$theme-sidebar-accent: $theme-accent;
+
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-header-accent: $theme-interactive-primary;
+
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: $theme-border-secondary;
+$theme-input-focus: $theme-interactive-primary;
+
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium;
+$theme-dropdown-accent: $theme-interactive-accent;
+
+// Modern data dashboard effects (same glow intensity as dark theme)
+$theme-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+$theme-data-glow: 0 0 15px rgba(0, 191, 255, 0.3);
+$theme-accent-glow: 0 0 15px rgba(255, 77, 109, 0.3); 

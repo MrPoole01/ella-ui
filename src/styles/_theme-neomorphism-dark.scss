@@ -1,0 +1,102 @@
+// Ella Neumorphism Dark Theme Variables
+// Dark mode soft, extruded design with neumorphic effects
+
+// Base Colors - Dark palette for neumorphic effects
+$theme-primary: #2D2D30;           // Main background - dark gray
+$theme-secondary: #1E1E1E;         // Darker gray for contrast
+$theme-tertiary: #3A3A3A;          // Lighter dark gray
+$theme-accent: #667EEA;            // Keep the same vibrant blue accent
+$theme-accent-soft: #7C3AED;       // Purple accent for variety
+
+// Background Colors - Clear hierarchy for dark depth
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #252528;      // Slightly darker base
+$theme-bg-tertiary: #333336;       // Lighter dark variant
+$theme-bg-elevated: #3A3A3A;       // Raised elements background
+$theme-bg-pressed: #1F1F22;        // Darker for pressed state
+
+// Text Colors - Good contrast on dark backgrounds
+$theme-text-primary: #F7FAFC;      // Very light gray for excellent readability
+$theme-text-secondary: #E2E8F0;    // Light gray for secondary text
+$theme-text-muted: #A0AEC0;        // Medium gray for muted text
+$theme-text-light: #718096;        // Darker gray for subtle text
+$theme-text-accent: $theme-accent; // Blue accent for highlights
+
+// Border Colors - Subtle but visible on dark
+$theme-border-primary: #4A5568;
+$theme-border-secondary: #2D3748;
+$theme-border-light: #1A202C;
+$theme-border-accent: $theme-accent;
+
+// Interactive Colors - Vibrant but tasteful
+$theme-interactive-primary: $theme-accent;
+$theme-interactive-secondary: $theme-accent-soft;
+$theme-interactive-accent: #5A67D8;         // Darker blue for focus
+$theme-interactive-hover: lighten($theme-accent, 10%);
+$theme-interactive-active: darken($theme-accent, 10%);
+$theme-interactive-focus: rgba($theme-accent, 0.3);
+
+// Status Colors - Clear and vibrant for dark mode
+$theme-success: #48BB78;           // Clear green
+$theme-warning: #ED8936;           // Clear orange
+$theme-error: #F56565;             // Clear red
+$theme-info: $theme-accent;        // Blue
+
+// Dark Neumorphic Shadow System - Adapted for dark backgrounds
+$theme-shadow-light: rgba(255, 255, 255, 0.1);    // Subtle white highlight
+$theme-shadow-dark: rgba(0, 0, 0, 0.6);           // Strong dark shadow
+$theme-shadow-medium: rgba(0, 0, 0, 0.4);         // Medium dark shadow
+$theme-shadow-heavy: rgba(0, 0, 0, 0.8);          // Heavy dark shadow
+
+// Dark Neumorphic Effects - Adapted shadow directions and intensities
+$theme-neomorphic-raised: 
+  9px 9px 16px rgba(0, 0, 0, 0.6),
+  -9px -9px 16px rgba(255, 255, 255, 0.1);
+
+$theme-neomorphic-pressed: 
+  inset 6px 6px 10px rgba(0, 0, 0, 0.6),
+  inset -6px -6px 10px rgba(255, 255, 255, 0.1);
+
+$theme-neomorphic-flat: 
+  5px 5px 10px rgba(0, 0, 0, 0.6),
+  -5px -5px 10px rgba(255, 255, 255, 0.1);
+
+$theme-neomorphic-subtle: 
+  3px 3px 6px rgba(0, 0, 0, 0.4),
+  -3px -3px 6px rgba(255, 255, 255, 0.08);
+
+$theme-neomorphic-button: 
+  6px 6px 12px rgba(0, 0, 0, 0.6),
+  -6px -6px 12px rgba(255, 255, 255, 0.1);
+
+$theme-neomorphic-button-pressed: 
+  inset 4px 4px 8px rgba(0, 0, 0, 0.6),
+  inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+
+// Component Specific - Dark neumorphic styling
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: transparent;
+$theme-sidebar-accent: $theme-accent;
+
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: transparent;
+$theme-header-accent: $theme-interactive-primary;
+
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: transparent;
+$theme-input-focus: $theme-interactive-primary;
+
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: transparent;
+$theme-dropdown-shadow: $theme-neomorphic-raised;
+$theme-dropdown-accent: $theme-interactive-accent;
+
+// Dark neumorphic gradients
+$theme-gradient-soft: linear-gradient(145deg, $theme-bg-primary, $theme-bg-secondary);
+$theme-gradient-elevated: linear-gradient(145deg, $theme-bg-elevated, $theme-bg-tertiary);
+$theme-gradient-pressed: linear-gradient(145deg, $theme-bg-pressed, $theme-bg-secondary); 

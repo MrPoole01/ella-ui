@@ -1,0 +1,22 @@
+// Icon exports
+export { default as EllaLogoIcon } from './EllaLogoIcon';
+export { default as EllaBrandIcon } from './EllaBrandIcon';
+export { default as ChevronRightIcon } from './ChevronRightIcon';
+export { default as ChevronDownIcon } from './ChevronDownIcon';
+export { default as ChevronUpIcon } from './ChevronUpIcon';
+export { default as ShareIcon } from './ShareIcon';
+export { default as SettingsIcon } from './SettingsIcon';
+export { default as UserIcon } from './UserIcon';
+export { default as MoreIcon } from './MoreIcon';
+export { default as ProfileIcon } from './ProfileIcon';
+export { default as FolderIcon } from './FolderIcon';
+export { default as ChatIcon } from './ChatIcon';
+export { default as ClockIcon } from './ClockIcon';
+export { default as EllipsisIcon } from './EllipsisIcon';
+export { default as ProjectIcon } from './ProjectIcon';
+export { default as PlusIcon } from './PlusIcon';
+export { default as MenuIcon } from './MenuIcon';
+export { default as MicIcon } from './MicIcon';
+export { default as AttachIcon } from './AttachIcon';
+export { default as ThumbsUpIcon } from './ThumbsUpIcon';
+export { default as SendIcon } from './SendIcon'; 

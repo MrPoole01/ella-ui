@@ -1,0 +1,1801 @@
+@import '../styles/variables';
+
+.header {
+  border-bottom: 1px solid var(--theme-header-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding-left: 25px;
+  padding-right: 31px;
+  padding-top: 12px;
+  padding-bottom: 13px;
+  height: $header-height;
+  background: var(--theme-header-bg);
+  flex-shrink: 0;
+  position: relative;
+  overflow: visible;
+  z-index: 2;
+
+  // Electric theme - ensure header is above workspace stacking context
+  .theme-electric-dark & {
+    z-index: 10;
+  }
+
+  // Citrus Grove theme - clean dark header
+  .theme-citrus-grove & {
+    background: var(--theme-bg-primary);
+    border-bottom: 1px solid var(--theme-border-primary);
+  }
+
+  // Neumorphism theme - subtle header
+  .theme-neumorphism & {
+    background: var(--theme-bg-primary);
+    border-bottom: none;
+  }
+
+  // Neumorphism Dark theme - subtle header
+  .theme-neumorphism-dark & {
+    background: var(--theme-bg-primary);
+    border-bottom: none;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+
+    .nav-toggle {
+      color: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      
+      &:hover {
+        color: var(--theme-text-primary);
+      }
+
+      path {
+        fill: var(--theme-text-secondary);
+        transition: all 0.2s ease;
+      }
+
+      &:hover path {
+        fill: var(--theme-text-primary);
+      }
+
+      // Electric Dark theme - cyber glow effect
+      .theme-electric-dark & {
+        color: var(--theme-interactive-primary);
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 8px var(--theme-glow-cyan));
+          
+          path {
+            fill: var(--theme-interactive-secondary);
+          }
+        }
+      }
+
+      // Modern Dark theme - data dashboard glow
+      .theme-modern-dark & {
+        color: var(--theme-interactive-primary);
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 8px var(--theme-data-glow));
+          
+          path {
+            fill: var(--theme-interactive-secondary);
+          }
+        }
+      }
+
+      // Modern Light theme - data dashboard glow (mirrors dark theme)
+      .theme-modern-light & {
+        color: var(--theme-interactive-primary);
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 8px var(--theme-data-glow));
+          
+          path {
+            fill: var(--theme-interactive-secondary);
+          }
+        }
+      }
+
+      // Web themes - vibrant colors
+      .theme-web-light &,
+      .theme-web-dark & {
+        color: var(--theme-interactive-primary);
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 5px var(--theme-interactive-primary));
+          
+          path {
+            fill: var(--theme-interactive-secondary);
+          }
+        }
+      }
+
+      // Citrus Grove theme - clean orange accent
+      .theme-citrus-grove & {
+        color: var(--theme-text-secondary);
+        
+        path {
+          fill: var(--theme-text-secondary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-primary);
+          filter: drop-shadow(0 0 6px var(--theme-citrus-glow));
+          
+          path {
+            fill: var(--theme-interactive-primary);
+          }
+        }
+      }
+
+      // Neumorphism themes - subtle embossed effect
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        color: var(--theme-text-secondary);
+        
+        path {
+          fill: var(--theme-text-secondary);
+        }
+        
+        &:hover {
+          color: var(--theme-interactive-primary);
+          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+          
+          path {
+            fill: var(--theme-interactive-primary);
+          }
+        }
+      }
+    }
+  }
+
+  &__logo-section {
+    gap: 2px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-bottom: 2px;
+
+    .ella-logo-icon {
+      margin-top: 1px;
+    }
+
+    .ella-brand-icon {
+      margin-left: 5px;
+    }
+  }
+
+  // Notification Bell Styles
+  .notification-bell {
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+    
+    &:active {
+      opacity: 0.6;
+    }
+  }
+
+  .notification-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .notification-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 420px;
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.10), 0px 10px 15px -3px rgba(0, 0, 0, 0.10);
+    z-index: 1000;
+    overflow: hidden;
+    margin-top: 8px;
+
+    // Electric Dark theme
+    .theme-electric-dark & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1), 0px 4px 6px -4px rgba(0, 0, 0, 0.20), 0px 10px 15px -3px rgba(0, 0, 0, 0.20);
+    }
+
+    // Modern Dark theme
+    .theme-modern-dark & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      box-shadow: 0 0 15px rgba(0, 162, 255, 0.08), 0px 4px 6px -4px rgba(0, 0, 0, 0.15), 0px 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    // Web themes
+    .theme-web-light &,
+    .theme-web-dark & {
+      background: var(--theme-bg-primary);
+      border-color: var(--theme-border-primary);
+      box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.15), 0px 10px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+
+    // Citrus Grove theme
+    .theme-citrus-grove & {
+      background: var(--theme-bg-primary);
+      border-color: var(--theme-border-primary);
+      box-shadow: 0px 4px 6px -4px rgba(0, 0, 0, 0.12), 0px 10px 15px -3px rgba(0, 0, 0, 0.12);
+    }
+
+    // Neumorphism themes
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: var(--theme-neomorphic-raised);
+    }
+
+    &__header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px 13px;
+      border-bottom: 1px solid var(--theme-border-primary);
+      background: var(--theme-bg-secondary);
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        background: var(--theme-bg-tertiary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        background: var(--theme-bg-tertiary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 162, 255, 0.05);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        background: var(--theme-gradient-soft);
+        border: none;
+        box-shadow: var(--theme-neomorphic-pressed);
+      }
+    }
+
+    &__title {
+      color: var(--theme-text-primary);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 28px;
+      flex-grow: 1;
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 8px rgba(0, 162, 255, 0.3);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &__count {
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-interactive-primary);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      min-width: 24px;
+      text-align: center;
+      border: 1px solid var(--theme-border-primary);
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
+        color: var(--theme-text-on-primary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
+        color: var(--theme-text-on-primary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 162, 255, 0.3);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        background: linear-gradient(145deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+        color: var(--theme-text-on-primary);
+        border: none;
+        box-shadow: var(--theme-neomorphic-button);
+      }
+    }
+
+    &__mark-read {
+      color: var(--theme-interactive-primary);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      cursor: pointer;
+      margin-left: auto;
+      transition: all 0.2s ease;
+
+      &:hover {
+        text-decoration: underline;
+        color: var(--theme-interactive-secondary);
+      }
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-interactive-primary);
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+        }
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-interactive-primary);
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          text-shadow: 0 0 8px rgba(0, 162, 255, 0.4);
+        }
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        &:hover {
+          filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+      }
+    }
+
+    &__content {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-bottom: 8px;
+      background: var(--theme-bg-primary);
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        background: var(--theme-bg-secondary);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        background: var(--theme-bg-secondary);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        background: var(--theme-bg-primary);
+      }
+    }
+
+    &__item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 16px 17px 20px;
+      border-bottom: 1px solid var(--theme-border-primary);
+      transition: all 0.2s ease;
+
+      &--unread {
+        background: var(--theme-bg-tertiary);
+        border-left: 4px solid var(--theme-interactive-primary);
+
+        // Electric Dark theme
+        .theme-electric-dark & {
+          background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+          border-left-color: var(--theme-interactive-primary);
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        // Modern Dark theme
+        .theme-modern-dark & {
+          background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+          border-left-color: var(--theme-interactive-primary);
+          box-shadow: 0 0 10px rgba(0, 162, 255, 0.1);
+        }
+
+        // Neumorphism themes
+        .theme-neumorphism &,
+        .theme-neumorphism-dark & {
+          background: var(--theme-gradient-pressed);
+          border-left-color: var(--theme-interactive-primary);
+          box-shadow: var(--theme-neomorphic-pressed);
+        }
+      }
+
+      &:hover {
+        background: var(--theme-bg-secondary);
+
+        // Electric Dark theme
+        .theme-electric-dark & {
+          background: var(--theme-bg-tertiary);
+          box-shadow: 0 0 5px rgba(0, 255, 255, 0.1);
+        }
+
+        // Modern Dark theme
+        .theme-modern-dark & {
+          background: var(--theme-bg-tertiary);
+          box-shadow: 0 0 5px rgba(0, 162, 255, 0.1);
+        }
+
+        // Neumorphism themes
+        .theme-neumorphism &,
+        .theme-neumorphism-dark & {
+          background: var(--theme-gradient-soft);
+          box-shadow: var(--theme-neomorphic-flat);
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    &__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      background: var(--theme-bg-tertiary);
+      border: 1px solid var(--theme-border-primary);
+      color: var(--theme-text-secondary);
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
+        border-color: var(--theme-border-secondary);
+        color: var(--theme-text-primary);
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
+        border-color: var(--theme-border-secondary);
+        color: var(--theme-text-primary);
+        box-shadow: 0 0 8px rgba(0, 162, 255, 0.2);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        background: var(--theme-gradient-elevated);
+        border: none;
+        box-shadow: var(--theme-neomorphic-button);
+      }
+    }
+
+    &__details {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    &__message {
+      color: var(--theme-text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 20px;
+      word-wrap: break-word;
+
+      .notification-menu__item:not(.notification-menu__item--unread) & {
+        font-weight: 500;
+        color: var(--theme-text-secondary);
+      }
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-text-primary);
+        text-shadow: 0 0 3px rgba(0, 255, 255, 0.2);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-text-primary);
+        text-shadow: 0 0 3px rgba(0, 162, 255, 0.2);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    &__meta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--theme-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+
+      svg {
+        flex-shrink: 0;
+        color: var(--theme-text-secondary);
+        
+        // Electric Dark theme
+        .theme-electric-dark & {
+          color: var(--theme-interactive-primary);
+        }
+        
+        // Modern Dark theme
+        .theme-modern-dark & {
+          color: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    &__time {
+      color: var(--theme-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    &__category {
+      color: var(--theme-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    &__actions {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: all 0.2s ease;
+      color: var(--theme-text-secondary);
+
+      &:hover {
+        opacity: 1;
+        color: var(--theme-text-primary);
+      }
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-interactive-primary);
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 3px var(--theme-glow-cyan));
+        }
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-interactive-primary);
+        
+        &:hover {
+          color: var(--theme-interactive-secondary);
+          filter: drop-shadow(0 0 3px var(--theme-data-glow));
+        }
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        &:hover {
+          filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+      }
+
+      svg {
+        color: inherit;
+      }
+    }
+
+    &__footer {
+      border-top: 1px solid var(--theme-border-primary);
+      padding: 15.5px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 49px;
+      background: var(--theme-bg-secondary);
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        background: var(--theme-bg-tertiary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        background: var(--theme-bg-tertiary);
+        border-color: var(--theme-border-secondary);
+        box-shadow: 0 0 10px rgba(0, 162, 255, 0.05);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        background: var(--theme-gradient-soft);
+        border: none;
+        box-shadow: var(--theme-neomorphic-pressed);
+      }
+    }
+
+    &__view-all {
+      color: var(--theme-text-secondary);
+      font-size: 14px;
+      line-height: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: var(--theme-interactive-primary);
+        text-decoration: underline;
+      }
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-text-secondary);
+        
+        &:hover {
+          color: var(--theme-interactive-primary);
+          text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+        }
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-text-secondary);
+        
+        &:hover {
+          color: var(--theme-interactive-primary);
+          text-shadow: 0 0 5px rgba(0, 162, 255, 0.3);
+        }
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        &:hover {
+          filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+        }
+      }
+    }
+  }
+
+  &__workspace-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 21.01px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .theme-dark & {
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  &__workspace-text {
+    color: var(--theme-text-secondary);
+    font-family: $font-secondary;
+    font-weight: $font-semibold;
+    line-height: $line-height-xl;
+    width: 90px;
+    align-items: center;
+    display: flex;
+    text-overflow: ellipsis;
+    min-height: $line-height-xl;
+
+    // Special accent styling for web themes
+    .theme-web-light &,
+    .theme-web-dark & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    // Electric theme - cyberpunk glow effect
+    .theme-electric-dark & {
+      background: linear-gradient(90deg, var(--theme-interactive-primary), var(--theme-interactive-secondary), var(--theme-interactive-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 10px var(--theme-glow-cyan);
+    }
+
+    // Modern Dark theme - data dashboard styling
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      font-weight: $font-semibold;
+      text-shadow: 0 0 8px var(--theme-data-glow);
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-interactive-primary);
+      font-weight: 600;
+    }
+
+    // Neumorphism theme - simple text
+    .theme-neumorphism & {
+      color: var(--theme-text-primary);
+      font-weight: $font-semibold;
+    }
+
+    // Neumorphism Dark theme - simple text
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-primary);
+      font-weight: $font-semibold;
+    }
+  }
+
+  &__center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+  }
+
+  &__actions {
+    gap: 30px;
+    display: flex;
+    flex-direction: row;
+    padding-top: 1px;
+  }
+
+  .share-icon {
+    margin-top: 1.5px;
+    transition: opacity 0.2s ease;
+    color: var(--theme-text-secondary);
+    
+    &:hover {
+      opacity: 0.8;
+      color: var(--theme-text-primary);
+    }
+
+    path {
+      fill: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    &:hover path {
+      fill: var(--theme-text-primary);
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-glow-cyan));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Light theme - data dashboard glow (mirrors dark theme)
+    .theme-modern-light & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 5px var(--theme-interactive-primary));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 0 6px var(--theme-citrus-glow));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+  }
+
+  .settings-icon {
+    margin-top: 2.5px;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+
+    path {
+      fill: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    &:hover path {
+      fill: var(--theme-text-primary);
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-glow-cyan));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Light theme - data dashboard glow (mirrors dark theme)
+    .theme-modern-light & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 5px var(--theme-interactive-primary));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 0 6px var(--theme-citrus-glow));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+  }
+
+  .user-icon {
+    margin-top: 2px;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+
+    path {
+      fill: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    &:hover path {
+      fill: var(--theme-text-primary);
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-glow-cyan));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Light theme - data dashboard glow (mirrors dark theme)
+    .theme-modern-light & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 5px var(--theme-interactive-primary));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 0 6px var(--theme-citrus-glow));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+  }
+
+  .more-icon {
+    margin-top: 2.5px;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+
+    path {
+      fill: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    &:hover path {
+      fill: var(--theme-text-primary);
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-glow-cyan));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Modern Light theme - data dashboard glow (mirrors dark theme)
+    .theme-modern-light & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 8px var(--theme-data-glow));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-secondary);
+        filter: drop-shadow(0 0 5px var(--theme-interactive-primary));
+        
+        path {
+          fill: var(--theme-interactive-secondary);
+        }
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 0 6px var(--theme-citrus-glow));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        
+        path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+  }
+
+  // Special styling for chevron icons in header
+  .chevron-down-icon {
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+
+    path {
+      fill: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      
+      path {
+        fill: var(--theme-text-secondary);
+      }
+    }
+  }
+
+  // Special styling for ella brand icon
+  .ella-brand-icon {
+    color: var(--theme-text-primary);
+    transition: all 0.2s ease;
+
+    path {
+      fill: var(--theme-text-primary);
+      transition: all 0.2s ease;
+    }
+
+    // Electric Dark theme - cyber glow effect
+    .theme-electric-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Modern Dark theme - data dashboard glow
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light &,
+    .theme-web-dark & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Citrus Grove theme - clean orange accent
+    .theme-citrus-grove & {
+      color: var(--theme-interactive-primary);
+      
+      path {
+        fill: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism themes - subtle embossed effect
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-primary);
+      
+      path {
+        fill: var(--theme-text-primary);
+      }
+    }
+  }
+
+  &__search-container {
+    position: relative;
+    overflow: hidden;
+    width: 0;
+    transition: width 0.3s ease;
+    margin-right: 0;
+
+    &--open {
+      width: 250px;
+      margin-right: 15px;
+    }
+  }
+
+  &__search-input {
+    width: 100%;
+    height: 36px;
+    padding: 8px 16px;
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+    font-family: $font-secondary;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+
+    &::placeholder {
+      color: var(--theme-text-secondary);
+    }
+
+    &:focus {
+      border-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 0 2px var(--theme-interactive-focus);
+    }
+
+    // Theme-specific styles
+    .theme-electric-dark & {
+      background: var(--theme-bg-elevated);
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      
+      &:focus {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: 0 0 0 2px var(--theme-interactive-focus), 0 0 10px var(--theme-glow-cyan);
+      }
+    }
+
+    .theme-citrus-grove & {
+      background: var(--theme-bg-elevated);
+      border-color: var(--theme-emerald-secondary);
+      color: var(--theme-text-primary);
+      
+      &:focus {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: 0 0 0 2px var(--theme-citrus-glow);
+      }
+    }
+
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: var(--theme-shadow-inset);
+      
+      &:focus {
+        box-shadow: var(--theme-shadow-inset), 0 0 0 2px var(--theme-interactive-primary);
+      }
+    }
+  }
+} 
+
+.theme-dropdown {
+  position: relative;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--theme-dropdown-bg);
+    border: 1px solid var(--theme-dropdown-border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: $font-secondary;
+    font-size: 14px;
+    font-weight: $font-medium;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--theme-interactive-primary);
+      background: var(--theme-interactive-focus);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 0 2px var(--theme-interactive-focus);
+    }
+
+    // Award-winning Citrus Grove theme dropdown trigger
+    .theme-citrus-grove & {
+      background: linear-gradient(135deg, var(--theme-bg-elevated), var(--theme-emerald-primary));
+      border: 1px solid var(--theme-emerald-secondary);
+      color: var(--theme-text-emerald);
+      box-shadow: var(--theme-shadow-emerald);
+
+      &:hover {
+        border-color: var(--theme-interactive-primary);
+        background: linear-gradient(135deg, var(--theme-emerald-primary), var(--theme-bg-elevated));
+        box-shadow: var(--theme-shadow-citrus), 0 0 10px var(--theme-emerald-glow);
+        color: var(--theme-interactive-primary);
+      }
+
+      &:focus {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: 0 0 0 2px var(--theme-citrus-glow), var(--theme-shadow-emerald);
+      }
+    }
+
+    // Neumorphism theme dropdown trigger
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border: none;
+      color: var(--theme-text-secondary);
+      box-shadow: var(--theme-neomorphic-button);
+      border-radius: 8px;
+
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism Dark theme dropdown trigger
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      color: var(--theme-text-secondary);
+      box-shadow: var(--theme-neomorphic-button);
+      border-radius: 8px;
+
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+  }
+
+  &__text {
+    white-space: nowrap;
+  }
+
+  &__menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 4px;
+    min-width: 200px;
+    background: var(--theme-dropdown-bg);
+    border: 1px solid var(--theme-dropdown-border);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px var(--theme-dropdown-shadow);
+    z-index: 99999;
+    overflow: visible;
+
+    // Citrus Grove theme dropdown menu
+    .theme-citrus-grove & {
+      background: var(--theme-bg-elevated);
+      border: 1px solid var(--theme-border-primary);
+      box-shadow: var(--theme-shadow-medium);
+    }
+
+    // Neumorphism theme dropdown menu
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: var(--theme-neomorphic-raised);
+      border-radius: 12px;
+    }
+
+    // Neumorphism Dark theme dropdown menu
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: var(--theme-neomorphic-raised);
+      border-radius: 12px;
+    }
+  }
+
+  &__item {
+    padding: 8px 12px;
+    font-family: $font-secondary;
+    font-size: 14px;
+    font-weight: $font-medium;
+    color: var(--theme-text-secondary);
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: var(--theme-interactive-focus);
+    }
+
+    &--selected {
+      background: var(--theme-interactive-focus);
+      color: var(--theme-interactive-primary);
+      font-weight: $font-semibold;
+
+      // Electric theme special effects
+      .theme-electric-dark & {
+        box-shadow: 0 0 15px var(--theme-glow-purple);
+        border: 1px solid var(--theme-interactive-accent);
+      }
+
+      // Citrus Grove theme selected item
+      .theme-citrus-grove & {
+        background: var(--theme-interactive-primary);
+        color: var(--theme-bg-primary);
+        font-weight: 600;
+      }
+
+      // Neumorphism theme selected item
+      .theme-neumorphism & {
+        background: var(--theme-bg-pressed);
+        color: var(--theme-interactive-primary);
+        font-weight: $font-semibold;
+      }
+
+      // Neumorphism Dark theme selected item
+      .theme-neumorphism-dark & {
+        background: var(--theme-bg-pressed);
+        color: var(--theme-interactive-primary);
+        font-weight: $font-semibold;
+      }
+    }
+
+    // Citrus Grove theme dropdown items
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+
+      &:hover {
+        background: var(--theme-bg-tertiary);
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism theme dropdown items
+    .theme-neumorphism & {
+      color: var(--theme-text-secondary);
+
+      &:hover {
+        background: var(--theme-bg-pressed);
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism Dark theme dropdown items
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+
+      &:hover {
+        background: var(--theme-bg-pressed);
+        color: var(--theme-interactive-primary);
+      }
+    }
+  }
+
+  // Electric theme special effects
+  .theme-electric-dark & {
+    &__trigger {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      
+      &:hover {
+        box-shadow: 0 0 20px var(--theme-glow-cyan);
+        text-shadow: 0 0 5px var(--theme-interactive-primary);
+      }
+    }
+
+    &__menu {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--theme-border-accent);
+      z-index: 999999;
+      background: var(--theme-dropdown-bg) !important;
+    }
+
+    &__item:hover {
+      text-shadow: 0 0 5px var(--theme-interactive-primary);
+      box-shadow: inset 0 0 10px var(--theme-glow-cyan);
+    }
+  }
+
+  // Modern Dark theme special effects
+  .theme-modern-dark & {
+    &__trigger {
+      background: linear-gradient(135deg, var(--theme-dropdown-bg), var(--theme-bg-tertiary));
+      box-shadow: var(--theme-card-shadow);
+      
+      &:hover {
+        box-shadow: var(--theme-shadow-data);
+        border-color: var(--theme-interactive-primary);
+      }
+    }
+
+    &__menu {
+      background: var(--theme-dropdown-bg);
+      box-shadow: var(--theme-card-shadow), 0 0 0 1px var(--theme-border-accent);
+    }
+
+    &__item {
+      &:hover {
+        background: var(--theme-interactive-focus);
+        box-shadow: inset 0 0 10px var(--theme-data-glow);
+      }
+
+      &--selected {
+        background: var(--theme-interactive-focus);
+        color: var(--theme-interactive-primary);
+        box-shadow: inset 0 0 15px var(--theme-data-glow);
+      }
+    }
+  }
+
+  // Modern Light theme special effects (mirrors dark theme)
+  .theme-modern-light & {
+    &__trigger {
+      background: linear-gradient(135deg, var(--theme-dropdown-bg), var(--theme-bg-tertiary));
+      box-shadow: var(--theme-card-shadow);
+      
+      &:hover {
+        box-shadow: var(--theme-shadow-data);
+        border-color: var(--theme-interactive-primary);
+      }
+    }
+
+    &__menu {
+      background: var(--theme-dropdown-bg);
+      box-shadow: var(--theme-card-shadow), 0 0 0 1px var(--theme-border-accent);
+    }
+
+    &__item {
+      &:hover {
+        background: var(--theme-interactive-focus);
+        box-shadow: inset 0 0 10px var(--theme-data-glow);
+      }
+
+      &--selected {
+        background: var(--theme-interactive-focus);
+        color: var(--theme-interactive-primary);
+        box-shadow: inset 0 0 15px var(--theme-data-glow);
+      }
+    }
+  }
+}
+
+ 

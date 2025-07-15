@@ -1,0 +1,80 @@
+// Ella Electric Dark Theme Variables
+// Inspired by cyberpunk/retro-futuristic aesthetic with electric accents
+
+// Base Colors - Electric/Cyberpunk Palette
+$theme-primary: #0A0A0F;           // Deep space black
+$theme-secondary: #00D4FF;         // Electric cyan
+$theme-tertiary: #FF3B80;          // Hot pink/magenta
+$theme-accent: #A855F7;            // Electric purple
+
+// Background Colors - Dark with subtle gradients
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #0F0F1A;
+$theme-bg-tertiary: #1A1A2E;
+$theme-bg-elevated: #16213E;
+
+// Text Colors - High contrast for readability
+$theme-text-primary: #F0F8FF;
+$theme-text-secondary: #B8C5D6;
+$theme-text-muted: #7C8DB5;
+$theme-text-light: #556B8D;
+$theme-text-accent: $theme-secondary;
+
+// Border Colors - Subtle with electric highlights
+$theme-border-primary: #2A2A40;
+$theme-border-secondary: #3A3A55;
+$theme-border-light: #1F1F35;
+$theme-border-accent: $theme-secondary;
+
+// Interactive Colors - Electric/Glow effects
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-secondary: $theme-tertiary;
+$theme-interactive-accent: $theme-accent;
+$theme-interactive-hover: lighten($theme-secondary, 10%);
+$theme-interactive-active: lighten($theme-secondary, 15%);
+$theme-interactive-focus: rgba($theme-secondary, 0.4);
+
+// Electric Glow Colors
+$theme-glow-cyan: rgba($theme-secondary, 0.6);
+$theme-glow-pink: rgba($theme-tertiary, 0.6);
+$theme-glow-purple: rgba($theme-accent, 0.6);
+
+// Status Colors - Electric themed
+$theme-success: #00FF94;           // Electric green
+$theme-warning: #FFB800;           // Electric amber
+$theme-error: $theme-tertiary;     // Hot pink
+$theme-info: $theme-secondary;     // Electric cyan
+
+// Shadow Colors - Enhanced for electric effects
+$theme-shadow-light: rgba(0, 0, 0, 0.3);
+$theme-shadow-medium: rgba(0, 0, 0, 0.5);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.7);
+$theme-shadow-electric: 0 0 20px $theme-glow-cyan;
+
+// Component Specific - Electric/Cyberpunk styling
+$theme-sidebar-bg: linear-gradient(180deg, $theme-bg-primary 0%, $theme-bg-secondary 100%);
+$theme-sidebar-border: $theme-border-primary;
+$theme-sidebar-accent: $theme-accent;
+$theme-sidebar-glow: $theme-glow-purple;
+
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-header-accent: $theme-interactive-primary;
+$theme-header-glow: $theme-glow-cyan;
+
+$theme-chat-bg: linear-gradient(135deg, $theme-bg-secondary 0%, $theme-bg-tertiary 100%);
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+$theme-chat-item-glow: $theme-glow-pink;
+
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: $theme-border-secondary;
+$theme-input-focus: $theme-interactive-primary;
+$theme-input-glow: $theme-glow-cyan;
+
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-heavy;
+$theme-dropdown-accent: $theme-interactive-accent;
+$theme-dropdown-glow: $theme-glow-purple; 

@@ -1,0 +1,83 @@
+// Ella Modern Dark Theme Variables
+// Based on modern data dashboard aesthetic with vibrant accent colors
+
+// Base Colors - Modern Data Dashboard Palette
+$theme-primary: #1A1A1A;           // Deep charcoal background
+$theme-secondary: #00BFFF;         // Vibrant cyan blue (data visualization)
+$theme-tertiary: #FF4D6D;          // Hot pink/coral (alerts/critical data)
+$theme-accent: #7C3AED;            // Purple accent (secondary data)
+
+// Background Colors - Modern dark with subtle variations
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #202020;
+$theme-bg-tertiary: #2A2A2A;
+$theme-bg-elevated: #252525;
+
+// Text Colors - High contrast for data readability
+$theme-text-primary: #FFFFFF;
+$theme-text-secondary: #E5E5E5;
+$theme-text-muted: #B3B3B3;
+$theme-text-light: #999999;
+$theme-text-accent: $theme-secondary;
+
+// Border Colors - Subtle modern borders
+$theme-border-primary: #333333;
+$theme-border-secondary: #404040;
+$theme-border-light: #2A2A2A;
+$theme-border-accent: $theme-secondary;
+
+// Interactive Colors - Data dashboard focused
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-secondary: $theme-tertiary;
+$theme-interactive-accent: $theme-accent;
+$theme-interactive-hover: lighten($theme-secondary, 10%);
+$theme-interactive-active: lighten($theme-secondary, 15%);
+$theme-interactive-focus: rgba($theme-secondary, 0.3);
+
+// Data Visualization Colors
+$theme-data-primary: $theme-secondary;     // Main data color (cyan)
+$theme-data-secondary: $theme-tertiary;    // Secondary data color (coral)
+$theme-data-accent: $theme-accent;         // Accent data color (purple)
+$theme-data-success: #00FF88;              // Success/positive data
+$theme-data-warning: #FFB800;              // Warning data
+$theme-data-error: $theme-tertiary;        // Error/critical data
+
+// Status Colors - Dashboard appropriate
+$theme-success: #00FF88;           // Bright green for positive metrics
+$theme-warning: #FFB800;           // Amber for warnings
+$theme-error: $theme-tertiary;     // Coral for errors
+$theme-info: $theme-secondary;     // Cyan for info
+
+// Shadow Colors - Modern subtle shadows
+$theme-shadow-light: rgba(0, 0, 0, 0.1);
+$theme-shadow-medium: rgba(0, 0, 0, 0.2);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.4);
+$theme-shadow-data: 0 4px 20px rgba(0, 191, 255, 0.15);
+
+// Component Specific - Modern dashboard styling
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-primary;
+$theme-sidebar-accent: $theme-accent;
+
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-header-accent: $theme-interactive-primary;
+
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: $theme-border-secondary;
+$theme-input-focus: $theme-interactive-primary;
+
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium;
+$theme-dropdown-accent: $theme-interactive-accent;
+
+// Modern data dashboard effects
+$theme-card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+$theme-data-glow: 0 0 15px rgba(0, 191, 255, 0.3);
+$theme-accent-glow: 0 0 15px rgba(255, 77, 109, 0.3); 

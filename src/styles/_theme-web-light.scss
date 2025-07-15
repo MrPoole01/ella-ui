@@ -1,0 +1,65 @@
+// Ella Web Light Theme Variables
+// Based on Design System with vibrant accent colors
+
+// Base Colors from Design System
+$theme-primary: #FFFFFF;           // Primary: White
+$theme-secondary: #2DABFF;         // Secondary: Vibrant Blue
+$theme-tertiary: #FF3B80;          // Tertiary: Vibrant Pink
+$theme-accent: #904ED0;            // Accent: Vibrant Purple
+
+// Background Colors
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #F8FAFC;
+$theme-bg-tertiary: #F1F5F9;
+$theme-bg-elevated: $theme-primary;
+
+// Text Colors
+$theme-text-primary: #0F172A;
+$theme-text-secondary: #475569;
+$theme-text-muted: #64748B;
+$theme-text-light: #94A3B8;
+$theme-text-accent: $theme-secondary;
+
+// Border Colors
+$theme-border-primary: #E2E8F0;
+$theme-border-secondary: #CBD5E1;
+$theme-border-light: #F1F5F9;
+$theme-border-accent: $theme-secondary;
+
+// Interactive Colors (with vibrant accents for pop)
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-secondary: $theme-tertiary;
+$theme-interactive-accent: $theme-accent;
+$theme-interactive-hover: darken($theme-secondary, 8%);
+$theme-interactive-active: darken($theme-secondary, 12%);
+$theme-interactive-focus: rgba($theme-secondary, 0.2);
+
+// Status Colors
+$theme-success: #10B981;
+$theme-warning: #F59E0B;
+$theme-error: $theme-tertiary;
+$theme-info: $theme-secondary;
+
+// Shadow Colors
+$theme-shadow-light: rgba(0, 0, 0, 0.04);
+$theme-shadow-medium: rgba(0, 0, 0, 0.08);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.15);
+
+// Component Specific with Accent Integration
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-primary;
+$theme-sidebar-accent: $theme-accent;
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-header-accent: $theme-interactive-primary;
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-primary;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-chat-item-accent: $theme-interactive-secondary;
+$theme-input-bg: $theme-bg-primary;
+$theme-input-border: $theme-border-secondary;
+$theme-input-focus: $theme-interactive-primary;
+$theme-dropdown-bg: $theme-bg-primary;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium;
+$theme-dropdown-accent: $theme-interactive-accent; 

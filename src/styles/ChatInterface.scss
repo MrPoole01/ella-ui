@@ -1,0 +1,1065 @@
+@import '../styles/variables';
+
+.chat-interface {
+  border-radius: $border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  max-width: 759px;
+  margin: 0 auto;
+
+      // Neumorphism theme - clean integrated layout
+  .theme-neumorphism & {
+    background: transparent;
+    border-radius: 0;
+    gap: 16px;
+  }
+
+  // Neumorphism Dark theme - clean integrated layout
+  .theme-neumorphism-dark & {
+    background: transparent;
+    border-radius: 0;
+    gap: 16px;
+  }
+
+  &__project-content {
+    background: var(--theme-bg-tertiary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 10px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: flex-start;
+    height: auto;
+    overflow: hidden;
+    padding: 0 49px;
+    overflow-y: scroll;
+    transition: all 0.2s ease;
+    
+    // Hide scrollbar while maintaining scroll functionality
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE and Edge
+    
+    &::-webkit-scrollbar {
+      display: none; // Chrome, Safari, Opera
+    }
+
+    // Light theme - subtle background
+    .theme-light & {
+      background: var(--theme-bg-accent);
+      border-color: var(--theme-border-tertiary);
+    }
+
+    // Dark theme - proper dark background
+    .theme-dark & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+    }
+
+    // Electric Dark theme - cyber themed background
+    .theme-electric-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      border-color: var(--theme-border-secondary);
+      box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.05);
+    }
+
+    // Modern Dark theme - data dashboard background
+    .theme-modern-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      border-color: var(--theme-border-secondary);
+      box-shadow: inset 0 0 20px rgba(0, 162, 255, 0.05);
+    }
+
+    // Modern Light theme - data dashboard background (mirrors dark theme)
+    .theme-modern-light & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      border-color: var(--theme-border-secondary);
+      box-shadow: inset 0 0 20px rgba(0, 162, 255, 0.05);
+    }
+
+    // Web themes - clean backgrounds
+    .theme-web-light & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-primary);
+    }
+
+    .theme-web-dark & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+    }
+
+    // Citrus Grove theme - warm background
+    .theme-citrus-grove & {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-primary);
+    }
+
+    // Neumorphism themes - subtle inset effect
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: 
+        inset 4px 4px 8px rgba(163, 177, 198, 0.2),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      box-shadow: 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.3),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &__project-conversation {
+    width: 707px;
+    height: 899px;
+    flex-grow: 1;
+    min-height: 675px;
+    margin-top: 36px;
+    margin-bottom: 0px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: var(--theme-text-primary);
+    transition: all 0.2s ease;
+
+    // Neumorphism themes - specific height override
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      height: 770px;
+    }
+
+    // Default paragraph styling
+    p {
+      margin: 0 0 16px 0;
+      line-height: 1.6;
+      font-size: 16px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    // Regular paragraph text (non-header spans)
+    p span:not([style*="font-weight: 600"]) {
+      color: var(--theme-text-secondary) !important;
+      font-weight: 400 !important;
+      line-height: 1.6;
+    }
+
+    // Header text (spans with font-weight: 600)
+    p span[style*="font-weight: 600"] {
+      color: var(--theme-interactive-primary) !important;
+      font-weight: 500 !important;
+      line-height: 1.6;
+    }
+
+    // Light theme - enhanced contrast
+    .theme-light & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #6B7280 !important; // Gray-500
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    // Dark theme - high contrast
+    .theme-dark & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #9CA3AF !important; // Gray-400
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    // Electric Dark theme - cyber styling
+    .theme-electric-dark & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #A3A3A3 !important; // Neutral-400
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 0 8px var(--theme-glow-cyan);
+      }
+    }
+
+    // Modern Dark theme - data dashboard styling
+    .theme-modern-dark & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #94A3B8 !important; // Slate-400
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 0 8px var(--theme-data-glow);
+      }
+    }
+
+    // Modern Light theme - data dashboard styling (mirrors dark theme)
+    .theme-modern-light & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #64748B !important; // Slate-500 (darker for light mode)
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 0 8px var(--theme-data-glow);
+      }
+    }
+
+    // Web themes - vibrant colors
+    .theme-web-light & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #6B7280 !important; // Gray-500
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    .theme-web-dark & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #9CA3AF !important; // Gray-400
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    // Citrus Grove theme - warm colors
+    .theme-citrus-grove & {
+      p span:not([style*="font-weight: 600"]) {
+        color: var(--theme-text-secondary) !important;
+        font-weight: 400 !important;
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    // Neumorphism themes - subtle text effects
+    .theme-neumorphism & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #64748B !important; // Slate-500
+        font-weight: 400 !important;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .theme-neumorphism-dark & {
+      p span:not([style*="font-weight: 600"]) {
+        color: #8B8B8B !important; // Gray-400 equivalent
+        font-weight: 400 !important;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+      }
+
+      p span[style*="font-weight: 600"] {
+        color: var(--theme-interactive-primary) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+    }
+  }
+
+  &__input-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input-container {
+    background: var(--theme-bg-secondary);
+    border: 1.5px solid var(--theme-input-border);
+    border-bottom: none;
+    border-radius: $border-radius-lg $border-radius-lg 0 0;
+    width: 100%;
+    min-height: 91.87px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    transition: border-color 0.2s ease;
+
+    // Special accent styling for web themes
+    .theme-web-light &:focus-within,
+    .theme-web-dark &:focus-within {
+      border-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 0 2px var(--theme-interactive-focus);
+    }
+
+    // Electric theme special effects
+    .theme-electric-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+
+      &:focus-within {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: 0 0 20px var(--theme-glow-cyan), inset 0 0 10px var(--theme-glow-purple);
+      }
+    }
+
+    // Modern Dark theme special effects
+    .theme-modern-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: var(--theme-card-shadow);
+
+      &:focus-within {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: var(--theme-shadow-data);
+      }
+    }
+
+    // Modern Light theme special effects (mirrors dark theme)
+    .theme-modern-light & {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: var(--theme-card-shadow);
+
+      &:focus-within {
+        border-color: var(--theme-interactive-primary);
+        box-shadow: var(--theme-shadow-data);
+      }
+    }
+
+    // Neumorphism theme - large embossed input area
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border: none;
+      border-radius: 16px;
+      box-shadow: 
+        inset 6px 6px 12px rgba(163, 177, 198, 0.3),
+        inset -6px -6px 12px rgba(255, 255, 255, 0.7);
+      padding: 24px;
+      min-height: 120px;
+      margin-bottom: 16px;
+
+      &:focus-within {
+        box-shadow: 
+          inset 8px 8px 16px rgba(163, 177, 198, 0.25),
+          inset -8px -8px 16px rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    // Neumorphism Dark theme - large embossed input area
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      border-radius: 16px;
+      box-shadow: 
+        inset 6px 6px 12px rgba(0, 0, 0, 0.5),
+        inset -6px -6px 12px rgba(255, 255, 255, 0.08);
+      padding: 24px;
+      min-height: 120px;
+      margin-bottom: 16px;
+
+      &:focus-within {
+        box-shadow: 
+          inset 8px 8px 16px rgba(0, 0, 0, 0.4),
+          inset -8px -8px 16px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  &__input-field {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: $font-primary;
+    font-size: $font-size-xl;
+    line-height: 1.5;
+    color: var(--theme-text-primary);
+    resize: none;
+    min-height: 24px;
+    max-height: 200px;
+    overflow-y: auto;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: var(--theme-text-secondary);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    // Special accent styling for web themes
+    .theme-web-light &:focus,
+    .theme-web-dark &:focus {
+      color: var(--theme-interactive-primary);
+    }
+
+    // Electric theme special effects
+    .theme-electric-dark &:focus {
+      color: var(--theme-interactive-primary);
+      text-shadow: 0 0 5px var(--theme-glow-cyan);
+    }
+
+    // Modern Dark theme special effects
+    .theme-modern-dark &:focus {
+      color: var(--theme-interactive-primary);
+      text-shadow: 0 0 5px var(--theme-data-glow);
+    }
+
+    // Modern Light theme special effects (mirrors dark theme)
+    .theme-modern-light &:focus {
+      color: var(--theme-interactive-primary);
+      text-shadow: 0 0 5px var(--theme-data-glow);
+    }
+
+    // Neumorphism theme - large clean text field
+    .theme-neumorphism & {
+      font-size: 16px;
+      color: var(--theme-text-primary);
+      line-height: 1.6;
+      min-height: 60px;
+
+      &:focus {
+        color: var(--theme-interactive-primary);
+      }
+
+      &::placeholder {
+        color: var(--theme-text-muted);
+        font-size: 16px;
+      }
+    }
+
+    // Neumorphism Dark theme - large clean text field
+    .theme-neumorphism-dark & {
+      font-size: 16px;
+      color: var(--theme-text-primary);
+      line-height: 1.6;
+      min-height: 60px;
+
+      &:focus {
+        color: var(--theme-interactive-primary);
+      }
+
+      &::placeholder {
+        color: var(--theme-text-muted);
+        font-size: 16px;
+      }
+    }
+  }
+
+  &__controls {
+    background: var(--theme-input-border);
+    border: 1.5px solid var(--theme-input-border);
+    border-top: 1px solid var(--theme-input-bg);
+    border-radius: 0 0 $border-radius-lg $border-radius-lg;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+
+    // Neumorphism theme - separate raised controls bar
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border: none;
+      border-radius: 12px;
+      box-shadow: 
+        4px 4px 8px rgba(163, 177, 198, 0.3),
+        -4px -4px 8px rgba(255, 255, 255, 0.6);
+      padding: 12px 16px;
+      margin: 0;
+    }
+
+    // Neumorphism Dark theme - separate raised controls bar
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border: none;
+      border-radius: 12px;
+      box-shadow: 
+        4px 4px 8px rgba(0, 0, 0, 0.4),
+        -4px -4px 8px rgba(255, 255, 255, 0.06);
+      padding: 12px 16px;
+      margin: 0;
+    }
+  }
+
+  &__left-controls {
+    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__mic-container {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.19px 0.24px 0.25px 0.2px;
+
+    // Neumorphism theme - square raised button
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border-radius: 8px;
+      padding: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        3px 3px 6px rgba(163, 177, 198, 0.3),
+        -3px -3px 6px rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(163, 177, 198, 0.4),
+          -1px -1px 3px rgba(255, 255, 255, 0.7);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    // Neumorphism Dark theme - square raised button
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border-radius: 8px;
+      padding: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(0, 0, 0, 0.5),
+          -1px -1px 3px rgba(255, 255, 255, 0.08);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.06);
+      }
+    }
+  }
+
+  &__attach-container {
+    background: transparent;
+    border-radius: $border-radius-lg;
+    display: flex;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 7.81px 9px;
+
+    // Neumorphism theme - square raised button
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 
+        3px 3px 6px rgba(163, 177, 198, 0.3),
+        -3px -3px 6px rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(163, 177, 198, 0.4),
+          -1px -1px 3px rgba(255, 255, 255, 0.7);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.6);
+      }
+    }
+
+    // Neumorphism Dark theme - square raised button
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(0, 0, 0, 0.5),
+          -1px -1px 3px rgba(255, 255, 255, 0.08);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.06);
+      }
+    }
+  }
+
+  &__right-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+
+    // Neumorphism theme - style mic button in right controls
+    .theme-neumorphism & {
+      gap: 16px;
+
+      .mic-icon, .microphone-button {
+        background: var(--theme-bg-primary);
+        border-radius: 8px;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          3px 3px 6px rgba(163, 177, 198, 0.3),
+          -3px -3px 6px rgba(255, 255, 255, 0.6);
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          box-shadow: 
+            1px 1px 3px rgba(163, 177, 198, 0.4),
+            -1px -1px 3px rgba(255, 255, 255, 0.7);
+        }
+
+        &:active {
+          box-shadow: 
+            inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+            inset -2px -2px 4px rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+
+    // Neumorphism Dark theme - style mic button in right controls
+    .theme-neumorphism-dark & {
+      gap: 16px;
+
+      .mic-icon, .microphone-button {
+        background: var(--theme-bg-primary);
+        border-radius: 8px;
+        padding: 8px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 
+          3px 3px 6px rgba(0, 0, 0, 0.4),
+          -3px -3px 6px rgba(255, 255, 255, 0.06);
+        transition: all 0.2s ease;
+        cursor: pointer;
+
+        &:hover {
+          box-shadow: 
+            1px 1px 3px rgba(0, 0, 0, 0.5),
+            -1px -1px 3px rgba(255, 255, 255, 0.08);
+        }
+
+        &:active {
+          box-shadow: 
+            inset 2px 2px 4px rgba(0, 0, 0, 0.4),
+            inset -2px -2px 4px rgba(255, 255, 255, 0.06);
+        }
+      }
+    }
+  }
+
+  &__send-button {
+    background: var(--theme-interactive-primary);
+    border-radius: $border-radius-base;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: var(--theme-interactive-hover);
+    }
+
+    // Electric theme special effects
+    .theme-electric-dark & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+      box-shadow: 0 0 15px var(--theme-glow-cyan);
+      border: 1px solid var(--theme-interactive-primary);
+
+      &:hover {
+        box-shadow: 0 0 25px var(--theme-glow-cyan), 0 0 35px var(--theme-glow-pink);
+        transform: scale(1.05);
+        background: linear-gradient(45deg, var(--theme-interactive-hover), var(--theme-interactive-secondary));
+      }
+    }
+
+    // Modern Dark theme special effects
+    .theme-modern-dark & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+      box-shadow: var(--theme-shadow-data);
+      border: 1px solid var(--theme-interactive-primary);
+
+      &:hover {
+        box-shadow: var(--theme-shadow-data), var(--theme-accent-glow);
+        transform: scale(1.05);
+        background: linear-gradient(45deg, var(--theme-interactive-hover), var(--theme-interactive-secondary));
+      }
+    }
+
+    // Modern Light theme special effects (mirrors dark theme)
+    .theme-modern-light & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+      box-shadow: var(--theme-shadow-data);
+      border: 1px solid var(--theme-interactive-primary);
+
+      &:hover {
+        box-shadow: var(--theme-shadow-data), var(--theme-accent-glow);
+        transform: scale(1.05);
+        background: linear-gradient(45deg, var(--theme-interactive-hover), var(--theme-interactive-secondary));
+      }
+    }
+
+    // Neumorphism theme - blue raised send button
+    .theme-neumorphism & {
+      background: var(--theme-interactive-primary);
+      border-radius: 8px;
+      box-shadow: 
+        3px 3px 6px rgba(163, 177, 198, 0.3),
+        -3px -3px 6px rgba(255, 255, 255, 0.6);
+      width: 40px;
+      height: 40px;
+
+      &:hover {
+        background: var(--theme-interactive-hover);
+        box-shadow: 
+          1px 1px 3px rgba(163, 177, 198, 0.4),
+          -1px -1px 3px rgba(255, 255, 255, 0.7);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(102, 126, 234, 0.4),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    // Neumorphism Dark theme - blue raised send button
+    .theme-neumorphism-dark & {
+      background: var(--theme-interactive-primary);
+      border-radius: 8px;
+      box-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.06);
+      width: 40px;
+      height: 40px;
+
+      &:hover {
+        background: var(--theme-interactive-hover);
+        box-shadow: 
+          1px 1px 3px rgba(0, 0, 0, 0.5),
+          -1px -1px 3px rgba(255, 255, 255, 0.08);
+      }
+
+      &:active {
+        box-shadow: 
+          inset 2px 2px 4px rgba(102, 126, 234, 0.4),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  // Planning Assets List
+  &__planning-assets {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 500px;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  &__planning-assets-list {
+    padding: 8px 0;
+  }
+
+  &__planning-asset-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--theme-border-secondary);
+    font-family: $font-secondary;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--theme-text-primary);
+    opacity: 0;
+    animation: cascadeIn 0.4s ease-out forwards;
+    background: var(--theme-bg-primary);
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      color: var(--theme-text-primary);
+    }
+
+    &:active {
+      background: var(--theme-interactive-focus);
+    }
+
+    // Theme-specific hover effects
+    .theme-electric-dark & {
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+        box-shadow: inset 0 0 10px var(--theme-glow-cyan);
+      }
+    }
+
+    .theme-citrus-grove & {
+      &:hover {
+        background: var(--theme-bg-secondary);
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      &:hover {
+        background: var(--theme-bg-primary);
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  // Marketing Assets List
+  &__marketing-assets {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 500px;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+  }
+
+  &__marketing-assets-list {
+    padding: 8px 0;
+  }
+
+  &__marketing-asset-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--theme-border-secondary);
+    font-family: $font-secondary;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--theme-text-primary);
+    opacity: 0;
+    animation: cascadeIn 0.4s ease-out forwards;
+    background: var(--theme-bg-primary);
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      color: var(--theme-text-primary);
+    }
+
+    &:active {
+      background: var(--theme-interactive-focus);
+    }
+
+    // Theme-specific hover effects
+    .theme-electric-dark & {
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+        box-shadow: inset 0 0 10px var(--theme-glow-cyan);
+      }
+    }
+
+    .theme-citrus-grove & {
+      &:hover {
+        background: var(--theme-bg-secondary);
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      &:hover {
+        background: var(--theme-bg-primary);
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  // Strategy Documents List
+  &__strategy-documents {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    max-height: 500px;
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+    
+    // Hide scrollbar while keeping scroll functionality
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    
+    &::-webkit-scrollbar {
+      display: none; /* WebKit browsers (Chrome, Safari, etc.) */
+    }
+  }
+
+  &__strategy-documents-list {
+    padding: 8px 0;
+  }
+
+  &__strategy-document-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--theme-border-secondary);
+    font-family: $font-secondary;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--theme-text-primary);
+    opacity: 0;
+    animation: cascadeIn 0.4s ease-out forwards;
+    background: var(--theme-bg-primary);
+    border-radius: 8px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      color: var(--theme-text-primary);
+    }
+
+    &:active {
+      background: var(--theme-interactive-focus);
+    }
+
+    // Theme-specific hover effects
+    .theme-electric-dark & {
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+        box-shadow: inset 0 0 10px var(--theme-glow-cyan);
+      }
+    }
+
+    .theme-citrus-grove & {
+      &:hover {
+        background: var(--theme-bg-secondary);
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      &:hover {
+        background: var(--theme-bg-primary);
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+      }
+    }
+  }
+
+  // Animations
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes cascadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+} 

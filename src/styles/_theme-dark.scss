@@ -1,0 +1,59 @@
+// Ella Current Dark Theme Variables
+// Based on Avenir Typography System
+
+// Base Colors from Style Guide (Dark Mode)
+$theme-primary: #0F0F0F;           // Primary: Soft Black
+$theme-secondary: #659D5E;         // Secondary: Aqua Sea Green (same as light)
+$theme-tertiary: #FFCE8B;          // Tertiary: Pale Yellow (same as light)
+$theme-accent-1: #90CE28;          // Accent 1: Mint Green (same as light)
+$theme-accent-2: #4F4732;          // Accent 2: Dark Olive Green (same as light)
+
+// Background Colors
+$theme-bg-primary: $theme-primary;
+$theme-bg-secondary: #1A1A1A;
+$theme-bg-tertiary: #262626;
+$theme-bg-elevated: #1F1F1F;
+
+// Text Colors
+$theme-text-primary: #FFFFFF;
+$theme-text-secondary: #B3B3B3;
+$theme-text-muted: #9CA3AF;
+$theme-text-light: #6B7280;
+$theme-text-accent: $theme-secondary;
+
+// Border Colors
+$theme-border-primary: #333333;
+$theme-border-secondary: #404040;
+$theme-border-light: #2A2A2A;
+$theme-border-accent: $theme-secondary;
+
+// Interactive Colors
+$theme-interactive-primary: $theme-secondary;
+$theme-interactive-hover: lighten($theme-secondary, 10%);
+$theme-interactive-active: lighten($theme-secondary, 15%);
+$theme-interactive-focus: rgba($theme-secondary, 0.3);
+
+// Status Colors
+$theme-success: $theme-accent-1;
+$theme-warning: $theme-tertiary;
+$theme-error: #EF4444;
+$theme-info: $theme-secondary;
+
+// Shadow Colors
+$theme-shadow-light: rgba(0, 0, 0, 0.2);
+$theme-shadow-medium: rgba(0, 0, 0, 0.4);
+$theme-shadow-heavy: rgba(0, 0, 0, 0.6);
+
+// Component Specific
+$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-border: $theme-border-primary;
+$theme-header-bg: $theme-bg-primary;
+$theme-header-border: $theme-border-primary;
+$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-item-bg: $theme-bg-elevated;
+$theme-chat-item-hover: $theme-bg-tertiary;
+$theme-input-bg: $theme-bg-elevated;
+$theme-input-border: $theme-border-secondary;
+$theme-dropdown-bg: $theme-bg-elevated;
+$theme-dropdown-border: $theme-border-secondary;
+$theme-dropdown-shadow: $theme-shadow-medium; 

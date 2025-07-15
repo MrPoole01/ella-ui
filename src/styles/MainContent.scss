@@ -1,0 +1,415 @@
+@import '../styles/variables';
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+
+  // Citrus Grove theme - clean dark background
+  .theme-citrus-grove & {
+    background: var(--theme-bg-primary);
+  }
+
+  // Neumorphism theme - simple background
+  .theme-neumorphism & {
+    background: var(--theme-bg-primary);
+  }
+
+  // Neumorphism Dark theme - simple background
+  .theme-neumorphism-dark & {
+    background: var(--theme-bg-primary);
+  }
+
+  &__nav {
+    border-bottom: 1px solid var(--theme-border-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 53px;
+    padding-top: 22px;
+    padding-bottom: 22px;
+    height: $nav-height;
+    flex-shrink: 0;
+    background: var(--theme-bg-primary);
+
+    // Citrus Grove theme nav
+    .theme-citrus-grove & {
+      background: var(--theme-bg-primary);
+      border-bottom: 1px solid var(--theme-border-primary);
+    }
+
+    // Neumorphism theme nav
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border-bottom: none;
+    }
+
+    // Neumorphism Dark theme nav
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border-bottom: none;
+    }
+  }
+
+  &__project-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    margin-left: 20px;
+  }
+
+  &__project-header {
+    display: flex;
+    gap: 18px;
+  }
+
+  &__project-title {
+    color: var(--theme-text-primary);
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    
+    // Light theme - clean H2 styling
+    .theme-light & {
+      color: var(--theme-text-primary);
+      font-weight: 600;
+    }
+
+    // Electric theme - cyberpunk glow H2 effect
+    .theme-electric-dark & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px var(--theme-glow-cyan);
+      font-weight: 700;
+    }
+
+    // Modern Dark theme - data dashboard H2 styling
+    .theme-modern-dark & {
+      color: var(--theme-interactive-primary);
+      font-weight: 700;
+      text-shadow: 0 0 16px var(--theme-data-glow);
+      letter-spacing: 0.5px;
+    }
+
+    // Web Light theme - vibrant H2 styling
+    .theme-web-light & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    // Web Dark theme - vibrant H2 styling
+    .theme-web-dark & {
+      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+
+    // Citrus Grove theme - clean orange H2 accent
+    .theme-citrus-grove & {
+      color: var(--theme-interactive-primary);
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(255, 165, 0, 0.3);
+    }
+
+    // Neumorphism theme - embossed H2 text
+    .theme-neumorphism & {
+      color: var(--theme-text-primary);
+      font-weight: 600;
+      text-shadow: 
+        1px 1px 2px rgba(163, 177, 198, 0.4),
+        -1px -1px 2px rgba(255, 255, 255, 0.8);
+    }
+
+    // Neumorphism Dark theme - embossed H2 text
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-primary);
+      font-weight: 600;
+      text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.6),
+        -1px -1px 2px rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  &__project-title-input {
+    color: #1E293B;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 32px;
+    margin: 0;
+    border: 2px solid #E5E7EB;
+    border-radius: 4px;
+    padding: 4px 8px;
+    background: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    min-width: 200px;
+
+    &:focus {
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+
+  &__project-share {
+    margin-top: 9px;
+  }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__breadcrumb-item {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+    
+    // Light theme - clean breadcrumb styling
+    .theme-light & {
+      color: var(--theme-text-tertiary);
+      font-weight: 400;
+    }
+
+    // Electric theme - cyberpunk breadcrumb effect
+    .theme-electric-dark & {
+      color: var(--theme-text-secondary);
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+      font-weight: 500;
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 12px var(--theme-glow-cyan);
+      }
+    }
+
+    // Modern Dark theme - data breadcrumb styling
+    .theme-modern-dark & {
+      color: var(--theme-text-secondary);
+      font-weight: 500;
+      text-shadow: 0 0 4px var(--theme-data-glow);
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 8px var(--theme-data-glow);
+      }
+    }
+
+    // Web Light theme - vibrant breadcrumb styling
+    .theme-web-light & {
+      color: var(--theme-text-secondary);
+      font-weight: 500;
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Web Dark theme - vibrant breadcrumb styling
+    .theme-web-dark & {
+      color: var(--theme-text-secondary);
+      font-weight: 500;
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Citrus Grove theme - clean orange breadcrumb
+    .theme-citrus-grove & {
+      color: var(--theme-text-secondary);
+      font-weight: 500;
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism theme - subtle breadcrumb text
+    .theme-neumorphism & {
+      color: var(--theme-text-secondary);
+      font-weight: 400;
+      text-shadow: 
+        0.5px 0.5px 1px rgba(163, 177, 198, 0.3),
+        -0.5px -0.5px 1px rgba(255, 255, 255, 0.6);
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+
+    // Neumorphism Dark theme - subtle breadcrumb text
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-secondary);
+      font-weight: 400;
+      text-shadow: 
+        0.5px 0.5px 1px rgba(0, 0, 0, 0.4),
+        -0.5px -0.5px 1px rgba(255, 255, 255, 0.08);
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+      }
+    }
+  }
+
+  &__breadcrumb-arrow {
+    margin-top: 2px;
+    color: var(--theme-text-muted);
+    transition: all 0.2s ease;
+    
+    // Light theme - clean arrow styling
+    .theme-light & {
+      color: var(--theme-text-muted);
+    }
+
+    // Electric theme - glowing arrow
+    .theme-electric-dark & {
+      color: var(--theme-text-muted);
+      filter: drop-shadow(0 0 4px rgba(0, 255, 255, 0.1));
+    }
+
+    // Modern Dark theme - data arrow styling
+    .theme-modern-dark & {
+      color: var(--theme-text-muted);
+      filter: drop-shadow(0 0 2px var(--theme-data-glow));
+    }
+
+    // Web Light theme - vibrant arrow
+    .theme-web-light & {
+      color: var(--theme-text-muted);
+    }
+
+    // Web Dark theme - vibrant arrow
+    .theme-web-dark & {
+      color: var(--theme-text-muted);
+    }
+
+    // Citrus Grove theme - clean arrow
+    .theme-citrus-grove & {
+      color: var(--theme-text-muted);
+    }
+
+    // Neumorphism theme - subtle arrow
+    .theme-neumorphism & {
+      color: var(--theme-text-muted);
+      filter: drop-shadow(0.5px 0.5px 1px rgba(163, 177, 198, 0.2));
+    }
+
+    // Neumorphism Dark theme - subtle arrow
+    .theme-neumorphism-dark & {
+      color: var(--theme-text-muted);
+      filter: drop-shadow(0.5px 0.5px 1px rgba(0, 0, 0, 0.3));
+    }
+  }
+
+  &__breadcrumb-arrow {
+    margin-top: 2px;
+  }
+
+  &__chat {
+    border-top: 1px solid var(--theme-border-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    padding: 50px;
+    background: var(--theme-chat-bg);
+
+    // Citrus Grove theme chat area
+    .theme-citrus-grove & {
+      background: var(--theme-bg-secondary);
+      border-top: 1px solid var(--theme-border-primary);
+    }
+
+    // Neumorphism theme chat area - embossed inset with rounded corners
+    .theme-neumorphism & {
+      background: var(--theme-bg-primary);
+      border-top: none;
+      padding: 30px;
+      margin: 20px;
+      border-radius: 24px;
+      box-shadow: 
+        inset 8px 8px 16px rgba(163, 177, 198, 0.4),
+        inset -8px -8px 16px rgba(255, 255, 255, 0.7);
+      position: relative;
+      
+      // Add subtle inner highlight for depth
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, 
+          rgba(255, 255, 255, 0.1) 0%, 
+          transparent 50%, 
+          rgba(163, 177, 198, 0.05) 100%
+        );
+        pointer-events: none;
+      }
+    }
+
+    // Neumorphism Dark theme chat area - embossed inset with rounded corners
+    .theme-neumorphism-dark & {
+      background: var(--theme-bg-primary);
+      border-top: none;
+      padding: 30px;
+      margin: 20px;
+      border-radius: 24px;
+      box-shadow: 
+        inset 8px 8px 16px rgba(0, 0, 0, 0.5),
+        inset -8px -8px 16px rgba(255, 255, 255, 0.08);
+      position: relative;
+      
+      // Add subtle inner highlight for depth
+      &::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, 
+          rgba(255, 255, 255, 0.02) 0%, 
+          transparent 50%, 
+          rgba(0, 0, 0, 0.05) 100%
+        );
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+// Simple enhancement for chat interface in neumorphism theme
+.theme-neumorphism .chat-interface {
+  background: var(--theme-bg-primary);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--theme-neomorphic-flat);
+} 
+
+// Simple enhancement for chat interface in neumorphism dark theme
+.theme-neumorphism-dark .chat-interface {
+  background: var(--theme-bg-primary);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--theme-neomorphic-flat);
+} 
