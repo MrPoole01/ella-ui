@@ -32,7 +32,7 @@ $theme-border-light: #F1F5F9;
 $theme-border-accent: $theme-secondary;
 
 // Interactive Colors (with vibrant accents for pop)
-$theme-interactive-primary: $theme-secondary;
+$theme-interactive-primary: darken($theme-secondary, 10%);
 $theme-interactive-secondary: $theme-tertiary;
 $theme-interactive-accent: $theme-accent;
 $theme-interactive-hover: darken($theme-secondary, 8%);
@@ -57,7 +57,7 @@ $theme-sidebar-accent: $theme-accent;
 $theme-header-bg: $theme-primary-4;
 $theme-header-border: $theme-border-primary;
 $theme-header-accent: $theme-interactive-primary;
-$theme-chat-bg: $theme-bg-secondary;
+$theme-chat-bg: $theme-primary;
 $theme-chat-item-bg: $theme-bg-primary;
 $theme-chat-item-hover: $theme-bg-tertiary;
 $theme-chat-item-accent: $theme-interactive-secondary;

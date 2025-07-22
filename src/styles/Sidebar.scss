@@ -836,7 +836,7 @@
 
       // Web Light theme - vibrant H2 styling
       .theme-web-light & {
-        background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+        background: var(--theme-interactive-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -845,7 +845,7 @@
 
       // Web Dark theme - vibrant H2 styling
       .theme-web-dark & {
-        background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+        background: var(--theme-interactive-primary);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
@@ -931,7 +931,7 @@
     justify-content: flex-end;
 
     span {
-      color: $text-disabled;
+      color: var(--theme-text-primary);
       font-size: $font-size-sm;
       font-style: italic;
       line-height: $line-height-lg;

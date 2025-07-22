@@ -100,7 +100,7 @@
 
     // Web Light theme - vibrant H2 styling
     .theme-web-light & {
-      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      background: var(--theme-interactive-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -109,7 +109,7 @@
 
     // Web Dark theme - vibrant H2 styling
     .theme-web-dark & {
-      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      background: var(--theme-interactive-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
