@@ -6,6 +6,7 @@
 @import 'theme-citrus';
 @import 'theme-neomorphism';
 @import 'theme-neomorphism-dark';
+@import 'theme-web-light';
 
 // Default theme (UI Theme) - uses existing variables
 .theme-ui {
@@ -95,45 +96,47 @@
 
 // Ella Web Light theme
 .theme-web-light {
-  --theme-bg-primary: #{#FFFFFF};
-  --theme-bg-secondary: #{#F8FAFC};
-  --theme-bg-tertiary: #{#F1F5F9};
-  --theme-bg-elevated: #{#FFFFFF};
-  --theme-text-primary: #{#0F172A};
-  --theme-text-secondary: #{#475569};
-  --theme-text-muted: #{#64748B};
-  --theme-text-light: #{#94A3B8};
-  --theme-text-accent: #{#2DABFF};
-  --theme-border-primary: #{#E2E8F0};
-  --theme-border-secondary: #{#CBD5E1};
-  --theme-border-light: #{#F1F5F9};
-  --theme-border-accent: #{#2DABFF};
-  --theme-interactive-primary: #{#2DABFF};
-  --theme-interactive-secondary: #{#FF3B80};
-  --theme-interactive-accent: #{#904ED0};
-  --theme-interactive-hover: #{darken(#2DABFF, 8%)};
-  --theme-interactive-focus: #{rgba(#2DABFF, 0.2)};
-  --theme-header-bg: #{#FFFFFF};
-  --theme-header-border: #{#E2E8F0};
-  --theme-header-accent: #{#2DABFF};
-  --theme-sidebar-bg: #{#FFFFFF};
-  --theme-sidebar-border: #{#E2E8F0};
-  --theme-sidebar-accent: #{#904ED0};
-  --theme-chat-bg: #{#F8FAFC};
-  --theme-chat-item-bg: #{#FFFFFF};
-  --theme-chat-item-hover: #{#F1F5F9};
-  --theme-chat-item-accent: #{#FF3B80};
-  --theme-input-bg: #{#FFFFFF};
-  --theme-input-border: #{#CBD5E1};
-  --theme-input-focus: #{#2DABFF};
-  --theme-dropdown-bg: #{#FFFFFF};
-  --theme-dropdown-border: #{#CBD5E1};
-  --theme-dropdown-shadow: #{rgba(0, 0, 0, 0.08)};
-  --theme-dropdown-accent: #{#904ED0};
-  --theme-success: #{#10B981};
-  --theme-warning: #{#F59E0B};
-  --theme-error: #{#FF3B80};
-  --theme-info: #{#2DABFF};
+  --theme-bg-primary: #{$theme-bg-primary};
+  --theme-bg-primary-2: #{$theme-bg-primary-2};
+  --theme-bg-secondary: #{$theme-bg-secondary};
+  --theme-bg-tertiary: #{$theme-bg-tertiary};
+  --theme-bg-elevated: #{$theme-bg-elevated};
+  --theme-text-primary: #{$theme-text-primary};
+  --theme-text-secondary: #{$theme-text-secondary};
+  --theme-text-muted: #{$theme-text-muted};
+  --theme-text-light: #{$theme-text-light};
+  --theme-text-accent: #{$theme-text-accent};
+  --theme-border-primary: #{$theme-border-primary};
+  --theme-border-secondary: #{$theme-border-secondary};
+  --theme-border-secondary-2: #{$theme-border-secondary-2};
+  --theme-border-light: #{$theme-border-light};
+  --theme-border-accent: #{$theme-border-accent};
+  --theme-interactive-primary: #{$theme-interactive-primary};
+  --theme-interactive-secondary: #{$theme-interactive-secondary};
+  --theme-interactive-accent: #{$theme-interactive-accent};
+  --theme-interactive-hover: #{$theme-interactive-hover};
+  --theme-interactive-focus: #{$theme-interactive-focus};
+  --theme-header-bg: #{$theme-header-bg};
+  --theme-header-border: #{$theme-header-border};
+  --theme-header-accent: #{$theme-header-accent};
+  --theme-sidebar-bg: #{$theme-sidebar-bg};
+  --theme-sidebar-border: #{$theme-sidebar-border};
+  --theme-sidebar-accent: #{$theme-sidebar-accent};
+  --theme-chat-bg: #{$theme-chat-bg};
+  --theme-chat-item-bg: #{$theme-chat-item-bg};
+  --theme-chat-item-hover: #{$theme-chat-item-hover};
+  --theme-chat-item-accent: #{$theme-chat-item-accent};
+  --theme-input-bg: #{$theme-input-bg};
+  --theme-input-border: #{$theme-input-border};
+  --theme-input-focus: #{$theme-input-focus};
+  --theme-dropdown-bg: #{$theme-dropdown-bg};
+  --theme-dropdown-border: #{$theme-dropdown-border};
+  --theme-dropdown-shadow: #{$theme-dropdown-shadow};
+  --theme-dropdown-accent: #{$theme-dropdown-accent};
+  --theme-success: #{$theme-success};
+  --theme-warning: #{$theme-warning};
+  --theme-error: #{$theme-error};
+  --theme-info: #{$theme-info};
 }
 
 // Ella Web Dark theme
