@@ -752,7 +752,7 @@
     // Special accent styling for web themes
     .theme-web-light &,
     .theme-web-dark & {
-      background: linear-gradient(45deg, var(--theme-interactive-primary), var(--theme-interactive-accent));
+      background: var(--theme-interactive-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;

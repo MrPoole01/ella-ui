@@ -3,6 +3,9 @@
 
 // Base Colors from Design System
 $theme-primary: #FFFFFF;           // Primary: White
+$theme-primary-2: #ebecf2;           // Primary: White Alt-1
+$theme-primary-3: #98a0b3;           // Primary: White Alt-2
+$theme-primary-4: #424656;           // Primary: White Alt-2
 $theme-secondary: #2DABFF;         // Secondary: Vibrant Blue
 $theme-tertiary: #FF3B80;          // Tertiary: Vibrant Pink
 $theme-accent: #904ED0;            // Accent: Vibrant Purple
@@ -22,7 +25,7 @@ $theme-text-accent: $theme-secondary;
 
 // Border Colors
 $theme-border-primary: #E2E8F0;
-$theme-border-secondary: #CBD5E1;
+$theme-border-secondary: $theme-primary-2;
 $theme-border-light: #F1F5F9;
 $theme-border-accent: $theme-secondary;
 
@@ -46,10 +49,10 @@ $theme-shadow-medium: rgba(0, 0, 0, 0.08);
 $theme-shadow-heavy: rgba(0, 0, 0, 0.15);
 
 // Component Specific with Accent Integration
-$theme-sidebar-bg: $theme-bg-primary;
+$theme-sidebar-bg: $theme-primary-2;
 $theme-sidebar-border: $theme-border-primary;
 $theme-sidebar-accent: $theme-accent;
-$theme-header-bg: $theme-bg-primary;
+$theme-header-bg: $theme-primary-4;
 $theme-header-border: $theme-border-primary;
 $theme-header-accent: $theme-interactive-primary;
 $theme-chat-bg: $theme-bg-secondary;
@@ -57,7 +60,7 @@ $theme-chat-item-bg: $theme-bg-primary;
 $theme-chat-item-hover: $theme-bg-tertiary;
 $theme-chat-item-accent: $theme-interactive-secondary;
 $theme-input-bg: $theme-bg-primary;
-$theme-input-border: $theme-border-secondary;
+$theme-input-border: $theme-primary-3;
 $theme-input-focus: $theme-interactive-primary;
 $theme-dropdown-bg: $theme-bg-primary;
 $theme-dropdown-border: $theme-border-secondary;
