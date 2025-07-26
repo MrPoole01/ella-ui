@@ -292,7 +292,7 @@
 
   &__project-section-item {
     background: var(--theme-bg-primary);
-    border: 1px solid var(--theme-border-secondary);
+    border: 1px solid var(--theme-interactive-primary);
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -302,7 +302,7 @@
 
     &:hover {
       background: var(--theme-bg-secondary);
-      border-color: var(--theme-border-primary);
+      border-color: var(--theme-interactive-secondary);
     }
 
     // Light theme specific styling
@@ -393,7 +393,7 @@
 
   &__uploaded-files-item {
     background: var(--theme-bg-primary);
-    border: 1px solid var(--theme-border-secondary);
+    border: 1px solid var(--theme-interactive-primary);
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -403,7 +403,7 @@
 
     &:hover {
       background: var(--theme-bg-secondary);
-      border-color: var(--theme-border-primary);
+      border-color: var(--theme-interactive-secondary);
     }
 
     // Light theme specific styling
@@ -494,7 +494,7 @@
 
   &__saved-work-item {
     background: var(--theme-bg-primary);
-    border: 1px solid var(--theme-border-secondary);
+    border: 1px solid var(--theme-interactive-primary);
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -504,7 +504,7 @@
 
     &:hover {
       background: var(--theme-bg-secondary);
-      border-color: var(--theme-border-primary);
+      border-color: var(--theme-interactive-secondary);
     }
 
     // Light theme specific styling
@@ -932,7 +932,7 @@
 
     span {
       color: var(--theme-text-primary);
-      font-size: $font-size-sm;
+      font-size: $font-size-lg;
       font-style: italic;
       line-height: $line-height-lg;
       white-space: nowrap;
@@ -971,11 +971,63 @@
   padding-bottom: 19.5px;
   border: 1px solid var(--theme-border-primary);
 
+  // Slide-out version styles
+  &--slide-out {
+    // Reset all inherited styles
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    height: 100vh !important;
+    width: 400px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-left: 1px solid var(--theme-border-primary) !important;
+    background: var(--theme-bg-primary) !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+    z-index: 10001 !important;
+    overflow-y: auto !important;
+    padding: 24px !important;
+    gap: 24px !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+
+    &.workspace-menu--open {
+      transform: translateX(0) !important;
+    }
+  }
+
+  &__close {
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
   // Electric Dark theme
   .theme-electric-dark & {
     background: var(--theme-bg-secondary);
     border-color: var(--theme-border-secondary);
     box-shadow: 0 0 20px rgba(0, 255, 255, 0.1), 0px 1px 4px 0px rgba(0, 0, 0, 0.30);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 255, 255, 0.15), -4px 0 40px rgba(0, 0, 0, 0.3);
+    }
   }
 
   // Modern Dark theme
@@ -983,6 +1035,10 @@
     background: var(--theme-bg-secondary);
     border-color: var(--theme-border-secondary);
     box-shadow: 0 0 15px rgba(0, 162, 255, 0.08), 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 162, 255, 0.12), -4px 0 40px rgba(0, 0, 0, 0.25);
+    }
   }
 
   // Web themes
@@ -991,6 +1047,10 @@
     background: var(--theme-bg-primary);
     border-color: var(--theme-border-primary);
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    }
   }
 
   // Citrus Grove theme
@@ -998,6 +1058,10 @@
     background: var(--theme-bg-primary);
     border-color: var(--theme-border-primary);
     box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.22);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    }
   }
 
   // Neumorphism themes
@@ -1006,6 +1070,10 @@
     background: var(--theme-bg-primary);
     border: none;
     box-shadow: var(--theme-neomorphic-raised);
+
+    &.workspace-menu--slide-out {
+      box-shadow: var(--theme-neomorphic-elevated);
+    }
   }
 
   &__header {
@@ -1214,6 +1282,217 @@
      }
    }
  }
+
+// Workspace Menu Backdrop
+.workspace-menu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+// Workspace Slide-Out Menu
+.workspace-slide-menu {
+  position: fixed;
+  left: 0;
+  height: 100vh;
+  width: 330px;
+  background: var(--theme-bg-primary);
+  border-right: 1px solid var(--theme-border-primary);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 10001;
+  overflow-y: auto;
+  padding: 0;
+  font-family: 'Geist', sans-serif;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+
+  &--open {
+    transform: translateX(0);
+  }
+
+  // Electric Dark theme
+  .theme-electric-dark & {
+    background: var(--theme-bg-secondary);
+    border-color: var(--theme-border-secondary);
+    box-shadow: -4px 0 20px rgba(0, 255, 255, 0.15), -4px 0 40px rgba(0, 0, 0, 0.3);
+  }
+
+  // Modern Dark theme
+  .theme-modern-dark & {
+    background: var(--theme-bg-secondary);
+    border-color: var(--theme-border-secondary);
+    box-shadow: -4px 0 20px rgba(0, 162, 255, 0.12), -4px 0 40px rgba(0, 0, 0, 0.25);
+  }
+
+  // Web themes
+  .theme-web-light &,
+  .theme-web-dark & {
+    background: var(--theme-bg-primary);
+    border-color: var(--theme-border-primary);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  // Citrus Grove theme
+  .theme-citrus-grove & {
+    background: var(--theme-bg-primary);
+    border-color: var(--theme-border-primary);
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  // Neumorphism themes
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    background: var(--theme-bg-primary);
+    border: none;
+    box-shadow: var(--theme-neomorphic-elevated);
+  }
+
+  // Close button section - prominent above content
+  .workspace-menu__close-section {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 20px 8px 20px;
+    border-bottom: 1px solid var(--theme-border-primary);
+    background: var(--theme-bg-secondary);
+  }
+
+  .workspace-menu__close {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      transform: scale(1.05);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // Header styles
+  .workspace-menu__header {
+    background: var(--theme-bg-secondary);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20);
+    border-left: 3px solid var(--theme-interactive-primary);
+    padding: 10px 20px;
+    margin: 16px 20px 0 20px;
+    border-radius: 4px;
+
+    .workspace-menu__title {
+      color: var(--theme-text-primary);
+      font-weight: 500;
+      line-height: 20px;
+      font-size: 14px;
+    }
+
+    .workspace-menu__subtitle {
+      color: var(--theme-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: 2px;
+    }
+  }
+
+  // Action buttons
+  .workspace-menu__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    padding: 20px;
+    padding-top: 16px;
+  }
+
+  .workspace-menu__action-btn {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    padding: 10px 17px;
+    color: var(--theme-text-secondary);
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+    }
+  }
+
+  // Options
+  .workspace-menu__options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 27px 24px 27px;
+  }
+
+  .workspace-menu__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: var(--theme-text-primary);
+
+      svg path {
+        fill: var(--theme-text-primary);
+      }
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      color: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+
+      path {
+        fill: var(--theme-text-secondary);
+        transition: all 0.2s ease;
+      }
+    }
+
+    span {
+      flex: 1;
+    }
+  }
+}
 
 // Project Menu - Instantly fading in next to left nav
 .project-menu {
@@ -1663,8 +1942,23 @@
     box-shadow: var(--theme-neomorphic-raised);
   }
 
+  .theme-web-light & {
+    background: var(--theme-bg-primary);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.05), 
+                0 0 20px rgba(45, 171, 255, 0.08),
+                0 0 40px rgba(45, 171, 255, 0.04);
+  }
+
+  .theme-web-dark & {
+    background: var(--theme-bg-primary);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.25), 
+                0 0 20px rgba(45, 171, 255, 0.15),
+                0 0 40px rgba(45, 171, 255, 0.08),
+                0 0 60px rgba(45, 171, 255, 0.04);
+  }
+
   &__content {
-    padding: 15px 0 7px;
+    padding: 15px 16px 7px;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -2129,9 +2423,10 @@
   }
 
   &__tasks {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     overflow-y: auto;
-    border-top: 1px solid var(--theme-border-secondary);
     margin-top: 8px;
     
     // Theme-specific styling
@@ -2169,10 +2464,16 @@
     padding: 11.75px 16px 13px;
     border-bottom: 1px solid var(--theme-border-secondary);
     transition: all 0.2s ease;
-    background: var(--theme-bg-primary);
+    background: linear-gradient(135deg, var(--theme-bg-primary) 25%, var(--theme-bg-secondary) 75%);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 
     &:hover {
       background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
     }
 
     // Theme-specific styling
@@ -2893,10 +3194,19 @@
   }
 
   // Web themes
-  .theme-web-light &,
+  .theme-web-light & {
+    background: var(--theme-bg-primary);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.05), 
+                0 0 20px rgba(45, 171, 255, 0.08),
+                0 0 40px rgba(45, 171, 255, 0.04);
+  }
+
   .theme-web-dark & {
     background: var(--theme-bg-primary);
-    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.25), 
+                0 0 20px rgba(45, 171, 255, 0.15),
+                0 0 40px rgba(45, 171, 255, 0.08),
+                0 0 60px rgba(45, 171, 255, 0.04);
   }
 
   // Citrus Grove theme
@@ -3609,10 +3919,19 @@
   }
 
   // Web themes
-  .theme-web-light &,
+  .theme-web-light & {
+    background: var(--theme-bg-primary);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.05), 
+                0 0 20px rgba(45, 171, 255, 0.08),
+                0 0 40px rgba(45, 171, 255, 0.04);
+  }
+
   .theme-web-dark & {
     background: var(--theme-bg-primary);
-    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 5px 0px 11px 0px rgba(0, 0, 0, 0.25), 
+                0 0 20px rgba(45, 171, 255, 0.15),
+                0 0 40px rgba(45, 171, 255, 0.08),
+                0 0 60px rgba(45, 171, 255, 0.04);
   }
 
   // Citrus Grove theme

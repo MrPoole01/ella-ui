@@ -52,13 +52,15 @@ const WorkspaceDropdown = ({ isOpen, onClose }) => {
       {/* Backdrop overlay for blur effect */}
       <div className="workspace-dropdown__backdrop" onClick={onClose} />
       
-      <div className="workspace-dropdown">
+      <div className={`workspace-dropdown ${isOpen ? 'workspace-dropdown--open' : ''}`}>
         <div className="workspace-dropdown__container">
-          {/* Header with close icon */}
-          <div className="workspace-dropdown__header">
+          {/* Close Button - Prominent above content */}
+          <div className="workspace-dropdown__close-section">
+            <div className="header__workspace-text">Workspace Menu</div>
             <button 
               className="workspace-dropdown__close"
               onClick={onClose}
+              aria-label="Close workspace dropdown"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -334,9 +334,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
   }, [isWorkspaceMenuOpen, isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen]);
 
   return (
-    <div className="sidebar nav-container">
+    <>
+      <div className="sidebar nav-container">
       {/* Workspace Header */}
-      <div className="sidebar__workspace-header" ref={workspaceMenuRef}>
+      <div 
+        className="sidebar__workspace-header" 
+        ref={workspaceMenuRef}
+        onClick={handleWorkspaceMenuClick}
+        style={{ cursor: 'pointer' }}
+      >
         <div className="sidebar__workspace-info">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="folder-icon">
             <defs>
@@ -365,8 +371,6 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
           height="17.5" 
           viewBox="0 0 4 17.5" 
           className="chevron-down-icon workspace-ellipsis"
-          onClick={handleWorkspaceMenuClick}
-          style={{ cursor: 'pointer' }}
         >
           <defs>
             <clipPath id="clipPath9062581315-ellipsis">
@@ -385,75 +389,6 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
           </g>
         </svg>
 
-        {/* Workspace Context Menu */}
-        {isWorkspaceMenuOpen && (
-          <div className="workspace-menu">
-            <div className="workspace-menu__header">
-              <div className="workspace-menu__title">Workspace 1</div>
-              <div className="workspace-menu__subtitle">Last updated 2 hours ago</div>
-            </div>
-            
-            <div className="workspace-menu__actions">
-              <button className="workspace-menu__action-btn">
-                Manage Marketing Assets
-              </button>
-              <button className="workspace-menu__action-btn">
-                Manage Templates
-              </button>
-            </div>
-
-            <div className="workspace-menu__options">
-              <div className="workspace-menu__option" onClick={() => console.log('Rename Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M12.854 3.146a.5.5 0 0 1 0 .708L8.207 8.5l4.647 4.646a.5.5 0 0 1-.708.708L7.5 9.207l-4.646 4.647a.5.5 0 0 1-.708-.708L6.793 8.5 2.146 3.854a.5.5 0 1 1 .708-.708L7.5 7.793l4.646-4.647a.5.5 0 0 1 .708 0z" fill="#6B7280"/>
-                </svg>
-                <span>Rename Workspace</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Share Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
-                </svg>
-                <span>Share Workspace</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Un-Share Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
-                </svg>
-                <span>Un-Share Workspace</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Download Documents')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 12l4-4h-3V2H7v6H4l4 4zM2 14h12v2H2v-2z" fill="#6B7280"/>
-                </svg>
-                <span>Download Documents</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Transfer Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 2l4 4h-3v6H7V6H4l4-4z" fill="#6B7280"/>
-                </svg>
-                <span>Transfer Workspace</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Archive Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M2 3h12v2H2V3zm1 3h10v8H3V6zm3 2v4h4V8H6z" fill="#6B7280"/>
-                </svg>
-                <span>Archive Workspace</span>
-              </div>
-
-              <div className="workspace-menu__option" onClick={() => console.log('Delete Workspace')}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M6 3V2h4v1h3v1H3V3h3zM4 5h8v9H4V5zm2 2v5h1V7H6zm3 0v5h1V7H9z" fill="#6B7280"/>
-                </svg>
-                <span>Delete Workspace</span>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Active Tab Section */}
@@ -1139,7 +1074,101 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
           </div>
         </div>
       </div>
+
     </div>
+
+    {/* Workspace Slide-Out Menu - Outside sidebar container */}
+    {isWorkspaceMenuOpen && (
+      <>
+        {/* Backdrop */}
+        <div 
+          className="workspace-menu-backdrop"
+          onClick={handleWorkspaceMenuClose}
+        />
+        
+                            {/* Slide-Out Panel */}
+          <div className={`workspace-slide-menu ${isWorkspaceMenuOpen ? 'workspace-slide-menu--open' : ''}`}>
+            {/* Close Button - Prominent above content */}
+            <div className="workspace-menu__close-section">
+              <button 
+                className="workspace-menu__close"
+                onClick={handleWorkspaceMenuClose}
+                aria-label="Close workspace menu"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div className="workspace-menu__header">
+            <div className="workspace-menu__title">Workspace 1</div>
+            <div className="workspace-menu__subtitle">Last updated 2 hours ago</div>
+          </div>
+          
+          <div className="workspace-menu__actions">
+            <button className="workspace-menu__action-btn">
+              Manage Marketing Assets
+            </button>
+            <button className="workspace-menu__action-btn">
+              Manage Templates
+            </button>
+          </div>
+
+          <div className="workspace-menu__options">
+            <div className="workspace-menu__option" onClick={() => console.log('Rename Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12.854 3.146a.5.5 0 0 1 0 .708L8.207 8.5l4.647 4.646a.5.5 0 0 1-.708.708L7.5 9.207l-4.646 4.647a.5.5 0 0 1-.708-.708L6.793 8.5 2.146 3.854a.5.5 0 1 1 .708-.708L7.5 7.793l4.646-4.647a.5.5 0 0 1 .708 0z" fill="#6B7280"/>
+              </svg>
+              <span>Rename Workspace</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Share Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
+              </svg>
+              <span>Share Workspace</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Un-Share Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
+              </svg>
+              <span>Un-Share Workspace</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Download Documents')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 12l4-4h-3V2H7v6H4l4 4zM2 14h12v2H2v-2z" fill="#6B7280"/>
+              </svg>
+              <span>Download Documents</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Transfer Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2l4 4h-3v6H7V6H4l4-4z" fill="#6B7280"/>
+              </svg>
+              <span>Transfer Workspace</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Archive Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 3h12v2H2V3zm1 3h10v8H3V6zm3 2v4h4V8H6z" fill="#6B7280"/>
+              </svg>
+              <span>Archive Workspace</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Delete Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3V2h4v1h3v1H3V3h3zM4 5h8v9H4V5zm2 2v5h1V7H6zm3 0v5h1V7H9z" fill="#6B7280"/>
+              </svg>
+              <span>Delete Workspace</span>
+            </div>
+          </div>
+        </div>
+      </>
+    )}
+    </>
   );
 };
 
