@@ -1108,7 +1108,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
           
           <div className="workspace-menu__actions">
             <button className="workspace-menu__action-btn">
-              Manage Marketing Assets
+              Manage Saved Work
             </button>
             <button className="workspace-menu__action-btn">
               Manage Templates
