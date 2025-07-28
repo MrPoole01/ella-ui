@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   ChevronRightIcon,
   ProfileIcon
@@ -8,6 +9,7 @@ import WorkspaceDropdown from './WorkspaceDropdown';
 import '../styles/Header.scss';
 
 const Header = () => {
+  const navigate = useNavigate();
   const { currentTheme, themes, setTheme } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
@@ -15,10 +17,12 @@ const Header = () => {
   const [hasNotifications, setHasNotifications] = useState(true); // Show notifications by default
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const themeDropdownRef = useRef(null);
   const workspaceDropdownRef = useRef(null);
   const notificationMenuRef = useRef(null);
   const searchInputRef = useRef(null);
+  const profileDropdownRef = useRef(null);
 
   // Sample notification data based on the Motiff design
   const notifications = [
@@ -65,6 +69,14 @@ const Header = () => {
   ];
 
   const unreadCount = notifications.filter(n => n.isUnread).length;
+
+  const handleLogout = () => {
+    // Clear authentication token
+    localStorage.removeItem('ella-auth-token');
+    
+    // Navigate to login page
+    navigate('/login', { replace: true });
+  };
 
   const handleThemeSelect = (theme) => {
     setTheme(theme);
@@ -122,6 +134,10 @@ const Header = () => {
     console.log('Mark all as read');
   };
 
+  const toggleProfileDropdown = () => {
+    setShowProfileDropdown(!showProfileDropdown);
+  };
+
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -137,6 +153,9 @@ const Header = () => {
       if (searchInputRef.current && !searchInputRef.current.contains(event.target) && !event.target.classList.contains('share-icon')) {
         setIsSearchOpen(false);
         setSearchQuery('');
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setShowProfileDropdown(false);
       }
     };
 
@@ -370,7 +389,82 @@ const Header = () => {
             )}
           </div>
 
-          <ProfileIcon />
+          {/* Profile Icon with Dropdown */}
+          <div className="profile-section" ref={profileDropdownRef}>
+            <div 
+              className="profile-icon"
+              onClick={toggleProfileDropdown}
+              style={{
+                backgroundImage: "url('https://static.motiffcontent.com/private/resource/image/197f74679c4b11d-5b3004e6-a320-424c-8459-52e22ff76e2e.svg')",
+                width: '25px',
+                height: '25px',
+                backgroundSize: 'cover',
+                backgroundRepeat: 'no-repeat',
+                cursor: 'pointer'
+              }}
+            />
+            
+            {showProfileDropdown && (
+              <div className="profile-dropdown">
+                <div className="profile-dropdown-content">
+                  <div className="profile-info">
+                    <div className="profile-avatar">
+                      <ProfileIcon />
+                    </div>
+                    <div className="profile-details">
+                      <div className="profile-name">Demo User</div>
+                      <div className="profile-email">demo@example.com</div>
+                    </div>
+                  </div>
+                  <div className="profile-divider"></div>
+                  <div className="profile-menu">
+                    <button className="profile-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 6a4 4 0 100-8 4 4 0 000 8zM10 12a8 8 0 00-8 8h16a8 8 0 00-8-8z" fill="currentColor"/>
+                      </svg>
+                      <span>Profile</span>
+                    </button>
+                    <button className="profile-menu-item">
+                      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" fill="currentColor"/>
+                        <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" fill="currentColor"/>
+                      </svg>
+                      <span>Settings</span>
+                    </button>
+                    <button className="profile-menu-item" onClick={handleLogout}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path 
+                          d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" 
+                          stroke="currentColor" 
+                          strokeWidth="2" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        />
+                        <polyline 
+                          points="16,17 21,12 16,7" 
+                          stroke="currentColor" 
+                          strokeWidth="2" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        />
+                        <line 
+                          x1="21" 
+                          y1="12" 
+                          x2="9" 
+                          y2="12" 
+                          stroke="currentColor" 
+                          strokeWidth="2" 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span>Sign out</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
