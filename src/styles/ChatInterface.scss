@@ -348,19 +348,19 @@
 
     // When strategy documents are showing, move input area up to make room
     .chat-interface--strategy-showing & {
-      transform: translateY(-320px); // Move up to make room for dropdown
+      transform: translateY(-150px); // Move up to make room for dropdown
       transition: transform 0.3s ease-out;
     }
 
     // When planning assets are showing, move input area up to make room  
     .chat-interface--planning-showing & {
-      transform: translateY(-280px); // Move up for planning assets
+      transform: translateY(-150px); // Move up for planning assets
       transition: transform 0.3s ease-out;
     }
 
     // When marketing assets are showing, move input area up to make room
     .chat-interface--marketing-showing & {
-      transform: translateY(-280px); // Move up for marketing assets
+      transform: translateY(-150px); // Move up for marketing assets
       transition: transform 0.3s ease-out;
     }
 
