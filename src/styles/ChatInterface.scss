@@ -12,6 +12,20 @@
   height: 100%;
   max-height: calc(100vh - 200px); // Reserve space for header and padding
 
+  // When empty (no project selected), center the input area
+  &--empty {
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    min-height: 200px; // Minimum height for proper centering
+  }
+
+  // When has content, use full height layout
+  &--has-content {
+    justify-content: flex-start;
+    align-items: stretch;
+  }
+
   // Neumorphism theme - clean integrated layout
   .theme-neumorphism & {
     background: transparent;
@@ -317,10 +331,21 @@
   &__input-area {
     position: relative;
     display: flex;
+    width: 100%;
     flex-direction: column;
     flex-shrink: 0; // Prevent shrinking to ensure visibility
-    margin-top: auto; // Push to bottom of container
-    z-index: 10; // Ensure it's above other content
+    // z-index: 10; // Ensure it's above other content
+
+    // In empty state, don't push to bottom, let it center naturally
+    .chat-interface--empty & {
+      margin-top: 0;
+      align-self: center;
+    }
+
+    // In has-content state, push to bottom
+    .chat-interface--has-content & {
+      margin-top: auto;
+    }
   }
 
   &__input-container {

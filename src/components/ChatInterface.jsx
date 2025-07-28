@@ -218,7 +218,7 @@ const ChatInterface = ({ selectedProject }) => {
   }, []);
 
   return (
-    <div className="chat-interface">
+    <div className={`chat-interface ${selectedProject ? 'chat-interface--has-content' : 'chat-interface--empty'}`}>
       {/* Project Conversation Content */}
       {selectedProject && (
         <div className="chat-interface__project-content">

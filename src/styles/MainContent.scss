@@ -325,12 +325,23 @@
     border-top: 1px solid var(--theme-border-primary);
     display: flex;
     justify-content: center;
-    align-items: stretch; // Changed from center to stretch for better height utilization
+    align-items: center; // Center content initially
     flex: 1;
     min-height: 0; // Allow flexbox to shrink properly
     padding: 50px;
     background: var(--theme-chat-bg);
     overflow: hidden; // Prevent content overflow
+
+    // When chat interface has project content, allow full height usage
+    .chat-interface--has-content {
+      height: 100%;
+      align-self: stretch;
+    }
+
+    // When chat interface is empty, keep it centered
+    .chat-interface--empty {
+      align-self: center;
+    }
 
     // Responsive padding for smaller screens
     @media (max-height: 800px) {

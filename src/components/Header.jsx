@@ -409,7 +409,7 @@ const Header = () => {
                 <div className="profile-dropdown-content">
                   <div className="profile-info">
                     <div className="profile-avatar">
-                      <ProfileIcon />
+          <ProfileIcon />
                     </div>
                     <div className="profile-details">
                       <div className="profile-name">Demo User</div>

@@ -25,7 +25,7 @@ function App() {
     <CssVarsProvider>
       <ThemeProvider>
         <Router>
-          <div className="App">
+        <div className="App">
             <Routes>
               {/* Login Route */}
               <Route path="/login" element={<Login />} />
@@ -35,7 +35,7 @@ function App() {
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <Workspace />
+          <Workspace />
                   </ProtectedRoute>
                 }
               />
@@ -46,7 +46,7 @@ function App() {
                 element={<Navigate to="/" replace />}
               />
             </Routes>
-          </div>
+        </div>
         </Router>
       </ThemeProvider>
     </CssVarsProvider>
