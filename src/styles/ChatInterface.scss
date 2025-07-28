@@ -51,19 +51,10 @@
     justify-content: center;
     align-items: flex-start;
     height: auto;
-    overflow: hidden;
+    overflow: hidden; // Hide any overflow from the container
     padding: 0 49px;
-    overflow-y: scroll;
     transition: all 0.2s ease;
     
-    // Hide scrollbar while maintaining scroll functionality
-    scrollbar-width: none; // Firefox
-    -ms-overflow-style: none; // IE and Edge
-    
-    &::-webkit-scrollbar {
-      display: none; // Chrome, Safari, Opera
-    }
-
     // Light theme - subtle background
     .theme-light & {
       background: var(--theme-bg-accent);
@@ -148,6 +139,14 @@
     color: var(--theme-text-primary);
     transition: all 0.2s ease;
     overflow-y: auto; // Enable scrolling when content overflows
+    
+    // Hide scrollbar while maintaining scroll functionality
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE and Edge
+    
+    &::-webkit-scrollbar {
+      display: none; // Chrome, Safari, Opera
+    }
 
     // Neumorphism themes - responsive height
     .theme-neumorphism &,
