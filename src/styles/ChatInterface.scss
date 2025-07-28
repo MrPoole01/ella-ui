@@ -333,7 +333,7 @@
     width: 100%;
     flex-direction: column;
     flex-shrink: 0; // Prevent shrinking to ensure visibility
-    // z-index: 10; // Ensure it's above other content
+    z-index: 10; // Ensure it's above other content
 
     // In empty state, don't push to bottom, let it center naturally
     .chat-interface--empty & {
@@ -344,6 +344,30 @@
     // In has-content state, push to bottom
     .chat-interface--has-content & {
       margin-top: auto;
+    }
+
+    // When strategy documents are showing, move input area up to make room
+    .chat-interface--strategy-showing & {
+      transform: translateY(-320px); // Move up to make room for dropdown
+      transition: transform 0.3s ease-out;
+    }
+
+    // When planning assets are showing, move input area up to make room  
+    .chat-interface--planning-showing & {
+      transform: translateY(-280px); // Move up for planning assets
+      transition: transform 0.3s ease-out;
+    }
+
+    // When marketing assets are showing, move input area up to make room
+    .chat-interface--marketing-showing & {
+      transform: translateY(-280px); // Move up for marketing assets
+      transition: transform 0.3s ease-out;
+    }
+
+    // Reset transform when no dropdowns are showing
+    .chat-interface:not(.chat-interface--strategy-showing):not(.chat-interface--planning-showing):not(.chat-interface--marketing-showing) & {
+      transform: translateY(0);
+      transition: transform 0.3s ease-out;
     }
   }
 

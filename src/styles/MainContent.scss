@@ -343,13 +343,41 @@
       align-self: center;
     }
 
+    // When dropdowns are showing, ensure proper overflow handling
+    .chat-interface--strategy-showing,
+    .chat-interface--planning-showing,
+    .chat-interface--marketing-showing {
+      align-self: stretch;
+      overflow: visible; // Allow dropdowns to extend beyond container
+    }
+
     // Responsive padding for smaller screens
     @media (max-height: 800px) {
       padding: 30px;
+      
+      // Reduce transform distance for smaller screens
+      .chat-interface--strategy-showing .chat-interface__input-area {
+        transform: translateY(-250px) !important;
+      }
+      
+      .chat-interface--planning-showing .chat-interface__input-area,
+      .chat-interface--marketing-showing .chat-interface__input-area {
+        transform: translateY(-220px) !important;
+      }
     }
 
     @media (max-height: 600px) {
       padding: 20px;
+      
+      // Further reduce transform distance for very small screens
+      .chat-interface--strategy-showing .chat-interface__input-area {
+        transform: translateY(-200px) !important;
+      }
+      
+      .chat-interface--planning-showing .chat-interface__input-area,
+      .chat-interface--marketing-showing .chat-interface__input-area {
+        transform: translateY(-180px) !important;
+      }
     }
 
     // Citrus Grove theme chat area
