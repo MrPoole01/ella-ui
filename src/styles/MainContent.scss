@@ -325,10 +325,21 @@
     border-top: 1px solid var(--theme-border-primary);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch; // Changed from center to stretch for better height utilization
     flex: 1;
+    min-height: 0; // Allow flexbox to shrink properly
     padding: 50px;
     background: var(--theme-chat-bg);
+    overflow: hidden; // Prevent content overflow
+
+    // Responsive padding for smaller screens
+    @media (max-height: 800px) {
+      padding: 30px;
+    }
+
+    @media (max-height: 600px) {
+      padding: 20px;
+    }
 
     // Citrus Grove theme chat area
     .theme-citrus-grove & {
@@ -347,6 +358,17 @@
         inset 8px 8px 16px rgba(163, 177, 198, 0.4),
         inset -8px -8px 16px rgba(255, 255, 255, 0.7);
       position: relative;
+
+      // Responsive padding for neumorphism
+      @media (max-height: 800px) {
+        padding: 20px;
+        margin: 15px;
+      }
+
+      @media (max-height: 600px) {
+        padding: 15px;
+        margin: 10px;
+      }
       
       // Add subtle inner highlight for depth
       &::before {
@@ -377,6 +399,17 @@
         inset 8px 8px 16px rgba(0, 0, 0, 0.5),
         inset -8px -8px 16px rgba(255, 255, 255, 0.08);
       position: relative;
+
+      // Responsive padding for neumorphism dark
+      @media (max-height: 800px) {
+        padding: 20px;
+        margin: 15px;
+      }
+
+      @media (max-height: 600px) {
+        padding: 15px;
+        margin: 10px;
+      }
       
       // Add subtle inner highlight for depth
       &::before {

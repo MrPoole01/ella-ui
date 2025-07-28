@@ -9,12 +9,15 @@
   width: 100%;
   max-width: 759px;
   margin: 0 auto;
+  height: 100%;
+  max-height: calc(100vh - 200px); // Reserve space for header and padding
 
-      // Neumorphism theme - clean integrated layout
+  // Neumorphism theme - clean integrated layout
   .theme-neumorphism & {
     background: transparent;
     border-radius: 0;
     gap: 16px;
+    max-height: calc(100vh - 160px); // Less padding for neumorphism
   }
 
   // Neumorphism Dark theme - clean integrated layout
@@ -22,6 +25,7 @@
     background: transparent;
     border-radius: 0;
     gap: 16px;
+    max-height: calc(100vh - 160px); // Less padding for neumorphism
   }
 
   &__project-content {
@@ -117,9 +121,10 @@
 
   &__project-conversation {
     width: 707px;
-    height: 899px;
     flex-grow: 1;
-    min-height: 675px;
+    flex-shrink: 1;
+    min-height: 300px; // Reduced minimum to accommodate smaller screens
+    max-height: calc(100vh - 300px); // Dynamic height based on viewport
     margin-top: 36px;
     margin-bottom: 0px;
     font-family: 'Inter', sans-serif;
@@ -128,11 +133,24 @@
     line-height: 24px;
     color: var(--theme-text-primary);
     transition: all 0.2s ease;
+    overflow-y: auto; // Enable scrolling when content overflows
 
-    // Neumorphism themes - specific height override
+    // Neumorphism themes - responsive height
     .theme-neumorphism &,
     .theme-neumorphism-dark & {
-      height: 770px;
+      max-height: calc(100vh - 250px); // More space for neumorphism padding
+      min-height: 250px;
+    }
+
+    // Responsive design for smaller screens
+    @media (max-height: 800px) {
+      min-height: 200px;
+      max-height: calc(100vh - 250px);
+    }
+
+    @media (max-height: 600px) {
+      min-height: 150px;
+      max-height: calc(100vh - 200px);
     }
 
     // Default paragraph styling
@@ -300,6 +318,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0; // Prevent shrinking to ensure visibility
+    margin-top: auto; // Push to bottom of container
+    z-index: 10; // Ensure it's above other content
   }
 
   &__input-container {
@@ -313,6 +334,17 @@
     display: flex;
     align-items: flex-start;
     transition: border-color 0.2s ease;
+
+    // Responsive sizing for smaller screens
+    @media (max-height: 800px) {
+      min-height: 70px;
+      padding: 12px;
+    }
+
+    @media (max-height: 600px) {
+      min-height: 60px;
+      padding: 10px;
+    }
 
     // Special accent styling for web themes
     .theme-web-light &:focus-within,
@@ -1061,6 +1093,93 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+} 
+
+// Add comprehensive responsive design rules at the end of the file
+
+// Responsive design for different screen resolutions
+// 720p (1280x720) and smaller
+@media (max-height: 720px) {
+  .chat-interface {
+    max-height: calc(100vh - 150px);
+    gap: 12px;
+
+    &__project-conversation {
+      min-height: 120px;
+      max-height: calc(100vh - 180px);
+      margin-top: 20px;
+    }
+
+    &__input-container {
+      min-height: 50px;
+      padding: 8px;
+    }
+  }
+}
+
+// 1080p (1920x1080) - optimized layout
+@media (min-height: 1080px) {
+  .chat-interface {
+    max-height: calc(100vh - 220px);
+
+    &__project-conversation {
+      max-height: calc(100vh - 320px);
+      min-height: 400px;
+    }
+  }
+}
+
+// 1440p (2560x1440) - more spacious layout
+@media (min-height: 1440px) {
+  .chat-interface {
+    max-height: calc(100vh - 280px);
+
+    &__project-conversation {
+      max-height: calc(100vh - 380px);
+      min-height: 500px;
+    }
+
+    &__input-container {
+      min-height: 100px;
+      padding: 20px;
+    }
+  }
+}
+
+// 4K (3840x2160) and larger - maximum spacious layout
+@media (min-height: 2160px) {
+  .chat-interface {
+    max-height: calc(100vh - 400px);
+
+    &__project-conversation {
+      max-height: calc(100vh - 500px);
+      min-height: 800px;
+    }
+
+    &__input-container {
+      min-height: 120px;
+      padding: 24px;
+    }
+  }
+}
+
+// Ultra-wide and portrait orientations
+@media (orientation: portrait) {
+  .chat-interface {
+    &__project-conversation {
+      width: 100%;
+      max-width: 707px;
+    }
+  }
+}
+
+// High DPI displays (Retina, etc.)
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 2dppx) {
+  .chat-interface {
+    &__input-field {
+      font-size: $font-size-lg; // Slightly larger text for high DPI
     }
   }
 } 
