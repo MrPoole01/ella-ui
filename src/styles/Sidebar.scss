@@ -2429,6 +2429,14 @@
     overflow-y: auto;
     margin-top: 8px;
     
+    // Hide scrollbar while keeping scroll functionality
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none;  // Internet Explorer 10+
+    
+    &::-webkit-scrollbar {
+      display: none; // Safari and Chrome
+    }
+    
     // Theme-specific styling
     .theme-light & {
       border-top-color: var(--theme-border-tertiary);

@@ -292,9 +292,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (workspaceMenuRef.current && !workspaceMenuRef.current.contains(event.target)) {
-        setIsWorkspaceMenuOpen(false);
-      }
+      // Workspace menu should only close via the close button, so no click-outside behavior
+      
       if (projectMenuRef.current && !projectMenuRef.current.contains(event.target)) {
         // Check if the clicked element is the project toggle button or its children
         const isToggleButton = event.target.closest('.sidebar__create-project');
@@ -325,13 +324,14 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       }
     };
 
-    if (isWorkspaceMenuOpen || isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen) {
+    // Only listen for click outside on other menus, not workspace menu
+    if (isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isWorkspaceMenuOpen, isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen]);
+  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen]);
 
   return (
     <>
@@ -1083,7 +1083,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         {/* Backdrop */}
         <div 
           className="workspace-menu-backdrop"
-          onClick={handleWorkspaceMenuClose}
+          onClick={(e) => {
+            // Backdrop click should not close the menu - only the close button should
+          }}
         />
         
                             {/* Slide-Out Panel */}
@@ -1112,7 +1114,14 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             </button>
             <button 
               className="workspace-menu__action-btn"
-              onClick={onOpenTemplateDrawer}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                // Use setTimeout to ensure template drawer opens after any menu closing logic
+                setTimeout(() => {
+                  onOpenTemplateDrawer();
+                }, 10);
+              }}
             >
               Manage Templates
             </button>
