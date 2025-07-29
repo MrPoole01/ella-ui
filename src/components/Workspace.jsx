@@ -2,13 +2,23 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import MainContent from './MainContent';
+import TemplateDrawer from './TemplateDrawer';
 import '../styles/Workspace.scss';
 
 const Workspace = () => {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [isTemplateDrawerOpen, setIsTemplateDrawerOpen] = useState(false);
 
   const handleNewChat = () => {
     setSelectedProject(null);
+  };
+
+  const handleOpenTemplateDrawer = () => {
+    setIsTemplateDrawerOpen(true);
+  };
+
+  const handleCloseTemplateDrawer = () => {
+    setIsTemplateDrawerOpen(false);
   };
 
   return (
@@ -23,11 +33,21 @@ const Workspace = () => {
           selectedProject={selectedProject} 
           onProjectSelect={setSelectedProject}
           onNewChat={handleNewChat}
+          onOpenTemplateDrawer={handleOpenTemplateDrawer}
         />
         
         {/* Main Content Area */}
-        <MainContent selectedProject={selectedProject} />
+        <MainContent 
+          selectedProject={selectedProject} 
+          onOpenTemplateDrawer={handleOpenTemplateDrawer}
+        />
       </div>
+      
+      {/* Template Drawer */}
+      <TemplateDrawer 
+        isOpen={isTemplateDrawerOpen}
+        onClose={handleCloseTemplateDrawer}
+      />
     </div>
   );
 };

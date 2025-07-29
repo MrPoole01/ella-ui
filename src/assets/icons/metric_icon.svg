@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
+	<defs>
+		<clipPath id="clipPath0170888931">
+			<path d="M0 0L20 0L20 20L0 20L0 0Z" fill-rule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#clipPath0170888931)">
+		<defs>
+			<clipPath id="clipPath0008113643">
+				<path d="M0 0L20 0L20 20L0 20L0 0Z" fill-rule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+			</clipPath>
+		</defs>
+		<g clip-path="url(#clipPath0008113643)">
+			<rect width="1.875" height="6.25" rx="0.3125" ry="0.3125" stroke-width="1.25" stroke-linejoin="round" transform="matrix(1 0 0 1 2.5 12.5)" stroke="rgb(102, 102, 102)" fill="transparent"/>
+			<rect width="1.875" height="10" rx="0.3125" ry="0.3125" stroke-width="1.25" stroke-linejoin="round" transform="matrix(1 0 0 1 11.25 8.75)" stroke="rgb(102, 102, 102)" fill="transparent"/>
+			<rect width="1.875" height="14.375" rx="0.3125" ry="0.3125" stroke-width="1.25" stroke-linejoin="round" transform="matrix(1 0 0 1 15.625 4.375)" stroke="rgb(102, 102, 102)" fill="transparent"/>
+			<rect width="1.875" height="17.5" rx="0.3125" ry="0.3125" stroke-width="1.25" stroke-linejoin="round" transform="matrix(1 0 0 1 6.875 1.25)" stroke="rgb(102, 102, 102)" fill="transparent"/>
+		</g>
+	</g>
+</svg>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ChatInterface.scss';
 
-const ChatInterface = ({ selectedProject }) => {
+const ChatInterface = ({ selectedProject, onOpenTemplateDrawer }) => {
   const [inputValue, setInputValue] = useState('');
   const [showPlanningAssets, setShowPlanningAssets] = useState(false);
   const [showMarketingAssets, setShowMarketingAssets] = useState(false);
@@ -299,7 +299,11 @@ const ChatInterface = ({ selectedProject }) => {
               </g>
             </svg>
           </div>
-            <div className="chat-interface__attach-container">
+            <div 
+              className="chat-interface__attach-container"
+              onClick={onOpenTemplateDrawer}
+              style={{ cursor: 'pointer' }}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
                 <defs>
                   <clipPath id="clipPathTemplate">

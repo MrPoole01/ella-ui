@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ChatInterface from './ChatInterface';
 import '../styles/MainContent.scss';
 
-const MainContent = ({ selectedProject }) => {
+const MainContent = ({ selectedProject, onOpenTemplateDrawer }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
 
@@ -112,7 +112,10 @@ const MainContent = ({ selectedProject }) => {
 
       {/* Chat Container */}
       <div className="main-content__chat chat-container">
-        <ChatInterface selectedProject={selectedProject} />
+        <ChatInterface 
+          selectedProject={selectedProject} 
+          onOpenTemplateDrawer={onOpenTemplateDrawer}
+        />
       </div>
     </div>
   );

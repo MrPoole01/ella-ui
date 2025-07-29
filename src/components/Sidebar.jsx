@@ -9,7 +9,7 @@ import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../styles/Sidebar.scss';
 
-const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
+const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDrawer }) => {
   const [isRecentChatsExpanded, setIsRecentChatsExpanded] = useState(true);
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
@@ -1110,7 +1110,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat }) => {
             <button className="workspace-menu__action-btn">
               Manage Saved Work
             </button>
-            <button className="workspace-menu__action-btn">
+            <button 
+              className="workspace-menu__action-btn"
+              onClick={onOpenTemplateDrawer}
+            >
               Manage Templates
             </button>
           </div>
