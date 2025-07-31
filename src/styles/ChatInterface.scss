@@ -54,6 +54,8 @@
     overflow: hidden; // Hide any overflow from the container
     padding: 0 49px;
     transition: all 0.2s ease;
+    overflow-y: auto;
+    scrollbar-width: none;
     
     // Light theme - subtle background
     .theme-light & {

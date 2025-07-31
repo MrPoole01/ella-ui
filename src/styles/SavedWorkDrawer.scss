@@ -1,0 +1,430 @@
+@import 'themes/variables';
+
+// Saved Work Drawer - Matching Ellaments drawer design
+.saved-work-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: fit-content;
+  background: var(--theme-bg-primary);
+  border-left: 1px solid var(--theme-border-primary);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 10001;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+
+  &--open {
+    transform: translateX(0);
+  }
+
+  // Backdrop
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+  }
+
+  // Header
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 32px 0 32px;
+    border-bottom: none;
+  }
+
+  &__title {
+    color: var(--theme-text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__subtitle {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    padding: 6px 32px 0 32px;
+    margin-bottom: 20px;
+  }
+
+  // Filter Tabs Section - Matching Elements design
+  &__filter-tabs {
+    display: flex;
+    gap: 11px;
+    padding: 0 25px;
+    margin-bottom: 30px;
+  }
+
+  &__tab {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    padding: 9.5px 17px;
+    color: var(--theme-text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    text-align: center;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+    }
+
+    &--active {
+      background: var(--theme-interactive-primary);
+      color: var(--theme-bg-primary);
+      border-color: var(--theme-interactive-primary);
+    }
+  }
+
+  // Content Area
+  &__content {
+    flex: 1;
+    padding: 0 32px;
+    margin-bottom: 20px;
+  }
+
+  // Empty State
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--theme-text-secondary);
+  }
+
+  &__empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  &__empty-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--theme-text-primary);
+    margin-bottom: 8px;
+  }
+
+  &__empty-text {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  // Document Grid - 3 columns like Elements
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    padding: 0 2px;
+  }
+
+  // Document Cards - Matching Elements design exactly
+  &__card {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    padding: 1px 1px 15px 1px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    width: 369px;
+
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &__card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 16px 19px 16px;
+    border-bottom: 1px solid var(--theme-border-light);
+    background: rgba(0, 0, 0, 0.00);
+  }
+
+  &__card-title {
+    color: var(--theme-text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    flex: 1;
+    margin-right: 8px;
+  }
+
+  &__card-menu {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    cursor: pointer;
+    padding: 2px;
+    margin-top: 2px;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__card-content {
+    padding: 12px 15px 0 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__card-status {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  &__status-label {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    width: 47px;
+  }
+
+  &__status-value {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    width: 65px;
+  }
+
+  &__card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &__card-date {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    width: 100%;
+  }
+
+  &__card-author {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    width: 86px;
+  }
+
+  // Tags
+  &__card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  &__tag-chip {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__add-tag {
+    background: var(--theme-bg-secondary);
+    border: 1px dashed var(--theme-border-secondary);
+    border-radius: 12px;
+    padding: 4px 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--theme-bg-tertiary);
+      border-color: var(--theme-interactive-primary);
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+      color: var(--theme-text-secondary);
+    }
+  }
+
+  // Footer - Matching Elements design
+  &__footer {
+    border-top: 1px solid var(--theme-border-primary);
+    padding: 13.5px 15px 10.5px 15px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+
+  &__footer-left {
+    // Cancel button area
+  }
+
+  &__footer-right {
+    // Select/Action button area
+  }
+
+  &__cancel-btn {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    color: var(--theme-text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 11px 24.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__select-btn {
+    background: var(--theme-interactive-primary);
+    border: none;
+    border-radius: 8px;
+    color: var(--theme-bg-primary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 10px 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 1px 0;
+    
+    &:hover {
+      background: var(--theme-interactive-accent);
+    }
+  }
+}
+
+// Theme-specific overrides
+.theme-light {
+  .saved-work-drawer {
+    &__backdrop {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.theme-dark {
+  .saved-work-drawer {
+    &__backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+
+// EV2 Dark theme enhancements
+.theme-ev2-dark {
+  .saved-work-drawer {
+    background: var(--theme-workspace-menu-bg);
+    border-left: 2px solid var(--theme-border-primary);
+    
+    &__backdrop {
+      background: var(--theme-workspace-menu-overlay);
+    }
+
+    &__title {
+      color: var(--theme-text-primary);
+    }
+
+    &__card {
+      background: var(--theme-gradient-card);
+      border: 1px solid var(--theme-border-secondary);
+      width: 369px;
+      
+      &:hover {
+        border-color: var(--theme-primary);
+        box-shadow: 
+          0px 4px 12px rgba(0, 0, 0, 0.15),
+          0 0 15px var(--theme-orange-subtle);
+      }
+    }
+
+    &__tag-chip {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+    }
+
+    &__add-tag {
+      &:hover {
+        border-color: var(--theme-primary);
+        
+        svg {
+          color: var(--theme-primary);
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .saved-work-drawer {
+    width: 100%;
+    
+    &__grid {
+      grid-template-columns: 1fr;
+    }
+    
+    &__filter-row {
+      flex-direction: column;
+      
+      .saved-work-drawer__filter {
+        min-width: auto;
+      }
+    }
+  }
+}

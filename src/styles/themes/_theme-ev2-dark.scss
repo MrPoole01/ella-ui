@@ -1,0 +1,140 @@
+// Ella EV2 Dark Theme Implementation - ENHANCED WITH FLAIR 🔥
+// Based on Ella AI Color Palette: Brand Orange, Deep Charcoal, Medium Charcoal, Pure White, Medium Gray
+
+.theme-ev2-dark {
+  // CSS Custom Properties for Theme Variables
+  
+  // Primary Brand Colors - ENHANCED
+  --theme-primary: #FDB62F;           // Brand Orange
+  --theme-primary-bright: #FFCD5A;    // Brighter orange for extra pop
+  --theme-primary-deep: #E6A429;      // Deeper orange for contrast
+  --theme-secondary: #1A1A1A;         // Deep Charcoal  
+  --theme-tertiary: #2A2A2A;          // Medium Charcoal
+  --theme-accent-primary: #FFFFFF;    // Pure White
+  --theme-accent-secondary: #6B7280;  // Medium Gray
+  
+  // FLAIR COLORS - New additions for visual pop
+  --theme-orange-glow: rgba(253, 182, 47, 0.6);
+  --theme-orange-subtle: rgba(253, 182, 47, 0.08);
+  --theme-orange-medium: rgba(253, 182, 47, 0.15);
+  --theme-orange-strong: rgba(253, 182, 47, 0.25);
+
+  // Background Colors
+  --theme-bg-primary: var(--theme-secondary);     // Deep charcoal main background
+  --theme-bg-secondary: var(--theme-tertiary);    // Medium charcoal sidebar/secondary
+  --theme-bg-tertiary: #333333;                   // Cards and elevated surfaces
+  --theme-bg-elevated: #404040;                   // Hover states and overlays
+  --theme-bg-modal: var(--theme-secondary);       // Modal backgrounds
+  --theme-bg-card: var(--theme-tertiary);         // Card backgrounds
+  --theme-bg-surface: var(--theme-bg-tertiary);   // General surface backgrounds
+
+  // Text Colors
+  --theme-text-primary: var(--theme-accent-primary);    // Pure white primary text
+  --theme-text-secondary: #E5E7EB;                      // Light gray secondary text
+  --theme-text-muted: var(--theme-accent-secondary);    // Medium gray muted text
+  --theme-text-light: #9CA3AF;                          // Light gray disabled text
+  --theme-text-accent: var(--theme-primary);            // Brand orange accent text
+  --theme-text-inverse: var(--theme-secondary);         // Dark text on light backgrounds
+
+  // Border Colors
+  --theme-border-primary: #374151;                      // Primary borders
+  --theme-border-secondary: #4B5563;                    // Secondary borders  
+  --theme-border-light: var(--theme-tertiary);          // Light borders
+  --theme-border-accent: var(--theme-primary);          // Brand orange borders
+  --theme-border-focus: var(--theme-primary);           // Focus state borders
+
+  // Interactive Colors
+  --theme-interactive-primary: var(--theme-primary);    // Brand orange buttons/links
+  --theme-interactive-secondary: #F59E0B;               // Hover state orange
+  --theme-interactive-tertiary: #D97706;                // Active state orange
+  --theme-interactive-hover: rgba(253, 182, 47, 0.1);  // Orange hover overlay
+  --theme-interactive-active: rgba(253, 182, 47, 0.2); // Orange active overlay
+  --theme-interactive-disabled: #6B7280;                // Disabled interactive elements
+  --theme-interactive-focus: rgba(253, 182, 47, 0.3);  // Orange focus overlay
+
+  // Status Colors
+  --theme-success: #10B981;                // Green success
+  --theme-warning: var(--theme-primary);   // Orange warning (brand consistent)
+  --theme-error: #EF4444;                  // Red error
+  --theme-info: var(--theme-primary);      // Orange info (brand consistent)
+
+  // Shadow and Effects
+  --theme-shadow-light: rgba(0, 0, 0, 0.1);
+  --theme-shadow-medium: rgba(0, 0, 0, 0.25);
+  --theme-shadow-heavy: rgba(0, 0, 0, 0.4);
+  --theme-glow-primary: rgba(253, 182, 47, 0.3);  // Orange glow
+  --theme-overlay: rgba(26, 26, 26, 0.8);         // Modal overlay
+
+  // Component-Specific Variables (matching your reference images)
+  --theme-sidebar-bg: var(--theme-tertiary);      // Medium charcoal sidebar
+  --theme-header-bg: var(--theme-secondary);      // Deep charcoal header
+  --theme-header-border: #374151;                 // Header borders
+  --theme-header-accent: var(--theme-primary);    // Orange header accents
+  --theme-chat-bg: var(--theme-secondary);        // Deep charcoal chat area
+  --theme-chat-item-bg: var(--theme-bg-tertiary); // Chat item backgrounds
+  --theme-chat-item-hover: #404040;               // Chat item hover states
+  --theme-chat-item-accent: var(--theme-primary); // Orange chat accents
+  --theme-input-bg: var(--theme-bg-tertiary);     // Input backgrounds
+  --theme-input-border: #4B5563;                  // Input borders
+  --theme-input-focus: var(--theme-primary);      // Orange input focus
+  --theme-button-primary-bg: var(--theme-primary); // Orange primary buttons
+  --theme-button-secondary-bg: var(--theme-bg-tertiary); // Secondary buttons
+  --theme-dropdown-bg: var(--theme-bg-tertiary);   // Dropdown backgrounds
+  --theme-dropdown-border: #4B5563;               // Dropdown borders
+  --theme-dropdown-shadow: rgba(0, 0, 0, 0.4);    // Dropdown shadows
+  --theme-dropdown-accent: var(--theme-primary);   // Orange dropdown accents
+  
+  // Project Tags (from your reference images)
+  --theme-tag-bg: rgba(253, 182, 47, 0.1);        // Tag backgrounds with orange tint
+  --theme-tag-text: var(--theme-primary);         // Tag text in brand orange
+  --theme-tag-border: rgba(253, 182, 47, 0.3);    // Tag borders
+
+  // Logo and Branding (matching reference images)
+  --theme-logo-primary: var(--theme-primary);     // Orange logo elements
+  --theme-logo-secondary: var(--theme-accent-primary); // White logo elements
+  --theme-brand-accent: var(--theme-primary);     // Brand accent color
+
+  // Special UI Elements (from reference images)
+  --theme-workspace-indicator: var(--theme-primary);  // Orange workspace indicators
+  --theme-progress-bar: var(--theme-primary);         // Orange progress bars
+  --theme-notification-dot: var(--theme-primary);     // Orange notification dots
+  --theme-send-button: var(--theme-primary);          // Orange send button
+  --theme-active-tab: var(--theme-primary);           // Orange active tab indicator
+  --theme-template-card-bg: var(--theme-bg-tertiary); // Template card backgrounds
+  --theme-template-card-border: #4B5563;              // Template card borders
+  --theme-template-card-hover: #404040;               // Template card hover
+
+  // Hover and Focus States - ENHANCED WITH FLAIR
+  --theme-hover-overlay: rgba(255, 255, 255, 0.05);   // Light hover overlay
+  --theme-hover-orange: var(--theme-orange-subtle);   // Orange hover tint
+  --theme-focus-ring: var(--theme-primary);           // Orange focus rings
+  --theme-selection-bg: rgba(253, 182, 47, 0.2);      // Orange selection background
+  
+  // Breadcrumb and Navigation (from reference images)
+  --theme-breadcrumb-text: var(--theme-text-muted);   // Breadcrumb text
+  --theme-breadcrumb-separator: var(--theme-accent-secondary); // Breadcrumb separators
+  --theme-nav-active: var(--theme-primary);           // Active navigation items
+  
+  // VISUAL FLAIR EFFECTS ✨
+  --theme-gradient-orange: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-primary-deep) 100%);
+  --theme-gradient-subtle: linear-gradient(135deg, var(--theme-tertiary) 0%, #353535 100%);
+  --theme-gradient-card: linear-gradient(135deg, var(--theme-bg-tertiary) 0%, #3A3A3A 100%);
+  --theme-shadow-glow: 0 0 20px var(--theme-orange-glow);
+  --theme-shadow-orange: 0 4px 15px rgba(253, 182, 47, 0.3);
+  --theme-shadow-elevated: 0 8px 25px rgba(0, 0, 0, 0.4);
+  --theme-animation-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-animation-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // WORKSPACE MENU STYLING 🎯
+  --theme-workspace-menu-bg: var(--theme-secondary);
+  --theme-workspace-menu-overlay: rgba(0, 0, 0, 0.7);
+  --theme-workspace-item-bg: var(--theme-bg-tertiary);
+  --theme-workspace-item-hover: var(--theme-bg-elevated);
+  --theme-workspace-item-active: var(--theme-orange-medium);
+  --theme-workspace-search-bg: var(--theme-bg-tertiary);
+  --theme-workspace-search-border: #4B5563;
+  --theme-workspace-search-focus: var(--theme-primary);
+  --theme-workspace-divider: #404040;
+  --theme-workspace-header-bg: var(--theme-tertiary);
+  --theme-workspace-close-hover: rgba(239, 68, 68, 0.1);
+}

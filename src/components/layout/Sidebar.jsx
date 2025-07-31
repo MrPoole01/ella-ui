@@ -5,6 +5,8 @@ import {
   PlusIcon
 } from '../icons';
 import ChatItem from '../ui/ChatItem';
+import SavedWorkDrawer from '../features/SavedWorkDrawer';
+import DocumentDrawer from '../features/DocumentDrawer';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -18,6 +20,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [isFilesMenuOpen, setIsFilesMenuOpen] = useState(false);
   const [isSavedWorkMenuOpen, setIsSavedWorkMenuOpen] = useState(false);
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
+  const [showSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
+  const [showDocumentDrawer, setShowDocumentDrawer] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
@@ -1318,7 +1323,13 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           </div>
           
           <div className="workspace-menu__actions">
-            <button className="workspace-menu__action-btn">
+            <button 
+              className="workspace-menu__action-btn"
+              onClick={() => {
+                setShowSavedWorkDrawer(true);
+                setIsWorkspaceMenuOpen(false);
+              }}
+            >
               Manage Saved Work
             </button>
             <button 
@@ -1389,6 +1400,31 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         </div>
       </>
     )}
+
+    {/* Saved Work Drawer */}
+    <SavedWorkDrawer
+      isOpen={showSavedWorkDrawer}
+      onClose={() => setShowSavedWorkDrawer(false)}
+      onDocumentSelect={(document) => {
+        setSelectedDocument(document);
+        setShowDocumentDrawer(true);
+        setShowSavedWorkDrawer(false);
+      }}
+    />
+
+    {/* Document Drawer */}
+    <DocumentDrawer
+      isOpen={showDocumentDrawer}
+      onClose={() => {
+        setShowDocumentDrawer(false);
+        setSelectedDocument(null);
+      }}
+      document={selectedDocument}
+      onEdit={(document) => {
+        console.log('Edit document:', document);
+        // Document drawer will handle edit mode internally
+      }}
+    />
     </>
   );
 };

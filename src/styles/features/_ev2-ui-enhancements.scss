@@ -1,0 +1,291 @@
+// 🔥 ELLA EV2 DARK - UI COMPONENT ENHANCEMENTS WITH FLAIR
+
+.theme-ev2-dark {
+  
+  // ENHANCED BUTTONS ✨
+  .button {
+    &--primary {
+      background: var(--theme-gradient-orange);
+      border: none;
+      box-shadow: 
+        0 4px 15px rgba(253, 182, 47, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: var(--theme-animation-smooth);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 
+          var(--theme-shadow-orange),
+          0 0 25px var(--theme-orange-glow),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+      
+      &:active {
+        transform: translateY(-1px);
+      }
+    }
+    
+    &--secondary {
+      background: var(--theme-gradient-card);
+      border: 2px solid var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      transition: var(--theme-animation-smooth);
+      
+      &:hover {
+        border-color: var(--theme-primary);
+        background: var(--theme-bg-elevated);
+        box-shadow: 0 0 15px var(--theme-orange-subtle);
+        transform: translateY(-1px);
+      }
+    }
+  }
+  
+  // ENHANCED INPUT FIELDS 🎯
+  .input {
+    background: var(--theme-gradient-card);
+    border: 2px solid var(--theme-border-secondary);
+    color: var(--theme-text-primary);
+    transition: var(--theme-animation-smooth);
+    
+    &::placeholder {
+      color: var(--theme-text-muted);
+    }
+    
+    &:focus {
+      border-color: var(--theme-primary);
+      box-shadow: 
+        0 0 0 3px rgba(253, 182, 47, 0.2),
+        0 0 20px var(--theme-orange-glow),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+    }
+    
+    &:hover {
+      border-color: var(--theme-primary);
+      box-shadow: 0 0 10px var(--theme-orange-subtle);
+    }
+  }
+  
+  // ENHANCED CARDS 💎
+  .card, .chat-item {
+    background: var(--theme-gradient-card);
+    border: 1px solid var(--theme-border-secondary);
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: var(--theme-animation-smooth);
+    
+    &:hover {
+      transform: translateY(-2px);
+      border-color: var(--theme-primary);
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        0 0 20px var(--theme-orange-subtle),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+  }
+  
+  // ENHANCED DROPDOWNS 📋
+  .dropdown {
+    background: var(--theme-gradient-card);
+    
+    &__item {
+      transition: var(--theme-animation-fast);
+      
+      &:hover {
+        background: var(--theme-orange-subtle);
+        color: var(--theme-primary-bright);
+        padding-left: 20px;
+      }
+    }
+  }
+  
+  // ENHANCED SIDEBAR 🎨
+  .sidebar {
+    background: var(--theme-gradient-subtle);
+    border-right: 2px solid var(--theme-border-primary);
+    box-shadow: 
+      4px 0 20px rgba(0, 0, 0, 0.1),
+      inset -1px 0 0 rgba(253, 182, 47, 0.1);
+      
+    &__item {
+      transition: var(--theme-animation-smooth);
+      
+      &:hover {
+        background: var(--theme-orange-subtle);
+        padding-left: 20px;
+        border-left: 4px solid var(--theme-primary);
+      }
+      
+      &--active {
+        background: var(--theme-orange-medium);
+        border-left: 4px solid var(--theme-primary);
+        box-shadow: 0 0 15px var(--theme-orange-glow);
+      }
+    }
+  }
+  
+  // ENHANCED HEADER 👑
+  .header {
+    background: var(--theme-gradient-subtle);
+    border-bottom: 2px solid var(--theme-border-primary);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.1),
+      inset 0 -1px 0 rgba(253, 182, 47, 0.1);
+    
+    &__search {
+      background: var(--theme-gradient-card);
+      border: 2px solid var(--theme-border-secondary);
+      transition: var(--theme-animation-smooth);
+      
+      &:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 20px var(--theme-orange-glow);
+      }
+    }
+    
+    &__logo {
+      filter: drop-shadow(0 0 10px var(--theme-orange-glow));
+      transition: var(--theme-animation-smooth);
+      
+      &:hover {
+        filter: drop-shadow(0 0 20px var(--theme-orange-glow));
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  // ENHANCED CHAT INTERFACE 💬
+  .chat-interface {
+    
+    &__input {
+      background: var(--theme-gradient-card);
+      border: 2px solid var(--theme-border-secondary);
+      transition: var(--theme-animation-smooth);
+      
+      &:focus {
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 20px var(--theme-orange-glow);
+      }
+    }
+    
+    &__send-button {
+      background: var(--theme-gradient-orange);
+      box-shadow: 0 0 15px var(--theme-orange-glow);
+      transition: var(--theme-animation-smooth);
+      
+      &:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 25px var(--theme-orange-glow);
+      }
+      
+      &:active {
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  // ENHANCED PROJECT TAGS 🏷️
+  .chat-item__project-tag {
+    background: var(--theme-orange-medium);
+    border: 2px solid var(--theme-primary);
+    color: var(--theme-primary-bright);
+    box-shadow: 
+      0 2px 8px rgba(253, 182, 47, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: var(--theme-animation-fast);
+    font-weight: 600;
+    
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 4px 12px rgba(253, 182, 47, 0.3),
+        0 0 15px var(--theme-orange-glow);
+    }
+    
+    &--ellament {
+      background: var(--theme-gradient-orange);
+      color: black;
+    }
+  }
+  
+  // ENHANCED TEMPLATE CARDS 📄
+  .template-card {
+    background: var(--theme-gradient-card);
+    border: 2px solid var(--theme-border-secondary);
+    transition: var(--theme-animation-smooth);
+    
+    &:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: var(--theme-primary);
+      box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.2),
+        0 0 25px var(--theme-orange-subtle);
+    }
+    
+    &__icon {
+      filter: drop-shadow(0 0 8px var(--theme-orange-glow));
+    }
+  }
+  
+  // ENHANCED NOTIFICATIONS 🔔
+  .notification {
+    background: var(--theme-gradient-card);
+    border-left: 4px solid var(--theme-primary);
+    box-shadow: 
+      0 4px 15px rgba(0, 0, 0, 0.1),
+      0 0 20px var(--theme-orange-subtle);
+  }
+  
+  // ENHANCED TOOLTIPS 💭
+  .tooltip {
+    background: var(--theme-bg-tertiary);
+    border: 2px solid var(--theme-primary);
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.3),
+      0 0 20px var(--theme-orange-glow);
+    
+    &::before {
+      border-top-color: var(--theme-primary);
+    }
+  }
+  
+  // ENHANCED PROGRESS INDICATORS ⚡
+  .progress-bar {
+    background: var(--theme-bg-tertiary);
+    
+    &__fill {
+      background: var(--theme-gradient-orange);
+      box-shadow: 0 0 15px var(--theme-orange-glow);
+    }
+  }
+  
+  // ENHANCED LOADING SPINNERS 🌀
+  .loading-spinner {
+    border: 3px solid var(--theme-bg-tertiary);
+    border-top: 3px solid var(--theme-primary);
+    box-shadow: 0 0 20px var(--theme-orange-glow);
+  }
+  
+  // ENHANCED SCROLLBARS 📜
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: var(--theme-bg-tertiary);
+    border-radius: 4px;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: var(--theme-gradient-orange);
+    border-radius: 4px;
+    box-shadow: 0 0 10px var(--theme-orange-glow);
+    
+    &:hover {
+      background: var(--theme-primary-bright);
+      box-shadow: 0 0 15px var(--theme-orange-glow);
+    }
+  }
+}

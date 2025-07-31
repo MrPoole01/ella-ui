@@ -24,12 +24,13 @@ export const ThemeProvider = ({ children }) => {
     'Ella Modern Light',
     'Ella Citrus Grove',
     'Ella Neumorphism',
-    'Ella Neumorphism Dark'
+    'Ella Neumorphism Dark',
+    'Ella EV2 Dark'
   ];
 
   const applyTheme = (themeName) => {
     // Remove existing theme classes
-    document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark');
+    document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark', 'theme-ev2-dark');
     
     // Add the appropriate theme class
     switch (themeName) {
@@ -65,6 +66,9 @@ export const ThemeProvider = ({ children }) => {
         break;
       case 'Ella Neumorphism Dark':
         document.body.classList.add('theme-neumorphism-dark');
+        break;
+      case 'Ella EV2 Dark':
+        document.body.classList.add('theme-ev2-dark');
         break;
       default:
         document.body.classList.add('theme-ui');

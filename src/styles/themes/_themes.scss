@@ -6,7 +6,14 @@
 @import 'theme-citrus';
 @import 'theme-neomorphism';
 @import 'theme-neomorphism-dark';
+@import 'theme-ev2-dark';
 @import 'theme-web-light';
+
+// Enhanced workspace menu styling for EV2 Dark
+@import '../features/workspace-menu-ev2';
+
+// Enhanced UI components for EV2 Dark theme
+@import '../features/ev2-ui-enhancements';
 
 // Default theme (UI Theme) - uses existing variables
 .theme-ui {

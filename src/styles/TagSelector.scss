@@ -1,0 +1,151 @@
+@import 'themes/variables';
+
+.tag-selector {
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10003;
+    backdrop-filter: blur(4px);
+  }
+
+  position: relative;
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90vw;
+  font-family: 'Inter', sans-serif;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--theme-border-primary);
+
+    h3 {
+      color: var(--theme-text-primary);
+      font-size: 18px;
+      font-weight: 500;
+      margin: 0;
+    }
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__content {
+    padding: 24px;
+  }
+
+  &__section {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      color: var(--theme-text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+    }
+  }
+
+  &__current-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 32px;
+    align-items: center;
+  }
+
+  &__no-tags {
+    color: var(--theme-text-muted);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  &__tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__remove-tag {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    
+    &:hover {
+      color: var(--theme-error, #EF4444);
+    }
+  }
+
+  &__add-section {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+
+    .select {
+      flex: 1;
+    }
+  }
+
+  &__footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--theme-border-primary);
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+// Theme-specific overrides
+.theme-ev2-dark {
+  .tag-selector {
+    background: var(--theme-gradient-card);
+    border: 2px solid var(--theme-border-primary);
+    
+    &__backdrop {
+      background: var(--theme-workspace-menu-overlay);
+    }
+
+    &__tag {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+    }
+  }
+}
