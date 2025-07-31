@@ -1,0 +1,112 @@
+@import '../themes/variables';
+
+// Material-UI Component Overrides
+// Extracted from original Sidebar.scss lines 4731-4906 (~175 lines)
+
+// MUI Circular Progress overrides for loading states
+.MuiCircularProgress-root {
+  width: 16px !important;
+  height: 16px !important;
+  color: var(--theme-interactive-primary) !important;
+
+  .MuiCircularProgress-circle {
+    stroke-linecap: round;
+  }
+
+  // Theme-specific styling
+  .theme-electric-dark & {
+    color: var(--theme-interactive-primary) !important;
+    filter: drop-shadow(0 0 4px var(--theme-glow-cyan));
+  }
+
+  .theme-modern-dark & {
+    color: var(--theme-interactive-primary) !important;
+    filter: drop-shadow(0 0 3px var(--theme-data-glow));
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    color: var(--theme-interactive-primary) !important;
+    opacity: 0.8;
+  }
+}
+
+// Joy UI Circular Progress overrides (alternative implementation)
+[class*="JoyCircularProgress-root"] {
+  width: 16px !important;
+  height: 16px !important;
+  
+  --CircularProgress-size: 16px;
+  --CircularProgress-trackThickness: 2px;
+  --CircularProgress-progressThickness: 2px;
+  --CircularProgress-progressColor: var(--theme-interactive-primary);
+  --CircularProgress-trackColor: var(--theme-border-light);
+
+  // Theme-specific Joy UI styling
+  .theme-electric-dark & {
+    --CircularProgress-progressColor: var(--theme-interactive-primary);
+    filter: drop-shadow(0 0 4px var(--theme-glow-cyan));
+  }
+
+  .theme-modern-dark & {
+    --CircularProgress-progressColor: var(--theme-interactive-primary);
+    filter: drop-shadow(0 0 3px var(--theme-data-glow));
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    --CircularProgress-progressColor: var(--theme-interactive-primary);
+    --CircularProgress-trackColor: transparent;
+    opacity: 0.8;
+  }
+}
+
+// General MUI component theme integration
+.MuiButton-root {
+  font-family: $font-primary !important;
+}
+
+.MuiTypography-root {
+  font-family: $font-primary !important;
+}
+
+// MUI component focus overrides to match our theme system
+.MuiButton-root:focus,
+.MuiIconButton-root:focus {
+  outline: 2px solid var(--theme-interactive-focus) !important;
+  outline-offset: 2px !important;
+}
+
+// Override MUI default colors to use our theme system
+.MuiButton-containedPrimary {
+  background-color: var(--theme-interactive-primary) !important;
+  
+  &:hover {
+    background-color: var(--theme-interactive-hover) !important;
+  }
+}
+
+.MuiButton-outlinedPrimary {
+  border-color: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
+  
+  &:hover {
+    border-color: var(--theme-interactive-hover) !important;
+    background-color: var(--theme-interactive-focus) !important;
+  }
+}
+
+// MUI dark mode integration with our themes
+.theme-dark,
+.theme-modern-dark,
+.theme-electric-dark,
+.theme-neumorphism-dark {
+  .MuiPaper-root {
+    background-color: var(--theme-bg-secondary) !important;
+    color: var(--theme-text-primary) !important;
+  }
+  
+  .MuiDivider-root {
+    border-color: var(--theme-border-primary) !important;
+  }
+}

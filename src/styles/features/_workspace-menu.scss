@@ -1,0 +1,331 @@
+@import '../themes/variables';
+
+// Workspace Menu Component
+// Extracted from original Sidebar.scss lines 957-1285
+.workspace-menu {
+  position: absolute;
+  top: 33px;
+  right: 9px;
+  background: var(--theme-bg-primary);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20);
+  width: 301px;
+  z-index: 1000;
+  font-family: 'Geist', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding-bottom: 19.5px;
+  border: 1px solid var(--theme-border-primary);
+
+  // Slide-out version styles
+  &--slide-out {
+    // Reset all inherited styles
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: auto !important;
+    height: 100vh !important;
+    width: 400px !important;
+    border-radius: 0 !important;
+    border: none !important;
+    border-left: 1px solid var(--theme-border-primary) !important;
+    background: var(--theme-bg-primary) !important;
+    transform: translateX(100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+    z-index: 10001 !important;
+    overflow-y: auto !important;
+    padding: 24px !important;
+    gap: 24px !important;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15) !important;
+
+    &.workspace-menu--open {
+      transform: translateX(0) !important;
+    }
+  }
+
+  &__close {
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--theme-text-secondary);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    &:hover {
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // Electric Dark theme
+  .theme-electric-dark & {
+    background: var(--theme-bg-secondary);
+    border-color: var(--theme-border-secondary);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1), 0px 1px 4px 0px rgba(0, 0, 0, 0.30);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 255, 255, 0.15), -4px 0 40px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  // Modern Dark theme
+  .theme-modern-dark & {
+    background: var(--theme-bg-secondary);
+    border-color: var(--theme-border-secondary);
+    box-shadow: 0 0 15px rgba(0, 162, 255, 0.08), 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 162, 255, 0.12), -4px 0 40px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  // Web themes
+  .theme-web-light &,
+  .theme-web-dark & {
+    background: var(--theme-bg-primary);
+    border-color: var(--theme-border-primary);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Citrus Grove theme
+  .theme-citrus-grove & {
+    background: var(--theme-bg-primary);
+    border-color: var(--theme-border-primary);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.22);
+
+    &.workspace-menu--slide-out {
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  // Neumorphism themes
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    background: var(--theme-bg-primary);
+    border: none;
+    box-shadow: var(--theme-neomorphic-raised);
+
+    &.workspace-menu--slide-out {
+      box-shadow: var(--theme-neomorphic-elevated);
+    }
+  }
+
+  &__header {
+    background: var(--theme-bg-secondary);
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.20);
+    border-left: 3px solid var(--theme-interactive-primary);
+    padding: 10px 20px;
+
+    // Electric Dark theme
+    .theme-electric-dark & {
+      background: var(--theme-bg-tertiary);
+      border-left-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.05), 0px 1px 4px 0px rgba(0, 0, 0, 0.30);
+    }
+
+    // Modern Dark theme
+    .theme-modern-dark & {
+      background: var(--theme-bg-tertiary);
+      border-left-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 10px rgba(0, 162, 255, 0.05), 0px 1px 4px 0px rgba(0, 0, 0, 0.25);
+    }
+
+    // Neumorphism themes
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      background: var(--theme-gradient-soft);
+      border-left: 3px solid var(--theme-interactive-primary);
+      box-shadow: var(--theme-neomorphic-pressed);
+    }
+
+    .workspace-menu__title {
+      color: var(--theme-text-primary);
+      font-weight: 500;
+      line-height: 20px;
+      font-size: 14px;
+
+      // Electric Dark theme
+      .theme-electric-dark & {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+      }
+
+      // Modern Dark theme
+      .theme-modern-dark & {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 5px rgba(0, 162, 255, 0.3);
+      }
+
+      // Neumorphism themes
+      .theme-neumorphism &,
+      .theme-neumorphism-dark & {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .workspace-menu__subtitle {
+      color: var(--theme-text-secondary);
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: 2px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin: 11px;
+  }
+
+  &__action-btn {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    padding: 10px 17px;
+    color: var(--theme-text-secondary);
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+    }
+
+    // Electric Dark theme
+    .theme-electric-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-secondary));
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        transform: translateY(-1px);
+      }
+    }
+
+    // Modern Dark theme
+    .theme-modern-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-secondary));
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+        box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+        transform: translateY(-1px);
+      }
+    }
+
+    // Neumorphism themes
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      background: var(--theme-gradient-elevated);
+      border: none;
+      box-shadow: var(--theme-neomorphic-button);
+      
+      &:hover {
+        background: var(--theme-gradient-pressed);
+        box-shadow: var(--theme-neomorphic-button-pressed);
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 27px 0 27px;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: var(--theme-text-primary);
+
+      svg path {
+        fill: var(--theme-text-primary);
+      }
+    }
+
+    // Electric Dark theme
+    .theme-electric-dark & {
+      color: var(--theme-text-secondary);
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 3px rgba(0, 255, 255, 0.3);
+        
+        svg path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Modern Dark theme
+    .theme-modern-dark & {
+      color: var(--theme-text-secondary);
+      
+      &:hover {
+        color: var(--theme-interactive-primary);
+        text-shadow: 0 0 3px rgba(0, 162, 255, 0.3);
+        
+        svg path {
+          fill: var(--theme-interactive-primary);
+        }
+      }
+    }
+
+    // Neumorphism themes
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      &:hover {
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+      }
+    }
+
+    svg {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      color: var(--theme-text-secondary);
+      transition: all 0.2s ease;
+
+      path {
+        fill: var(--theme-text-secondary);
+        transition: all 0.2s ease;
+      }
+    }
+
+    span {
+      flex: 1;
+    }
+  }
+}

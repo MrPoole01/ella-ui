@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Header from './Header';
-import Sidebar from './Sidebar';
-import MainContent from './MainContent';
-import TemplateDrawer from './TemplateDrawer';
+import Header from '../components/layout/Header';
+import Sidebar from '../components/layout/Sidebar';
+import MainContent from '../components/layout/MainContent';
+import TemplateDrawer from '../components/features/TemplateDrawer';
 import '../styles/Workspace.scss';
 
 const Workspace = () => {

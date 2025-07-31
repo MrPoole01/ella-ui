@@ -1,4 +1,4 @@
-@import '../styles/variables';
+@import './themes/variables';
 
 .chat-interface {
   border-radius: $border-radius-lg;
@@ -177,154 +177,82 @@
       }
     }
 
-    // Regular paragraph text (non-header spans)
+    // ✅ CONSOLIDATED: Regular paragraph text (non-header spans)
     p span:not([style*="font-weight: 600"]) {
-      color: var(--theme-text-secondary) !important;
-      font-weight: 400 !important;
+      font-weight: 400;
       line-height: 1.6;
-    }
+      
+      // Default and theme-specific colors (consolidated from 11 duplicate rules)
+      color: var(--theme-text-secondary);
 
-    // Header text (spans with font-weight: 600)
-    p span[style*="font-weight: 600"] {
-      color: var(--theme-interactive-primary) !important;
-      font-weight: 500 !important;
-      line-height: 1.6;
-    }
-
-    // Light theme - enhanced contrast
-    .theme-light & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #6B7280 !important; // Gray-500
-        font-weight: 400 !important;
+      .theme-light &,
+      .theme-web-light & {
+        color: #6B7280; // Gray-500 for enhanced contrast
       }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
+      
+      .theme-dark &,
+      .theme-web-dark & {
+        color: #9CA3AF; // Gray-400 for high contrast
       }
-    }
-
-    // Dark theme - high contrast
-    .theme-dark & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #9CA3AF !important; // Gray-400
-        font-weight: 400 !important;
+      
+      .theme-electric-dark & {
+        color: #A3A3A3; // Neutral-400
       }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
+      
+      .theme-modern-dark & {
+        color: #94A3B8; // Slate-400
       }
-    }
-
-    // Electric Dark theme - cyber styling
-    .theme-electric-dark & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #A3A3A3 !important; // Neutral-400
-        font-weight: 400 !important;
+      
+      .theme-modern-light & {
+        color: #64748B; // Slate-500 (darker for light mode)
       }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-        text-shadow: 0 0 8px var(--theme-glow-cyan);
-      }
-    }
-
-    // Modern Dark theme - data dashboard styling
-    .theme-modern-dark & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #94A3B8 !important; // Slate-400
-        font-weight: 400 !important;
-      }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-        text-shadow: 0 0 8px var(--theme-data-glow);
-      }
-    }
-
-    // Modern Light theme - data dashboard styling (mirrors dark theme)
-    .theme-modern-light & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #64748B !important; // Slate-500 (darker for light mode)
-        font-weight: 400 !important;
-      }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-        text-shadow: 0 0 8px var(--theme-data-glow);
-      }
-    }
-
-    // Web themes - vibrant colors
-    .theme-web-light & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #6B7280 !important; // Gray-500
-        font-weight: 400 !important;
-      }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-      }
-    }
-
-    .theme-web-dark & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #9CA3AF !important; // Gray-400
-        font-weight: 400 !important;
-      }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-      }
-    }
-
-    // Citrus Grove theme - warm colors
-    .theme-citrus-grove & {
-      p span:not([style*="font-weight: 600"]) {
-        color: var(--theme-text-secondary) !important;
-        font-weight: 400 !important;
-      }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-      }
-    }
-
-    // Neumorphism themes - subtle text effects
-    .theme-neumorphism & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #64748B !important; // Slate-500
-        font-weight: 400 !important;
+      
+      .theme-neumorphism & {
+        color: #64748B; // Slate-500
         text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
       }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      
+      .theme-neumorphism-dark & {
+        color: #8B8B8B; // Gray-400 equivalent
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
       }
     }
 
-    .theme-neumorphism-dark & {
-      p span:not([style*="font-weight: 600"]) {
-        color: #8B8B8B !important; // Gray-400 equivalent
-        font-weight: 400 !important;
-        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    // ✅ CONSOLIDATED: Header text (spans with font-weight: 600)
+    p span[style*="font-weight: 600"] {
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--theme-interactive-primary);
+      
+      // Special theme effects (consolidated from 11 duplicate rules)
+      .theme-electric-dark & {
+        text-shadow: 0 0 8px var(--theme-glow-cyan);
       }
-
-      p span[style*="font-weight: 600"] {
-        color: var(--theme-interactive-primary) !important;
-        font-weight: 500 !important;
+      
+      .theme-neumorphism & {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
+      
+      .theme-neumorphism-dark & {
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
       }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
   &__input-area {

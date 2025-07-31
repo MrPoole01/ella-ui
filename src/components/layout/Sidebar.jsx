@@ -3,11 +3,11 @@ import {
   ChevronUpIcon,
   EllipsisIcon,
   PlusIcon
-} from '../assets/icons';
-import ChatItem from './ChatItem';
+} from '../icons';
+import ChatItem from '../ui/ChatItem';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
-import '../styles/Sidebar.scss';
+import '../../styles/Sidebar.scss';
 
 const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDrawer }) => {
   const [isRecentChatsExpanded, setIsRecentChatsExpanded] = useState(true);
@@ -17,11 +17,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [activeSectionType, setActiveSectionType] = useState('');
   const [isFilesMenuOpen, setIsFilesMenuOpen] = useState(false);
   const [isSavedWorkMenuOpen, setIsSavedWorkMenuOpen] = useState(false);
+  const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
+  const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
   const sectionMenuRef = useRef(null);
   const filesMenuRef = useRef(null);
   const savedWorkMenuRef = useRef(null);
+  const ellipsisMenuRef = useRef(null);
+  const documentMenuRef = useRef(null);
 
   // Sample documents data based on Motiff design
   const sampleDocuments = [
@@ -252,6 +256,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
   const handleFilesMenuClose = () => {
     setIsFilesMenuOpen(false);
+    setActiveDocumentMenu(null); // Close any open document menus
   };
 
   const handleSavedWorkMenuClick = () => {
@@ -260,6 +265,79 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
   const handleSavedWorkMenuClose = () => {
     setIsSavedWorkMenuOpen(false);
+    setActiveEllipsisMenu(null); // Close any open ellipsis menus
+  };
+
+  const handleEllipsisMenuClick = (itemId, e) => {
+    e.stopPropagation();
+    setActiveEllipsisMenu(activeEllipsisMenu === itemId ? null : itemId);
+  };
+
+  const handleEllipsisMenuClose = () => {
+    setActiveEllipsisMenu(null);
+  };
+
+  const handleEllipsisAction = (action, itemId) => {
+    // Handle the different ellipsis menu actions
+    console.log(`Action: ${action}, Item ID: ${itemId}`);
+    setActiveEllipsisMenu(null);
+    
+    // TODO: Implement actual functionality for each action
+    switch(action) {
+      case 'edit':
+        // Open edit modal
+        break;
+      case 'share':
+        // Launch share modal
+        break;
+      case 'archive':
+        // Move to archive
+        break;
+      case 'delete':
+        // Show confirmation modal then delete
+        break;
+      case 'move':
+        // Open move to project modal
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleDocumentMenuClick = (docId, e) => {
+    e.stopPropagation();
+    setActiveDocumentMenu(activeDocumentMenu === docId ? null : docId);
+  };
+
+  const handleDocumentMenuClose = () => {
+    setActiveDocumentMenu(null);
+  };
+
+  const handleDocumentAction = (action, docId) => {
+    // Handle the different document menu actions
+    console.log(`Document Action: ${action}, Doc ID: ${docId}`);
+    setActiveDocumentMenu(null);
+    
+    // TODO: Implement actual functionality for each action
+    switch(action) {
+      case 'edit':
+        // Open edit modal
+        break;
+      case 'share':
+        // Launch share modal
+        break;
+      case 'archive':
+        // Move to archive
+        break;
+      case 'delete':
+        // Show confirmation modal then delete
+        break;
+      case 'move':
+        // Open move to project modal
+        break;
+      default:
+        break;
+    }
   };
 
   const getSectionTitle = (sectionType) => {
@@ -320,18 +398,37 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         const isSavedWorkTrigger = event.target.closest('.sidebar__saved-work-item');
         if (!isSavedWorkTrigger) {
           setIsSavedWorkMenuOpen(false);
+          setActiveEllipsisMenu(null); // Close any open ellipsis menus
+        }
+      }
+
+      // Handle ellipsis menu click outside
+      if (activeEllipsisMenu && ellipsisMenuRef.current && !ellipsisMenuRef.current.contains(event.target)) {
+        // Check if the clicked element is an ellipsis button
+        const isEllipsisButton = event.target.closest('.saved-work-menu__item-menu');
+        if (!isEllipsisButton) {
+          setActiveEllipsisMenu(null);
+        }
+      }
+
+      // Handle document menu click outside
+      if (activeDocumentMenu && documentMenuRef.current && !documentMenuRef.current.contains(event.target)) {
+        // Check if the clicked element is a document ellipsis button
+        const isDocumentButton = event.target.closest('.files-menu__document-menu');
+        if (!isDocumentButton) {
+          setActiveDocumentMenu(null);
         }
       }
     };
 
     // Only listen for click outside on other menus, not workspace menu
-    if (isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen) {
+    if (isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen || activeEllipsisMenu || activeDocumentMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen]);
+  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen, activeEllipsisMenu, activeDocumentMenu]);
 
   return (
     <>
@@ -761,20 +858,23 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         <div className="section-menu__content">
           {/* Header */}
           <div className="section-menu__header">
-            <div className="section-menu__back" onClick={handleSectionMenuClose}>
+            <button 
+              className="section-menu__back" 
+              onClick={handleSectionMenuClose}
+              title="Go back"
+            >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#D3D0D0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <span>back</span>
-            </div>
+            </button>
           </div>
 
           {/* Search and Filter */}
           <div className="section-menu__search-container">
             <div className="section-menu__search">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M6 12C9.26142 12 11.5 9.76142 11.5 7C11.5 4.23858 9.26142 2 6 2C3.73858 2 1.5 4.23858 1.5 7C1.5 9.76142 3.73858 12 6 12Z" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 12L9 9" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 12C9.26142 12 11.5 9.76142 11.5 7C11.5 4.23858 9.26142 2 6 2C3.73858 2 1.5 4.23858 1.5 7C1.5 9.76142 3.73858 12 6 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 12L9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input 
                 type="text" 
@@ -782,11 +882,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 className="section-menu__search-input"
               />
             </div>
-            <div className="section-menu__filter-btn">
+            <button className="section-menu__filter-btn">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 3h14v2H2V3zm1 4h12v2H3V7zm2 4h8v2H5v-2z" fill="#6B7280"/>
+                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </div>
+            </button>
           </div>
 
           {/* Filter Options */}
@@ -895,12 +995,20 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Header */}
           <div className="files-menu__header">
             <button 
-              className="files-menu__close"
+              className="files-menu__back"
               onClick={handleFilesMenuClose}
+              title="Go back"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#D3D0D0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+            </button>
+          </div>
+
+          {/* Upload Button */}
+          <div className="files-menu__create">
+            <button className="files-menu__create-btn">
+              + Upload Document
             </button>
           </div>
 
@@ -908,8 +1016,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           <div className="files-menu__search-container">
             <div className="files-menu__search">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12Z" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M11.5 11.5L9.5 9.5" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.5 11.5L9.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input 
                 type="text" 
@@ -919,18 +1027,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             </div>
             <button className="files-menu__filter-btn">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 4h12M4 8h8M6 12h4" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </button>
-          </div>
-
-          {/* Upload Button */}
-          <div className="files-menu__upload">
-            <button className="files-menu__upload-btn">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 12V4M4 8l4-4 4 4" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Upload a Document
             </button>
           </div>
 
@@ -953,13 +1051,67 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                       {doc.name}
                     </div>
                   </div>
-                  <button className="files-menu__document-menu">
-                    <svg width="4" height="16" viewBox="0 0 4 16" fill="none">
-                      <path d="M2 4C2.55228 4 3 3.55228 3 3C3 2.44772 2.55228 2 2 2C1.44772 2 1 2.44772 1 3C1 3.55228 1.44772 4 2 4Z" fill="#5D5D5D"/>
-                      <path d="M2 9C2.55228 9 3 8.55228 3 8C3 7.44772 2.55228 7 2 7C1.44772 7 1 7.44772 1 8C1 8.55228 1.44772 9 2 9Z" fill="#5D5D5D"/>
-                      <path d="M2 14C2.55228 14 3 13.5523 3 13C3 12.4477 2.55228 12 2 12C1.44772 12 1 12.4477 1 13C1 13.5523 1.44772 14 2 14Z" fill="#5D5D5D"/>
-                    </svg>
-                  </button>
+                  <div className="files-menu__document-menu-container">
+                    <button 
+                      className="files-menu__document-menu"
+                      onClick={(e) => handleDocumentMenuClick(doc.id, e)}
+                    >
+                      <svg width="4" height="17.5" viewBox="0 0 4 17.5" fill="none">
+                        <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fill="#5D5D5D"/>
+                      </svg>
+                    </button>
+                    
+                    {activeDocumentMenu === doc.id && (
+                      <div className="files-menu__document-dropdown" ref={documentMenuRef}>
+                        <button 
+                          className="files-menu__document-dropdown-option"
+                          onClick={() => handleDocumentAction('edit', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="files-menu__document-dropdown-option"
+                          onClick={() => handleDocumentAction('share', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="files-menu__document-dropdown-option"
+                          onClick={() => handleDocumentAction('archive', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="files-menu__document-dropdown-option"
+                          onClick={() => handleDocumentAction('move', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="files-menu__document-dropdown-divider" />
+                        <button 
+                          className="files-menu__document-dropdown-option files-menu__document-dropdown-option--danger"
+                          onClick={() => handleDocumentAction('delete', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="files-menu__document-description">
                   {doc.description}
@@ -999,11 +1151,12 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Header */}
           <div className="saved-work-menu__header">
             <button 
-              className="saved-work-menu__close"
+              className="saved-work-menu__back"
               onClick={handleSavedWorkMenuClose}
+              title="Go back"
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="#D3D0D0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>
@@ -1012,18 +1165,18 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           <div className="saved-work-menu__search-container">
             <div className="saved-work-menu__search">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12Z" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M11.5 11.5L9.5 9.5" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 12C9.31371 12 12 9.31371 12 6C12 2.68629 9.31371 0 6 0C2.68629 0 0 2.68629 0 6C0 9.31371 2.68629 12 6 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.5 11.5L9.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               <input 
                 type="text" 
-                placeholder="Search saved ideas"
+                placeholder="Search saved work..."
                 className="saved-work-menu__search-input"
               />
             </div>
             <button className="saved-work-menu__filter-btn">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M2 4h12M4 8h8M6 12h4" stroke="#111827" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>
@@ -1036,11 +1189,67 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   <div className="saved-work-menu__item-title">
                     {item.title}
                   </div>
-                  <button className="saved-work-menu__item-menu">
-                    <svg width="4" height="17.5" viewBox="0 0 4 17.5" fill="none">
-                      <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fill="#5D5D5D"/>
-                    </svg>
-                  </button>
+                  <div className="saved-work-menu__item-menu-container">
+                    <button 
+                      className="saved-work-menu__item-menu"
+                      onClick={(e) => handleEllipsisMenuClick(item.id, e)}
+                    >
+                      <svg width="4" height="17.5" viewBox="0 0 4 17.5" fill="none">
+                        <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fill="#5D5D5D"/>
+                      </svg>
+                    </button>
+                    
+                    {activeEllipsisMenu === item.id && (
+                      <div className="saved-work-menu__item-dropdown" ref={ellipsisMenuRef}>
+                        <button 
+                          className="saved-work-menu__item-dropdown-option"
+                          onClick={() => handleEllipsisAction('edit', item.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="saved-work-menu__item-dropdown-option"
+                          onClick={() => handleEllipsisAction('share', item.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="saved-work-menu__item-dropdown-option"
+                          onClick={() => handleEllipsisAction('archive', item.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="saved-work-menu__item-dropdown-option"
+                          onClick={() => handleEllipsisAction('move', item.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="saved-work-menu__item-dropdown-divider" />
+                        <button 
+                          className="saved-work-menu__item-dropdown-option saved-work-menu__item-dropdown-option--danger"
+                          onClick={() => handleEllipsisAction('delete', item.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="saved-work-menu__item-description">
                   {item.description}

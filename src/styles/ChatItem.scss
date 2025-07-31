@@ -1,12 +1,13 @@
-@import '../styles/variables';
+@import './themes/variables';
 
 .chat-item {
   width: auto;
   margin-bottom: 10px;
-  display: flex;
+  // display: flex;
   align-items: flex-start;
   justify-content: flex-end;
   min-height: 49px;
+  width: 273px;
 
   &__frame {
     display: flex;
@@ -140,7 +141,7 @@
   transition: all 0.2s ease;
   font-weight: $font-medium;
 
-  // Default styling - Project tags use accent colors (overridden by --ellament modifier)
+  // Default styling - Project tags use theme-specific colors
   background: var(--theme-bg-tertiary);
   color: var(--theme-text-primary);
   border: 1px solid var(--theme-border-secondary);

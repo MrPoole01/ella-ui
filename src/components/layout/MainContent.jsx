@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import ChatInterface from './ChatInterface';
-import '../styles/MainContent.scss';
+import ChatInterface from '../features/ChatInterface';
+import '../../styles/MainContent.scss';
 
 const MainContent = ({ selectedProject, onOpenTemplateDrawer }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);

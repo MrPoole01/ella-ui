@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { PlusIcon } from '../assets/icons';
-import '../styles/TemplateDrawer.scss';
+import { PlusIcon } from '../icons';
+import '../../styles/TemplateDrawer.scss';
 
 // Template Icon Components
 const MailIcon = () => (
@@ -378,7 +378,7 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
                 className={`template-drawer__tab ${activeTab === 'special-additions' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('special-additions')}
               >
-                Special Addition Templates
+                Special Edition Templates
               </button>
               <button 
                 className={`template-drawer__tab ${activeTab === 'ella-templates' ? 'template-drawer__tab--active' : ''}`}

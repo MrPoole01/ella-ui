@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import {
   ChevronRightIcon,
   ProfileIcon
-} from '../assets/icons';
-import { useTheme } from '../context/ThemeContext';
-import WorkspaceDropdown from './WorkspaceDropdown';
-import '../styles/Header.scss';
+} from '../icons';
+import { useTheme } from '../../context';
+import WorkspaceDropdown from '../features/WorkspaceDropdown';
+import '../../styles/Header.scss';
 
 const Header = () => {
   const navigate = useNavigate();

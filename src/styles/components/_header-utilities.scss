@@ -1,0 +1,239 @@
+@import '../themes/variables';
+
+// Header Utility Components
+// Extracted from original Header.scss lines 1919-1997 (~80 lines)
+
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  z-index: 999;
+  pointer-events: auto;
+}
+
+.header-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: var(--theme-text-secondary);
+
+  &:hover {
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+  }
+
+  &:focus {
+    outline: 2px solid var(--theme-interactive-focus);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  // Theme-specific button styling
+  .theme-electric-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+  }
+
+  .theme-modern-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 162, 255, 0.2);
+    }
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    &:hover {
+      background: var(--theme-gradient-pressed);
+      box-shadow: var(--theme-neomorphic-pressed);
+    }
+  }
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workspace-section {
+  position: relative;
+  margin-left: 16px;
+}
+
+.workspace-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--theme-text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--theme-bg-secondary);
+  }
+
+  &:focus {
+    outline: 2px solid var(--theme-interactive-focus);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+    color: var(--theme-text-secondary);
+  }
+
+  // Theme-specific workspace button styling
+  .theme-electric-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+    }
+  }
+
+  .theme-modern-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 162, 255, 0.1);
+    }
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    &:hover {
+      background: var(--theme-gradient-pressed);
+      box-shadow: var(--theme-neomorphic-pressed);
+    }
+  }
+}
+
+.menu-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  color: var(--theme-text-secondary);
+
+  &:hover {
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+  }
+
+  &:focus {
+    outline: 2px solid var(--theme-interactive-focus);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  // Theme-specific menu button styling
+  .theme-electric-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+    }
+  }
+
+  .theme-modern-dark & {
+    &:hover {
+      background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+      box-shadow: 0 0 10px rgba(0, 162, 255, 0.2);
+    }
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    &:hover {
+      background: var(--theme-gradient-pressed);
+      box-shadow: var(--theme-neomorphic-pressed);
+    }
+  }
+}
+
+// Search functionality (condensed)
+.header-search {
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+
+  &__input {
+    width: 100%;
+    padding: 8px 12px 8px 40px;
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    background: var(--theme-input-bg);
+    color: var(--theme-text-primary);
+    font-size: 14px;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      color: var(--theme-text-muted);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--theme-interactive-primary);
+      box-shadow: 0 0 0 2px var(--theme-interactive-focus);
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--theme-text-muted);
+    pointer-events: none;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Notification bell (condensed)
+.notification-bell {
+  position: relative;
+  
+  &__badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--theme-error);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: $font-bold;
+  }
+}

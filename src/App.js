@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Workspace from './components/Workspace';
-import Login from './components/Login';
-import { ThemeProvider } from './context/ThemeContext';
+import Workspace from './pages/Workspace';
+import Login from './pages/Login';
+import { ThemeProvider } from './context';
 import { CssVarsProvider } from '@mui/joy/styles';
 import './App.scss';
 
@@ -25,7 +25,7 @@ function App() {
     <CssVarsProvider>
       <ThemeProvider>
         <Router>
-        <div className="App">
+          <div className="App">
             <Routes>
               {/* Login Route */}
               <Route path="/login" element={<Login />} />
@@ -35,7 +35,7 @@ function App() {
                 path="/"
                 element={
                   <ProtectedRoute>
-          <Workspace />
+                    <Workspace />
                   </ProtectedRoute>
                 }
               />
@@ -46,7 +46,7 @@ function App() {
                 element={<Navigate to="/" replace />}
               />
             </Routes>
-        </div>
+          </div>
         </Router>
       </ThemeProvider>
     </CssVarsProvider>

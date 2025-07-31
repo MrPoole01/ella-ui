@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/ChatInterface.scss';
+import '../../styles/ChatInterface.scss';
 
 const ChatInterface = ({ selectedProject, onOpenTemplateDrawer }) => {
   const [inputValue, setInputValue] = useState('');
