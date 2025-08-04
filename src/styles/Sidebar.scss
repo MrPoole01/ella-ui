@@ -1525,7 +1525,7 @@
     font-family: 'Inter', sans-serif;
     font-size: 12px;
     height: 100%;
-    background: var(--theme-bg-primary);
+    background: var(--theme-bg-secondary);
     border-left: 1px solid var(--theme-bg-secondary);
 
     // Theme-light specific styling
@@ -1971,6 +1971,7 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--theme-text-primary);
+    background: var(--theme-bg-secondary);
   }
 
   &__header {
@@ -3247,6 +3248,7 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--theme-text-primary);
+    background: var(--theme-bg-secondary);
   }
 
   &__header {
@@ -4062,6 +4064,7 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--theme-text-primary);
+    background: var(--theme-bg-secondary);
   }
 
   &__header {

@@ -26,7 +26,7 @@
   // WORKSPACE SEARCH STYLING ✨
   .workspace-dropdown__search-input {
     background: var(--theme-workspace-search-bg);
-    border: 1px solid var(--theme-workspace-search-border);
+    // border: 1px solid var(--theme-workspace-search-border);
     color: var(--theme-text-primary);
     
     &::placeholder {
@@ -100,9 +100,9 @@
     }
     
     // Pinned workspace item
-    &--pinned {
-      background: var(--theme-orange-subtle);
-    }
+    // &--pinned {
+    //   background: var(--theme-orange-subtle);
+    // }
   }
   
   // Workspace item content

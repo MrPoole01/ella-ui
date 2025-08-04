@@ -273,8 +273,9 @@
   }
 
   &__search-btn {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: var(--theme-bg-tertiary);
+    border: 1px solid var(--theme-border-secondary);
+    color: var(--theme-text-secondary);
     border-radius: 8px;
     width: 42px;
     height: 42px;
@@ -285,8 +286,8 @@
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: #d1d5db;
-      background: #f9fafb;
+      border-color: var(--theme-tertiary);
+      background: var(--theme-tertiary);;
     }
 
     svg {
