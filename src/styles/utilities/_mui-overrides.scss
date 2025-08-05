@@ -13,6 +13,10 @@
     stroke-linecap: round;
   }
 
+  .MuiCircularProgress-progress {
+    stroke: var(--theme-interactive-primary) !important;
+  }
+
   // Theme-specific styling
   .theme-electric-dark & {
     color: var(--theme-interactive-primary) !important;
@@ -32,33 +36,87 @@
 }
 
 // Joy UI Circular Progress overrides (alternative implementation)
-[class*="JoyCircularProgress-root"] {
-  width: 16px !important;
-  height: 16px !important;
+[class*="JoyCircularProgress-root"],
+.css-sg4bgi-JoyCircularProgress-root,
+[class*="css-"][class*="JoyCircularProgress-root"] {
+  color: var(--theme-interactive-primary) !important;
   
-  --CircularProgress-size: 16px;
-  --CircularProgress-trackThickness: 2px;
-  --CircularProgress-progressThickness: 2px;
-  --CircularProgress-progressColor: var(--theme-interactive-primary);
-  --CircularProgress-trackColor: var(--theme-border-light);
+  --CircularProgress-size: 48px !important;
+  --CircularProgress-trackThickness: 4px !important;
+  --CircularProgress-progressThickness: 4px !important;
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+  --CircularProgress-trackColor: var(--theme-border-light) !important;
 
+  // Text color inside the progress circle
+  font-weight: 500 !important;
+  
+  // Target the progress circle specifically
+  .MuiCircularProgress-progress,
+  [class*="JoyCircularProgress-progress"],
+  circle[class*="progress"] {
+    stroke: var(--theme-interactive-primary) !important;
+    color: var(--theme-interactive-primary) !important;
+  }
+  
   // Theme-specific Joy UI styling
   .theme-electric-dark & {
-    --CircularProgress-progressColor: var(--theme-interactive-primary);
+    --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
     filter: drop-shadow(0 0 4px var(--theme-glow-cyan));
   }
 
   .theme-modern-dark & {
-    --CircularProgress-progressColor: var(--theme-interactive-primary);
+    --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
     filter: drop-shadow(0 0 3px var(--theme-data-glow));
   }
 
   .theme-neumorphism &,
   .theme-neumorphism-dark & {
-    --CircularProgress-progressColor: var(--theme-interactive-primary);
-    --CircularProgress-trackColor: transparent;
+    --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+    --CircularProgress-trackColor: transparent !important;
     opacity: 0.8;
   }
+}
+
+// Specific overrides for the exact Joy UI classes mentioned by user
+.css-1hs7rf2-JoyCircularProgress-progress,
+circle.css-1hs7rf2-JoyCircularProgress-progress {
+  stroke: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
+}
+
+.css-sg4bgi-JoyCircularProgress-root {
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
+}
+
+// Target all MUI/Joy CircularProgress elements with higher specificity
+span[role="progressbar"][class*="MuiCircularProgress"] {
+  color: var(--theme-interactive-primary) !important;
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+  
+  circle[class*="progress"] {
+    stroke: var(--theme-interactive-primary) !important;
+  }
+}
+
+// High-priority global override for ALL CircularProgress components
+:root {
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+}
+
+// Aggressive override with highest specificity for Joy UI generated classes
+body [class*="CircularProgress"][class*="progress"],
+body circle[class*="CircularProgress-progress"],
+body .MuiCircularProgress-progress,
+body [class*="JoyCircularProgress-progress"] {
+  stroke: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
+}
+
+body [class*="CircularProgress-root"],
+body [class*="JoyCircularProgress-root"] {
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
 }
 
 // General MUI component theme integration

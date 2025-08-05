@@ -4739,12 +4739,12 @@
 // ✅ CONSOLIDATED: MUI CircularProgress theme styling (removed duplicates)
 .MuiCircularProgress-root {
   // Default colors for most themes
-  color: var(--theme-text-primary);
+  color: var(--theme-interactive-primary);
   
   // Text inside the circular progress
   * {
     font-weight: 500;
-    color: var(--theme-text-primary);
+    color: var(--theme-interactive-primary);
   }
 
   // Special theme color overrides (consolidated from 10+ duplicate rules)
@@ -4818,11 +4818,11 @@
 // ✅ CONSOLIDATED: Joy CircularProgress component (removed duplicate theme rules)
 .css-sg4bgi-JoyCircularProgress-root,
 [class*="JoyCircularProgress-root"] {
-  color: var(--theme-text-primary);
+  color: var(--theme-interactive-primary);
   
   // Text inside the circular progress
   * {
-    color: var(--theme-text-primary);
+    color: var(--theme-interactive-primary);
     font-weight: 500;
   }
 
@@ -4847,28 +4847,25 @@
   .theme-modern-dark & * {
     text-shadow: 0 0 8px var(--theme-data-glow);
   }
+}
+
+// Specific overrides for Joy UI CircularProgress classes that weren't working
+.css-1hs7rf2-JoyCircularProgress-progress,
+circle.css-1hs7rf2-JoyCircularProgress-progress {
+  stroke: var(--theme-interactive-primary) !important;
+}
+
+.css-sg4bgi-JoyCircularProgress-root {
+  --CircularProgress-progressColor: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
   
-  .theme-web-light & *,
-  .theme-web-dark & * {
-    font-weight: 600;
+  circle[class*="progress"] {
+    stroke: var(--theme-interactive-primary) !important;
   }
+}
 
-  // Neumorphism themes - subtle text effects
-  .theme-neumorphism & {
-    color: var(--theme-text-primary) !important;
-    
-    * {
-      color: var(--theme-text-primary) !important;
-      text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-    }
-  }
-
-  .theme-neumorphism-dark & {
-    color: var(--theme-text-primary) !important;
-    
-    * {
-      color: var(--theme-text-primary) !important;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    }
-  }
+// Additional specific targeting for generated Joy UI classes
+[class*="css-"][class*="JoyCircularProgress-progress"] {
+  stroke: var(--theme-interactive-primary) !important;
+  color: var(--theme-interactive-primary) !important;
 }
