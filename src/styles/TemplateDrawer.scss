@@ -183,6 +183,7 @@
     }
 
     svg {
+      display: flex;
       width: 20px;
       height: 20px;
     }
@@ -309,6 +310,7 @@
     height: 15px;
     cursor: pointer;
     transition: all 0.2s ease;
+    fill: var(--theme-border-primary);
 
     .template-drawer__card-info-bg {
       // Theme-specific background styling
@@ -466,17 +468,26 @@
     font-size: 10px;
     font-weight: 500;
     padding: 2px 8px;
-    border-radius: 12px;
+    border-radius: 6px;
     line-height: 1.4;
 
     &--marketing {
-      background: rgba(236, 72, 153, 0.1);
-      color: #EC4899;
+      // background: var(--theme-tag-marketing-bg, rgba(236, 72, 153, 0.1));
+      color: var(--theme-tag-marketing-text, var(--theme-interactive-primary));
+      border: 1px solid var(--theme-tag-marketing-border, var(--theme-interactive-primary));
     }
 
     &--social {
-      background: rgba(59, 130, 246, 0.1);
-      color: #3B82F6;
+      // background: var(--theme-tag-social-bg, rgba(59, 130, 246, 0.1));
+      color: var(--theme-tag-social-text, var(--theme-interactive-secondary));
+      border: 1px solid var(--theme-tag-social-border, var(--theme-interactive-secondary));
+    }
+
+    // Default styling for other tags
+    &:not(&--marketing):not(&--social) {
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-text-primary);
+      border: 1px solid var(--theme-border-secondary);
     }
   }
 

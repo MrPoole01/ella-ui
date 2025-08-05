@@ -66,36 +66,45 @@
 
   &__subtitle {
     color: var(--theme-text-secondary);
-    font-size: 14px;
+    font-size: 20px;
     line-height: 20px;
-    padding: 6px 32px 0 32px;
+    padding: 12px 32px 20px 32px;
     margin-bottom: 20px;
+    border-bottom: 1px solid var(--theme-bg-tertiary);
   }
 
-  // Filter Tabs Section - Matching Elements design
-  &__filter-tabs {
-    display: flex;
-    gap: 11px;
-    padding: 0 25px;
+  // New Filtering UI
+  &__filters {
+    padding: 0 32px;
     margin-bottom: 30px;
   }
 
-  &__tab {
-    background: var(--theme-bg-primary);
+  &__tag-filters {
+    margin-bottom: 20px;
+  }
+
+  &__tag-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    justify-content: space-between;
+  }
+
+  &__tag-filter-chip {
+    background: var(--theme-bg-secondary);
     border: 1px solid var(--theme-border-primary);
     border-radius: 6px;
-    padding: 9.5px 17px;
+    padding: 6px 14px;
     color: var(--theme-text-secondary);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 24px;
     cursor: pointer;
     transition: all 0.2s ease;
-    flex: 1;
-    text-align: center;
     
     &:hover {
       border-color: var(--theme-border-secondary);
+      background: var(--theme-bg-tertiary);
     }
 
     &--active {
@@ -103,6 +112,48 @@
       color: var(--theme-bg-primary);
       border-color: var(--theme-interactive-primary);
     }
+  }
+
+  &__clear-filters {
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--theme-text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__filter-row {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__filter-label {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__project-select,
+  &__sort-select {
+    // min-width: 150px;
   }
 
   // Content Area
@@ -251,30 +302,39 @@
     width: 86px;
   }
 
-  // Tags
+  // Tags on Cards
   &__card-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
+    margin-top: 8px;
   }
 
   &__tag-chip {
     background: var(--theme-bg-tertiary);
     color: var(--theme-text-primary);
     border: 1px solid var(--theme-border-secondary);
-    border-radius: 12px;
+    border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__tag-more {
+    color: var(--theme-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    font-style: italic;
   }
 
   &__add-tag {
     background: var(--theme-bg-secondary);
     border: 1px dashed var(--theme-border-secondary);
-    border-radius: 12px;
+    border-radius: 6px;
     padding: 4px 6px;
     cursor: pointer;
     display: flex;
@@ -419,11 +479,31 @@
       grid-template-columns: 1fr;
     }
     
+    &__filters {
+      padding: 0 20px;
+    }
+    
+    &__tag-chips {
+      justify-content: flex-start;
+    }
+    
     &__filter-row {
       flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
       
-      .saved-work-drawer__filter {
-        min-width: auto;
+      .saved-work-drawer__filter-group {
+        justify-content: space-between;
+        
+        &--right {
+          margin-left: 0;
+        }
+      }
+      
+      .saved-work-drawer__project-select,
+      .saved-work-drawer__sort-select {
+        min-width: 120px;
+        flex: 1;
       }
     }
   }

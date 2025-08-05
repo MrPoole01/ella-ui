@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { SearchInput, Button, Select, Dropdown, DropdownItem, ContextMenu } from '../ui';
+import { SearchInput, Button, Select, Dropdown, DropdownItem, DropdownDivider, ContextMenu } from '../ui';
 import { EllipsisIcon, PlusIcon } from '../icons';
 import '../../styles/SavedWorkDrawer.scss';
 
@@ -63,19 +63,17 @@ const mockSavedDocuments = [
   }
 ];
 
-// Predefined tags - can be expanded later
+// Predefined canned tags - as specified in requirements
 const predefinedTags = [
   { value: 'email', label: 'Email' },
   { value: 'social_post', label: 'Social Post' },
   { value: 'campaign', label: 'Campaign' },
-  { value: 'press_release', label: 'Press Release' },
-  { value: 'onboarding', label: 'Onboarding' },
-  { value: 'launch', label: 'Launch' },
-  { value: 'holiday', label: 'Holiday' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'facebook', label: 'Facebook' },
-  { value: 'twitter', label: 'Twitter' },
-  { value: 'newsletter', label: 'Newsletter' }
+  { value: 'landing_page', label: 'Landing Page' },
+  { value: 'blog', label: 'Blog' },
+  { value: 'paid_ad', label: 'Paid Ad' },
+  { value: 'internal', label: 'Internal' },
+  { value: 'sales_copy', label: 'Sales Copy' },
+  { value: 'other', label: 'Other' }
 ];
 
 // Get unique projects from documents
@@ -87,7 +85,7 @@ const getUniqueProjects = (documents) => {
 const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState('all');
-  const [selectedTag, setSelectedTag] = useState('all');
+  const [selectedTags, setSelectedTags] = useState([]); // Changed to array for multiple selection
   const [sortBy, setSortBy] = useState('date_desc');
   const [documents] = useState(mockSavedDocuments);
 
@@ -97,20 +95,30 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     ...getUniqueProjects(documents)
   ], [documents]);
 
-  // Get tag options for filter
-  const tagOptions = useMemo(() => [
-    { value: 'all', label: 'All Tags' },
-    ...predefinedTags
-  ], []);
-
   // Sort options
   const sortOptions = [
-    { value: 'date_desc', label: 'Newest First' },
-    { value: 'date_asc', label: 'Oldest First' },
-    { value: 'name_asc', label: 'A-Z' },
-    { value: 'name_desc', label: 'Z-A' },
-    { value: 'project', label: 'Project' }
+    { value: 'date_desc', label: 'Newest to Oldest' },
+    { value: 'date_asc', label: 'Oldest to Newest' },
+    { value: 'name_asc', label: 'A–Z' },
+    { value: 'name_desc', label: 'Z–A' }
   ];
+
+  // Helper functions
+  const toggleTag = (tagValue) => {
+    setSelectedTags(prev => 
+      prev.includes(tagValue) 
+        ? prev.filter(tag => tag !== tagValue)
+        : [...prev, tagValue]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedTags([]);
+    setSelectedProject('all');
+    setSearchTerm('');
+  };
+
+  const hasActiveFilters = selectedTags.length > 0 || selectedProject !== 'all' || searchTerm.length >= 3;
 
   // Filter and sort documents
   const filteredDocuments = useMemo(() => {
@@ -130,9 +138,11 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       filtered = filtered.filter(doc => doc.project === selectedProject);
     }
 
-    // Apply tag filter
-    if (selectedTag !== 'all') {
-      filtered = filtered.filter(doc => doc.tags.includes(selectedTag));
+    // Apply tag filters with AND logic - all selected tags must be present
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(doc => 
+        selectedTags.every(selectedTag => doc.tags.includes(selectedTag))
+      );
     }
 
     // Apply sorting
@@ -154,7 +164,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     });
 
     return filtered;
-  }, [documents, searchTerm, selectedProject, selectedTag, sortBy]);
+  }, [documents, searchTerm, selectedProject, selectedTags, sortBy]);
 
   const handleDocumentClick = (document) => {
     if (onDocumentSelect) {
@@ -181,6 +191,10 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       case 'move':
         // Show move to project modal
         break;
+      case 'manage_tags':
+        // Show tag management modal
+        console.log('Managing tags for document:', document);
+        break;
       case 'download_pdf':
         // Trigger PDF download
         break;
@@ -190,6 +204,30 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       default:
         break;
     }
+  };
+
+  // Helper function to render document tags with truncation
+  const renderDocumentTags = (tags, maxVisible = 3) => {
+    if (!tags || tags.length === 0) return null;
+
+    const visibleTags = tags.slice(0, maxVisible);
+    const remainingCount = tags.length - maxVisible;
+
+    return (
+      <div className="saved-work-drawer__card-tags">
+        {visibleTags.map(tag => {
+          const tagInfo = predefinedTags.find(t => t.value === tag);
+          return (
+            <span key={tag} className="saved-work-drawer__tag-chip">
+              {tagInfo ? tagInfo.label : tag}
+            </span>
+          );
+        })}
+        {remainingCount > 0 && (
+          <span className="saved-work-drawer__tag-more">+{remainingCount} more</span>
+        )}
+      </div>
+    );
   };
 
   const getStatusColor = (status) => {
@@ -248,32 +286,59 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
           Manage all your documents created through Ella
         </div>
 
-        {/* Filter Tabs */}
-        <div className="saved-work-drawer__filter-tabs">
-          <button 
-            className={`saved-work-drawer__tab ${selectedTag === 'all' ? 'saved-work-drawer__tab--active' : ''}`}
-            onClick={() => setSelectedTag('all')}
-          >
-            All Documents
-          </button>
-          <button 
-            className={`saved-work-drawer__tab ${selectedTag === 'email' ? 'saved-work-drawer__tab--active' : ''}`}
-            onClick={() => setSelectedTag('email')}
-          >
-            Email
-          </button>
-          <button 
-            className={`saved-work-drawer__tab ${selectedTag === 'social_post' ? 'saved-work-drawer__tab--active' : ''}`}
-            onClick={() => setSelectedTag('social_post')}
-          >
-            Social Posts
-          </button>
-          <button 
-            className={`saved-work-drawer__tab ${selectedTag === 'campaign' ? 'saved-work-drawer__tab--active' : ''}`}
-            onClick={() => setSelectedTag('campaign')}
-          >
-            Campaigns
-          </button>
+        {/* Filtering UI */}
+        <div className="saved-work-drawer__filters">
+          {/* Tag Filter Chips */}
+          <div className="saved-work-drawer__tag-filters">
+            <div className="saved-work-drawer__tag-chips">
+              {predefinedTags.map(tag => (
+                <button
+                  key={tag.value}
+                  className={`saved-work-drawer__tag-filter-chip ${
+                    selectedTags.includes(tag.value) ? 'saved-work-drawer__tag-filter-chip--active' : ''
+                  }`}
+                  onClick={() => toggleTag(tag.value)}
+                >
+                  {tag.label}
+                </button>
+              ))}
+            </div>
+            
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <button 
+                className="saved-work-drawer__clear-filters"
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* Project and Sort Filters Row */}
+          <div className="saved-work-drawer__filter-row">
+            {/* Project Filter */}
+            <div className="saved-work-drawer__filter-group">
+              <label className="saved-work-drawer__filter-label">Project:</label>
+              <Select
+                value={selectedProject}
+                onChange={(value) => setSelectedProject(value)}
+                options={projectOptions}
+                className="saved-work-drawer__project-select"
+              />
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="saved-work-drawer__filter-group saved-work-drawer__filter-group--right">
+              <label className="saved-work-drawer__filter-label">Sort by:</label>
+              <Select
+                value={sortBy}
+                onChange={(value) => setSortBy(value)}
+                options={sortOptions}
+                className="saved-work-drawer__sort-select"
+              />
+            </div>
+          </div>
         </div>
 
         {/* Document Grid */}
@@ -282,13 +347,13 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
             <div className="saved-work-drawer__empty">
               <div className="saved-work-drawer__empty-icon">📄</div>
               <div className="saved-work-drawer__empty-title">
-                {searchTerm.length >= 3 || selectedProject !== 'all' || selectedTag !== 'all' 
-                  ? 'No documents found' 
+                {hasActiveFilters
+                  ? 'No saved work matches your filters.'
                   : 'No saved documents yet'
                 }
               </div>
               <div className="saved-work-drawer__empty-text">
-                {searchTerm.length >= 3 || selectedProject !== 'all' || selectedTag !== 'all'
+                {hasActiveFilters
                   ? 'Try adjusting your search or filters'
                   : 'Documents you create with Ella will appear here'
                 }
@@ -320,6 +385,9 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
                       <DropdownItem onClick={() => handleDocumentAction('edit', document)}>
                         Edit / View
                       </DropdownItem>
+                      <DropdownItem onClick={() => handleDocumentAction('manage_tags', document)}>
+                        Manage Tags
+                      </DropdownItem>
                       <DropdownItem onClick={() => handleDocumentAction('rename', document)}>
                         Rename
                       </DropdownItem>
@@ -329,7 +397,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
                       <DropdownItem onClick={() => handleDocumentAction('move', document)}>
                         Move to Project
                       </DropdownItem>
-                      <Dropdown.Divider />
+                      <DropdownDivider />
                       <DropdownItem onClick={() => handleDocumentAction('download_pdf', document)}>
                         Download as PDF
                       </DropdownItem>
@@ -359,6 +427,9 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
                         by {document.author}
                       </div>
                     </div>
+
+                    {/* Tags */}
+                    {renderDocumentTags(document.tags)}
                   </div>
                 </div>
               ))}
