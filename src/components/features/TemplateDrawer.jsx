@@ -391,7 +391,7 @@ const TemplateDrawer = ({ isOpen, onClose }) => {
                 className={`template-drawer__tab ${activeTab === 'saved-templates' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('saved-templates')}
               >
-                Saved Templates
+                Custom Templates
               </button>
             </div>
           </div>
