@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Select } from '../ui';
+import { Button, Select, TagManagementModal } from '../ui';
 import '../../styles/DocumentDrawer.scss';
 
 // Mock document versions
@@ -11,10 +11,42 @@ const mockVersions = [
   { id: 5, version: 'Version 5', status: 'not_started', updatedDate: '2024-12-06' }
 ];
 
+// Predefined tags
+const predefinedTags = [
+  { value: 'email', label: 'Email' },
+  { value: 'social_post', label: 'Social Post' },
+  { value: 'campaign', label: 'Campaign' },
+  { value: 'landing_page', label: 'Landing Page' },
+  { value: 'blog', label: 'Blog' },
+  { value: 'paid_ad', label: 'Paid Ad' },
+  { value: 'internal', label: 'Internal' },
+  { value: 'sales_copy', label: 'Sales Copy' },
+  { value: 'other', label: 'Other' }
+];
+
 const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
   const [selectedVersion, setSelectedVersion] = useState('Version 1');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showVersionDropdown, setShowVersionDropdown] = useState(false);
+  const [tagManagementModal, setTagManagementModal] = useState({ isOpen: false, document: null });
+  const [currentDocument, setCurrentDocument] = useState(document);
+
+  // Update currentDocument when document prop changes
+  React.useEffect(() => {
+    setCurrentDocument(document);
+  }, [document]);
+
+  const handleTagSave = (documentId, newTags) => {
+    setCurrentDocument(prev => ({
+      ...prev,
+      tags: newTags
+    }));
+    console.log(`Updated tags for document ${documentId}:`, newTags);
+  };
+
+  const handleManageTags = () => {
+    setTagManagementModal({ isOpen: true, document: currentDocument });
+  };
 
   if (!isOpen || !document) return null;
 
@@ -259,36 +291,65 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                 Execution: {formatDate(document.lastUpdated)} 09:25
               </div>
 
-              <div className="document-drawer__document-section">
-                <div className="document-drawer__section-label">Title:</div>
-                <div className="document-drawer__section-content">
-                  {document.title}
+              {/* Row 1: Title and Project */}
+              <div className="document-drawer__info-row">
+                <div className="document-drawer__document-section">
+                  <div className="document-drawer__section-label">Title:</div>
+                  <div className="document-drawer__section-content">
+                    {document.title}
+                  </div>
+                </div>
+
+                <div className="document-drawer__document-section">
+                  <div className="document-drawer__section-label">Project:</div>
+                  <div className="document-drawer__section-content">
+                    {document.project}
+                  </div>
                 </div>
               </div>
 
-              <div className="document-drawer__document-section">
-                <div className="document-drawer__section-label">Project:</div>
-                <div className="document-drawer__section-content">
-                  {document.project}
+              {/* Row 2: Content Type and Tags */}
+              <div className="document-drawer__info-row">
+                <div className="document-drawer__document-section">
+                  <div className="document-drawer__section-label">Content Type:</div>
+                  <div className="document-drawer__section-content">
+                    {document.type?.replace('_', ' ').toUpperCase()}
+                  </div>
                 </div>
-              </div>
 
-              <div className="document-drawer__document-section">
-                <div className="document-drawer__section-label">Content Type:</div>
-                <div className="document-drawer__section-content">
-                  {document.type?.replace('_', ' ').toUpperCase()}
-                </div>
-              </div>
-
-              <div className="document-drawer__document-section">
-                <div className="document-drawer__section-label">Tags:</div>
-                <div className="document-drawer__section-content">
-                  <div className="document-drawer__tags">
-                    {document.tags?.map((tag, index) => (
-                      <span key={index} className="document-drawer__tag">
-                        {tag}
-                      </span>
-                    ))}
+                <div className="document-drawer__document-section">
+                  <div className="document-drawer__section-header">
+                    <div className="document-drawer__section-label">Tags:</div>
+                    <button 
+                      className="document-drawer__manage-tags-link"
+                      onClick={handleManageTags}
+                    >
+                      Manage Tags
+                    </button>
+                  </div>
+                  <div className="document-drawer__section-content">
+                    <div className="document-drawer__tags">
+                      {/* Add Tag Button */}
+                      <button 
+                        className="document-drawer__add-tag"
+                        onClick={handleManageTags}
+                        title="Manage Tags"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </button>
+                      
+                      {/* Existing Tags */}
+                      {currentDocument.tags?.map((tag, index) => {
+                        const tagInfo = predefinedTags.find(t => t.value === tag);
+                        return (
+                          <span key={index} className="document-drawer__tag">
+                            {tagInfo ? tagInfo.label : tag}
+                          </span>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -381,6 +442,15 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
             </>
           )}
         </div>
+
+        {/* Tag Management Modal */}
+        <TagManagementModal
+          isOpen={tagManagementModal.isOpen}
+          onClose={() => setTagManagementModal({ isOpen: false, document: null })}
+          onSave={handleTagSave}
+          document={tagManagementModal.document}
+          predefinedTags={predefinedTags}
+        />
       </div>
     </>
   );

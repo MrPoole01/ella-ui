@@ -7,6 +7,7 @@ import {
 import ChatItem from '../ui/ChatItem';
 import SavedWorkDrawer from '../features/SavedWorkDrawer';
 import DocumentDrawer from '../features/DocumentDrawer';
+import EllamentDrawer from '../features/EllamentDrawer';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -22,7 +23,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
   const [showSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
   const [showDocumentDrawer, setShowDocumentDrawer] = useState(false);
+  const [showEllamentDrawer, setShowEllamentDrawer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [selectedEllament, setSelectedEllament] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
@@ -495,7 +498,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
       {/* Active Tab Section */}
       <div className="sidebar__active-section">
-        <div className="sidebar__active-tab ellament-tab">
+        <div 
+          className="sidebar__active-tab ellament-tab"
+          onClick={() => setShowEllamentDrawer(true)}
+          style={{ cursor: 'pointer' }}
+        >
           <div className="sidebar__tab-content">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="chat-icon">
               <defs>
@@ -1428,6 +1435,20 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       onEdit={(document) => {
         console.log('Edit document:', document);
         // Document drawer will handle edit mode internally
+      }}
+    />
+
+    {/* Ellament Drawer */}
+    <EllamentDrawer
+      isOpen={showEllamentDrawer}
+      onClose={() => {
+        setShowEllamentDrawer(false);
+        setSelectedEllament(null);
+      }}
+      onEllamentSelect={(ellament) => {
+        setSelectedEllament(ellament);
+        console.log('Selected ellament:', ellament);
+        // Handle ellament selection - could open a document or other action
       }}
     />
     </>

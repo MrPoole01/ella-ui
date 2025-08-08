@@ -1,0 +1,224 @@
+@import '../../../styles/themes/variables';
+
+.tag-management-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 480px;
+  max-width: 90vw;
+  max-height: 80vh;
+  z-index: 10002;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    backdrop-filter: blur(4px);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--theme-border-primary);
+  }
+
+  &__title {
+    color: var(--theme-text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__content {
+    padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__document-info {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--theme-border-light);
+  }
+
+  &__document-title {
+    color: var(--theme-text-primary);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  &__tags-label {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  &__tags-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
+  }
+
+  &__tag {
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-text-primary);
+    }
+
+    &--selected {
+      background: var(--theme-interactive-primary);
+      color: var(--theme-bg-primary);
+      border-color: var(--theme-interactive-primary);
+
+      &:hover {
+        background: var(--theme-interactive-accent);
+        border-color: var(--theme-interactive-accent);
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid var(--theme-border-primary);
+  }
+
+  &__cancel {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 6px;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+    }
+  }
+
+  &__save {
+    background: var(--theme-interactive-primary);
+    border: none;
+    border-radius: 6px;
+    color: var(--theme-bg-primary);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: var(--theme-interactive-accent);
+    }
+  }
+}
+
+// Theme-specific overrides
+.theme-light {
+  .tag-management-modal {
+    &__backdrop {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+
+.theme-dark {
+  .tag-management-modal {
+    &__backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+
+// EV2 Dark theme enhancements
+.theme-ev2-dark {
+  .tag-management-modal {
+    background: var(--theme-workspace-menu-bg);
+    border: 2px solid var(--theme-border-primary);
+    
+    &__backdrop {
+      background: var(--theme-workspace-menu-overlay);
+    }
+
+    &__tag {
+      &--selected {
+        background: var(--theme-orange-subtle);
+        border-color: var(--theme-primary);
+        color: var(--theme-primary-bright);
+
+        &:hover {
+          background: var(--theme-primary);
+          border-color: var(--theme-primary-bright);
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .tag-management-modal {
+    width: 95vw;
+    margin: 20px;
+    
+    &__tags-grid {
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    }
+    
+    &__footer {
+      flex-direction: column-reverse;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

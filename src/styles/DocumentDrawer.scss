@@ -357,8 +357,26 @@
     margin-bottom: 20px;
   }
 
+  &__info-row {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 20px;
+    
+    .document-drawer__document-section {
+      flex: 1;
+      margin-bottom: 0;
+    }
+  }
+
   &__document-section {
     margin-bottom: 20px;
+  }
+
+  &__section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
   }
 
   &__section-label {
@@ -366,7 +384,21 @@
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
-    margin-bottom: 4px;
+  }
+
+  &__manage-tags-link {
+    background: none;
+    border: none;
+    color: var(--theme-interactive-primary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--theme-interactive-accent);
+    }
   }
 
   &__section-content {
@@ -388,6 +420,39 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    align-items: center;
+  }
+
+  &__add-tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 26px;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-interactive-primary);
+      color: var(--theme-interactive-primary);
+    }
+
+    svg {
+      width: 12px;
+      height: 12px;
+      color: inherit;
+    }
   }
 
   &__tag {
@@ -575,6 +640,11 @@
     &__version-button {
       min-width: auto;
       flex: 1;
+    }
+
+    &__info-row {
+      flex-direction: column;
+      gap: 16px;
     }
 
     &__footer {
