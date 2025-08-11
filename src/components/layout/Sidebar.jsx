@@ -1447,8 +1447,19 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       }}
       onEllamentSelect={(ellament) => {
         setSelectedEllament(ellament);
-        console.log('Selected ellament:', ellament);
-        // Handle ellament selection - could open a document or other action
+        // Map ellament to a document shape for the DocumentDrawer
+        const mappedDocument = {
+          id: ellament.id,
+          title: ellament.title,
+          status: ellament.status || 'draft',
+          lastUpdated: ellament.lastUpdated || new Date().toISOString().slice(0, 10),
+          project: 'Ellaments',
+          type: ellament.category || 'ellament',
+          tags: ellament.category ? [ellament.category] : []
+        };
+        setSelectedDocument(mappedDocument);
+        setShowDocumentDrawer(true);
+        setShowEllamentDrawer(false);
       }}
     />
     </>

@@ -143,7 +143,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       filtered = filtered.filter(doc => 
         doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         doc.project.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+        (doc.tags || []).some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -155,7 +155,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     // Apply category filter
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(doc => 
-        doc.tags.includes(selectedCategory)
+        (doc.tags || []).includes(selectedCategory)
       );
     }
 
@@ -333,6 +333,16 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
         <div className="saved-work-drawer__filters">
           {/* Filter Row */}
           <div className="saved-work-drawer__filter-row">
+            {/* Search Field */}
+            <div className="saved-work-drawer__filter-group saved-work-drawer__filter-group--search">
+              <SearchInput
+                placeholder="Search saved work..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClear={() => setSearchTerm('')}
+                variant="search"
+              />
+            </div>
             {/* Category Filter */}
             {/* Clear Filters Button */}
             {hasActiveFilters && (

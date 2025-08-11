@@ -420,14 +420,14 @@ const TemplateDrawer = ({
             ))}
           </div>
           <div className="template-drawer__card-rating">
-            <svg width="33" height="14" viewBox="0 0 33 14" fill="none">
-              <rect width="33" height="14" rx="7" fill="url(#gradient)"/>
+            <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#3B82F6"/>
-                  <stop offset="100%" stopColor="#EC4899"/>
+                <linearGradient id={`ellaLogoGradient-${template.id}`} x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                  <stop offset="0" stopColor="#fed830"/>
+                  <stop offset="1" stopColor="#fbaf17"/>
                 </linearGradient>
               </defs>
+              <path d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z" fill={`url(#ellaLogoGradient-${template.id})`} />
             </svg>
           </div>
         </div>
@@ -628,14 +628,14 @@ const TemplateDrawer = ({
                               })}
                             </div>
                             <div className="template-drawer__card-rating">
-                              <svg width="33" height="14" viewBox="0 0 33 14" fill="none">
-                                <rect width="33" height="14" rx="7" fill="url(#gradient)"/>
+                              <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
-                                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stopColor="#3B82F6"/>
-                                    <stop offset="100%" stopColor="#EC4899"/>
+                                  <linearGradient id={`ellaLogoGradient-custom-${template.id}`} x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                                    <stop offset="0" stopColor="#fed830"/>
+                                    <stop offset="1" stopColor="#fbaf17"/>
                                   </linearGradient>
                                 </defs>
+                                <path d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z" fill={`url(#ellaLogoGradient-custom-${template.id})`} />
                               </svg>
                             </div>
                           </div>

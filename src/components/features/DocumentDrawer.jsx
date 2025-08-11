@@ -29,16 +29,16 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [showVersionDropdown, setShowVersionDropdown] = useState(false);
   const [tagManagementModal, setTagManagementModal] = useState({ isOpen: false, document: null });
-  const [currentDocument, setCurrentDocument] = useState(document);
+  const [currentDocument, setCurrentDocument] = useState(document || { tags: [] });
 
   // Update currentDocument when document prop changes
   React.useEffect(() => {
-    setCurrentDocument(document);
+    setCurrentDocument(document || { tags: [] });
   }, [document]);
 
   const handleTagSave = (documentId, newTags) => {
     setCurrentDocument(prev => ({
-      ...prev,
+      ...(prev || {}),
       tags: newTags
     }));
     console.log(`Updated tags for document ${documentId}:`, newTags);
@@ -341,7 +341,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                       </button>
                       
                       {/* Existing Tags */}
-                      {currentDocument.tags?.map((tag, index) => {
+                      {currentDocument?.tags?.map((tag, index) => {
                         const tagInfo = predefinedTags.find(t => t.value === tag);
                         return (
                           <span key={index} className="document-drawer__tag">

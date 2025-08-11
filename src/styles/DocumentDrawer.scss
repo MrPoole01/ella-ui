@@ -195,7 +195,7 @@
     display: flex;
     height: 100%;
     gap: 14px;
-    padding: 22px 24px 0 24px;
+    padding: 22px 24px 17px 24px;
   }
 
   &__document-panel {
@@ -412,8 +412,9 @@
     border-radius: 6px;
     padding: 16px;
     border: 1px solid var(--theme-border-light);
-    height: calc(100vh - 890%);
+    height: calc(100vh - 670%);
     overflow-y: auto;
+    margin: 10px 0 0 0;
   }
 
   &__tags {

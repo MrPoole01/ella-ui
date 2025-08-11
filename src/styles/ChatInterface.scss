@@ -413,8 +413,9 @@
     line-height: 1.5;
     color: var(--theme-text-primary);
     resize: none;
+    height: 91px;
     min-height: 24px;
-    max-height: 200px;
+    max-height: 91px;
     overflow-y: auto;
     transition: all 0.2s ease;
 
