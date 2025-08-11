@@ -858,7 +858,7 @@
   &__mini-cards-cta {
     display: flex;
     justify-content: center;
-    padding-top: 6px;
+    padding-top: 12px;
   }
 
   &__mini-cards-link {
@@ -868,7 +868,7 @@
     font-size: 12px;
     cursor: pointer;
     padding: 0;
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   &__mini-card {

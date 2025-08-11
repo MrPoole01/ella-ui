@@ -498,7 +498,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
               })}
             </div>
             <div className="chat-interface__mini-cards-cta">
-              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
+             <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>view more templates</button>
             </div>
           </div>
         )}
@@ -556,7 +556,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
               })}
             </div>
             <div className="chat-interface__mini-cards-cta">
-              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
+             <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>view more templates</button>
             </div>
           </div>
         )}
@@ -614,7 +614,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
               })}
             </div>
             <div className="chat-interface__mini-cards-cta">
-              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
+             <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>view more templates</button>
             </div>
           </div>
         )}
