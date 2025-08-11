@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/ChatInterface.scss';
 
 const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) => {
@@ -17,6 +17,92 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
     "I need to draft a messaging framework for different regions or markets",
     "I need to create an internal guide for brand messaging and tone"
   ];
+
+  // Create compact mini-card data from planning asset text
+  const deriveMiniCard = (text) => {
+    const lower = text.toLowerCase();
+    let title = 'Planning Asset';
+    const tags = [];
+    if (lower.includes('roadmap')) { title = 'Marketing Roadmap'; tags.push('Planning'); }
+    else if (lower.includes('retarget')) { title = 'Retargeting Plan'; tags.push('Campaign'); }
+    else if (lower.includes('content strategy')) { title = 'Content Strategy'; tags.push('Content'); }
+    else if (lower.includes('lead generation') || lower.includes('lead gen')) { title = 'Lead Gen Playbook'; tags.push('Growth'); }
+    else if (lower.includes('keywords') || lower.includes('seo')) { title = 'SEO Research'; tags.push('SEO'); }
+    else if (lower.includes('sales playbook')) { title = 'Sales Playbook'; tags.push('Sales'); }
+    else if (lower.includes('messaging')) { title = 'Messaging Framework'; tags.push('Brand'); }
+    else if (lower.includes('internal guide') || lower.includes('brand messaging')) { title = 'Brand Guide'; tags.push('Brand'); }
+    else if (lower.includes('webinar')) { title = 'Webinar Plan'; tags.push('Events'); }
+    else if (lower.includes('nurture')) { title = 'Nurture Sequence'; tags.push('Email'); }
+    else if (lower.includes('announcement email')) { title = 'Announcement Email'; tags.push('Email'); }
+    else if (lower.includes('optimize our website')) { title = 'Website Optimization'; tags.push('CRO'); }
+    else if (lower.includes('linkedin')) { title = 'LinkedIn Post'; tags.push('Social'); }
+    else if (lower.includes('customer success story')) { title = 'Case Study'; tags.push('Content'); }
+    else if (lower.includes('content calendar')) { title = 'Content Calendar'; tags.push('Content'); }
+    // Strategy document mappings
+    if (lower.includes('market condition') || lower.includes('market conditions') || lower.includes('market')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Market')) tags.push('Market');
+      if (!lower.includes('market') && title === 'Planning Asset') title = 'Market Conditions';
+    }
+    if (lower.includes('competitive')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Analysis')) tags.push('Analysis');
+      if (title === 'Planning Asset') title = 'Competitive Analysis';
+    }
+    if (lower.includes('persona') || lower.includes('icp')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Persona')) tags.push('Persona');
+      if (title === 'Planning Asset') title = 'Persona / ICP';
+    }
+    if (lower.includes('value proposition')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Brand')) tags.push('Brand');
+      if (title === 'Planning Asset') title = 'Value Proposition';
+    }
+    if (lower.includes('message guide') || lower.includes('message')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Brand')) tags.push('Brand');
+      if (title === 'Planning Asset') title = 'Message Guide';
+    }
+    if (lower.includes('customer journey') || lower.includes('journey')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Journey')) tags.push('Journey');
+      if (title === 'Planning Asset') title = 'Customer Journey Map';
+    }
+    if (lower.includes('moments')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Moments')) tags.push('Moments');
+      if (title === 'Planning Asset') title = 'Moments Framework';
+    }
+    if (lower.includes('brand identity') || lower.includes('identity')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Brand')) tags.push('Brand');
+      if (title === 'Planning Asset') title = 'Brand Identity';
+    }
+    if (lower.includes('pestle') || lower.includes('zeitgeist') || lower.includes('headwinds') || lower.includes('tailwinds')) {
+      if (!tags.includes('Strategy')) tags.push('Strategy');
+      if (!tags.includes('Analysis')) tags.push('Analysis');
+      if (title === 'Planning Asset') title = 'Macro Analysis';
+    }
+    // Default tag for strategy-type items
+    if (tags.length === 0) {
+      tags.push('Strategy');
+    }
+    return { title, tags };
+  };
+
+  const MiniCardTags = ({ tags }) => {
+    const display = Array.isArray(tags) ? tags.slice(0, 2) : [];
+    const showMore = Array.isArray(tags) && tags.length > 2;
+    return (
+      <div className="chat-interface__mini-card-tags">
+        {display.map((tag) => (
+          <span key={tag} className="chat-interface__mini-card-tag">{tag}</span>
+        ))}
+        {showMore && <span className="chat-interface__mini-card-tag-more">+</span>}
+      </div>
+    );
+  };
 
   const marketingAssets = [
     "I need to brainstorm topics for a content calendar",
@@ -362,17 +448,57 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
         {/* Planning Assets List */}
         {showPlanningAssets && (
           <div className="chat-interface__planning-assets">
-            <div className="chat-interface__planning-assets-list">
-              {planningAssets.map((asset, index) => (
-                <div 
-                  key={index}
-                  className="chat-interface__planning-asset-item"
-                  onClick={() => handlePlanningAssetClick(asset)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {asset}
-                </div>
-              ))}
+            <div className="chat-interface__mini-cards">
+              {planningAssets.slice(0, 8).map((asset, index) => {
+                const data = deriveMiniCard(asset);
+                return (
+                  <div
+                    key={index}
+                    className="chat-interface__mini-card"
+                    onClick={() => handlePlanningAssetClick(asset)}
+                    style={{ animationDelay: `${index * 0.06}s` }}
+                  >
+                    <div className="chat-interface__mini-card-header">
+                      <div className="chat-interface__mini-card-title-section">
+                        <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
+                      </div>
+                      <div className="chat-interface__mini-card-info" aria-hidden>
+                        <svg width="12" height="12" viewBox="0 0 15 15">
+                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        </svg>
+                        <div className="chat-interface__mini-card-tooltip">
+                          <div className="chat-interface__mini-card-tooltip-content">
+                            <h4>{data.title}</h4>
+                            <p>{asset}</p>
+                            <div className="chat-interface__mini-card-tooltip-tags">
+                              {data.tags.map((tag, i) => (
+                                <span key={`${tag}-${i}`} className="chat-interface__mini-card-tooltip-tag">{tag}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="chat-interface__mini-card-footer">
+                      <MiniCardTags tags={data.tags} />
+                      <div className="chat-interface__mini-card-pill" aria-hidden>
+                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                              <stop offset="0" stopColor="#fed830"/>
+                              <stop offset="1" stopColor="#fbaf17"/>
+                            </linearGradient>
+                          </defs>
+                          <path fill="url(#linear-gradient)" d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="chat-interface__mini-cards-cta">
+              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
             </div>
           </div>
         )}
@@ -380,17 +506,57 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
         {/* Marketing Assets List */}
         {showMarketingAssets && (
           <div className="chat-interface__marketing-assets">
-            <div className="chat-interface__marketing-assets-list">
-              {marketingAssets.map((asset, index) => (
-                <div 
-                  key={index}
-                  className="chat-interface__marketing-asset-item"
-                  onClick={() => handleMarketingAssetClick(asset)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {asset}
-                </div>
-              ))}
+            <div className="chat-interface__mini-cards">
+              {marketingAssets.slice(0, 8).map((asset, index) => {
+                const data = deriveMiniCard(asset);
+                return (
+                  <div
+                    key={index}
+                    className="chat-interface__mini-card"
+                    onClick={() => handleMarketingAssetClick(asset)}
+                    style={{ animationDelay: `${index * 0.06}s` }}
+                  >
+                    <div className="chat-interface__mini-card-header">
+                      <div className="chat-interface__mini-card-title-section">
+                        <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
+                      </div>
+                      <div className="chat-interface__mini-card-info" aria-hidden>
+                        <svg width="12" height="12" viewBox="0 0 15 15">
+                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        </svg>
+                        <div className="chat-interface__mini-card-tooltip">
+                          <div className="chat-interface__mini-card-tooltip-content">
+                            <h4>{data.title}</h4>
+                            <p>{asset}</p>
+                            <div className="chat-interface__mini-card-tooltip-tags">
+                              {data.tags.map((tag, i) => (
+                                <span key={`${tag}-${i}`} className="chat-interface__mini-card-tooltip-tag">{tag}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="chat-interface__mini-card-footer">
+                      <MiniCardTags tags={data.tags} />
+                      <div className="chat-interface__mini-card-pill" aria-hidden>
+                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                              <stop offset="0" stopColor="#fed830"/>
+                              <stop offset="1" stopColor="#fbaf17"/>
+                            </linearGradient>
+                          </defs>
+                          <path fill="url(#linear-gradient)" d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="chat-interface__mini-cards-cta">
+              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
             </div>
           </div>
         )}
@@ -398,17 +564,57 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
         {/* Strategy Documents List */}
         {showStrategyDocuments && (
           <div className="chat-interface__strategy-documents">
-            <div className="chat-interface__strategy-documents-list">
-              {strategyDocuments.map((asset, index) => (
-                <div 
-                  key={index}
-                  className="chat-interface__strategy-document-item"
-                  onClick={() => handleStrategyDocumentClick(asset)}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  {asset}
-                </div>
-              ))}
+            <div className="chat-interface__mini-cards">
+              {strategyDocuments.slice(0, 8).map((asset, index) => {
+                const data = deriveMiniCard(asset);
+                return (
+                  <div
+                    key={index}
+                    className="chat-interface__mini-card"
+                    onClick={() => handleStrategyDocumentClick(asset)}
+                    style={{ animationDelay: `${index * 0.06}s` }}
+                  >
+                    <div className="chat-interface__mini-card-header">
+                      <div className="chat-interface__mini-card-title-section">
+                        <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
+                      </div>
+                      <div className="chat-interface__mini-card-info" aria-hidden>
+                        <svg width="12" height="12" viewBox="0 0 15 15">
+                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        </svg>
+                        <div className="chat-interface__mini-card-tooltip">
+                          <div className="chat-interface__mini-card-tooltip-content">
+                            <h4>{data.title}</h4>
+                            <p>{asset}</p>
+                            <div className="chat-interface__mini-card-tooltip-tags">
+                              {data.tags.map((tag, i) => (
+                                <span key={`${tag}-${i}`} className="chat-interface__mini-card-tooltip-tag">{tag}</span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="chat-interface__mini-card-footer">
+                      <MiniCardTags tags={data.tags} />
+                      <div className="chat-interface__mini-card-pill" aria-hidden>
+                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                          <defs>
+                            <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                              <stop offset="0" stopColor="#fed830"/>
+                              <stop offset="1" stopColor="#fbaf17"/>
+                            </linearGradient>
+                          </defs>
+                          <path fill="url(#linear-gradient)" d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="chat-interface__mini-cards-cta">
+              <button className="chat-interface__mini-cards-link" onClick={onOpenTemplateDrawer}>View more</button>
             </div>
           </div>
         )}
