@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ChatInterface from '../features/ChatInterface';
 import '../../styles/MainContent.scss';
 
-const MainContent = ({ selectedProject, onOpenTemplateDrawer }) => {
+const MainContent = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
 
@@ -115,6 +115,7 @@ const MainContent = ({ selectedProject, onOpenTemplateDrawer }) => {
         <ChatInterface 
           selectedProject={selectedProject} 
           onOpenTemplateDrawer={onOpenTemplateDrawer}
+          externalPrompt={externalPrompt}
         />
       </div>
     </div>

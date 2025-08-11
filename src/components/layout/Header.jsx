@@ -6,7 +6,9 @@ import {
 } from '../icons';
 import { useTheme } from '../../context';
 import WorkspaceDropdown from '../features/WorkspaceDropdown';
+import { WorkspaceCreateModal } from '../ui/Modal';
 import '../../styles/Header.scss';
+import { ReactComponent as EllaTextLogo } from '../icons/ella_ai_text_logo.svg';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
+  const [orgBrandBots, setOrgBrandBots] = useState([]);
   const themeDropdownRef = useRef(null);
   const workspaceDropdownRef = useRef(null);
   const notificationMenuRef = useRef(null);
@@ -173,6 +177,7 @@ const Header = () => {
             <path d="M19.0199 21.9997L2.7159 21.9997C1.21683 21.9997 0 20.7687 0 19.2521L0 2.74761C0 1.2315 1.21683 0 2.7159 0L19.0199 0C20.519 0 21.7358 1.2315 21.7358 2.74761L21.7358 19.2521C21.7358 20.7687 20.519 21.9997 19.0199 21.9997ZM7.24845 20.166L7.24845 1.83373L3.16576 1.83373C2.41827 1.83373 1.81166 2.44742 1.81166 3.20364L1.81166 18.7961C1.81166 19.5523 2.41826 20.166 3.16576 20.166L7.24845 20.166ZM18.5701 1.83373L9.06057 1.83373L9.06057 20.166L18.5701 20.166C19.3176 20.166 19.9242 19.5523 19.9242 18.7961L19.9242 3.20364C19.9242 2.44742 19.3176 1.83373 18.5701 1.83373Z" fillRule="evenodd" transform="matrix(1 0 0 1 9.53674e-07 -9.53674e-05)" fill="rgb(0, 0, 0)"/>
             <path d="M3.09328 6.25924L0 3.12985L3.09328 0L4.3749 1.29658L2.56278 3.12985L4.3749 4.96312L3.09328 6.25924Z" fillRule="evenodd" transform="matrix(1 0 0 1 2.34285 7.8455)" fill="rgb(0, 0, 0)"/>
           </svg>
+          <EllaTextLogo width={50} height={19} style={{ marginLeft: 8, marginRight: 8 }} />
           <div 
             className="header__workspace-container" 
             ref={workspaceDropdownRef}
@@ -202,6 +207,14 @@ const Header = () => {
             <WorkspaceDropdown 
               isOpen={isWorkspaceDropdownOpen} 
               onClose={handleWorkspaceDropdownClose}
+              onWorkspaceCreated={(ws) => {
+                // TODO: propagate to global state; for now, log
+                console.log('Workspace created:', ws);
+              }}
+              onOpenCreateWorkspace={({ orgBrandBots: bots }) => {
+                setOrgBrandBots(bots || []);
+                setIsCreateWorkspaceOpen(true);
+              }}
             />
           </div>
         </div>
@@ -467,6 +480,15 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <WorkspaceCreateModal
+        isOpen={isCreateWorkspaceOpen}
+        onClose={() => setIsCreateWorkspaceOpen(false)}
+        onSubmit={(payload) => {
+          console.log('Workspace created:', payload);
+          setIsCreateWorkspaceOpen(false);
+        }}
+        orgBrandBots={orgBrandBots}
+      />
     </div>
   );
 };

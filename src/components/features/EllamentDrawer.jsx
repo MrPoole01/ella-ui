@@ -496,13 +496,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             className="ellament-drawer__cancel-btn"
             onClick={onClose}
           >
-            Cancel
-          </button>
-          <button 
-            className="ellament-drawer__select-btn"
-            onClick={onClose}
-          >
-            Select
+            Close
           </button>
         </div>
       </div>

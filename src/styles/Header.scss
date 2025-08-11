@@ -175,7 +175,7 @@
   }
 
   &__logo-section {
-    gap: 2px;
+    gap: 15px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -187,6 +187,18 @@
 
     .ella-brand-icon {
       margin-left: 5px;
+    }
+
+    // Ensure inline SVG logo adopts theme-driven text color
+    svg {
+      color: var(--theme-text-primary);
+    }
+
+    // Letters in logo use currentColor
+    svg polygon[fill="currentColor"],
+    svg rect[fill="currentColor"],
+    svg path[fill="currentColor"] {
+      fill: currentColor;
     }
   }
 
@@ -721,7 +733,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: 21.01px;
+    margin-left: 2rem;
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;

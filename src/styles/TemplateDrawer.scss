@@ -548,6 +548,16 @@
     }
   }
 
+  // Default styling for any other tags
+  .template-drawer__card-tag:not(.template-drawer__card-tag--marketing):not(.template-drawer__card-tag--social) {
+    .template-drawer__card-tag-dot {
+      background: var(--theme-border-secondary);
+    }
+    .template-drawer__card-tag-text {
+      color: var(--theme-text-secondary);
+    }
+  }
+
   &__card-rating {
     svg {
       width: 33px;

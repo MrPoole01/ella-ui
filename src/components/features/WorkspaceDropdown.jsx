@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProjectIcon } from '../icons';
 import '../../styles/WorkspaceDropdown.scss';
 
-const WorkspaceDropdown = ({ isOpen, onClose }) => {
+const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+  // Mock: organization-level brand bots available
+  const orgBrandBots = [
+    { id: 'bb-1', name: 'Acme BrandBot' },
+    { id: 'bb-2', name: 'Contoso BrandBot' }
+  ];
 
   // Mock data - replace with actual data from your state management
   const pinnedWorkspaces = [
@@ -29,8 +34,22 @@ const WorkspaceDropdown = ({ isOpen, onClose }) => {
   const currentWorkspaces = allWorkspaces.slice(startIndex, startIndex + itemsPerPage);
 
   const handleCreateWorkspace = () => {
-    // Add your create workspace logic here
-    console.log('Create new workspace');
+    if (onOpenCreateWorkspace) onOpenCreateWorkspace({ orgBrandBots });
+    onClose && onClose();
+  };
+
+  const handleCreateSubmit = ({ name, setupPath, brandBotId }) => {
+    // Simulate workspace creation and update left menu via callback
+    const newWorkspace = {
+      id: Date.now(),
+      name,
+      lastUpdated: 'just now',
+      isActive: true,
+      setupPath,
+      brandBotId: brandBotId || null
+    };
+    if (onWorkspaceCreated) onWorkspaceCreated(newWorkspace);
+    setIsCreateOpen(false);
     onClose();
   };
 
@@ -52,7 +71,11 @@ const WorkspaceDropdown = ({ isOpen, onClose }) => {
       {/* Backdrop overlay for blur effect */}
       <div className="workspace-dropdown__backdrop" onClick={onClose} />
       
-      <div className={`workspace-dropdown ${isOpen ? 'workspace-dropdown--open' : ''}`}>
+      <div 
+        className={`workspace-dropdown ${isOpen ? 'workspace-dropdown--open' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
         <div className="workspace-dropdown__container">
           {/* Close Button - Prominent above content */}
           <div className="workspace-dropdown__close-section">
@@ -174,6 +197,8 @@ const WorkspaceDropdown = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal is rendered at a higher level (Header) via onOpenCreateWorkspace */}
     </>
   );
 };

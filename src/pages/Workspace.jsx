@@ -8,6 +8,11 @@ import '../styles/Workspace.scss';
 const Workspace = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isTemplateDrawerOpen, setIsTemplateDrawerOpen] = useState(false);
+  const [externalPrompt, setExternalPrompt] = useState('');
+  // Placeholder permissions and brandbot scoping
+  const canManageCustomTemplates = true;
+  const brandBotId = 'default';
+  const currentUserId = 'demo-user';
 
   const handleNewChat = () => {
     setSelectedProject(null);
@@ -18,6 +23,11 @@ const Workspace = () => {
   };
 
   const handleCloseTemplateDrawer = () => {
+    setIsTemplateDrawerOpen(false);
+  };
+
+  const handleTemplateSelected = (prompt) => {
+    setExternalPrompt(prompt || '');
     setIsTemplateDrawerOpen(false);
   };
 
@@ -40,6 +50,7 @@ const Workspace = () => {
         <MainContent 
           selectedProject={selectedProject} 
           onOpenTemplateDrawer={handleOpenTemplateDrawer}
+          externalPrompt={externalPrompt}
         />
       </div>
       
@@ -47,6 +58,10 @@ const Workspace = () => {
       <TemplateDrawer 
         isOpen={isTemplateDrawerOpen}
         onClose={handleCloseTemplateDrawer}
+        onTemplateSelected={handleTemplateSelected}
+        canManageCustomTemplates={canManageCustomTemplates}
+        brandBotId={brandBotId}
+        currentUserId={currentUserId}
       />
     </div>
   );

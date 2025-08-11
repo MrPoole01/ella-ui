@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/ChatInterface.scss';
 
-const ChatInterface = ({ selectedProject, onOpenTemplateDrawer }) => {
+const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) => {
   const [inputValue, setInputValue] = useState('');
   const [showPlanningAssets, setShowPlanningAssets] = useState(false);
   const [showMarketingAssets, setShowMarketingAssets] = useState(false);
@@ -216,6 +216,13 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Preload input when external prompt is provided
+  useEffect(() => {
+    if (externalPrompt) {
+      setInputValue(externalPrompt);
+    }
+  }, [externalPrompt]);
 
   return (
     <div className={`chat-interface ${selectedProject ? 'chat-interface--has-content' : 'chat-interface--empty'} ${showStrategyDocuments ? 'chat-interface--strategy-showing' : ''} ${showPlanningAssets ? 'chat-interface--planning-showing' : ''} ${showMarketingAssets ? 'chat-interface--marketing-showing' : ''}`}>

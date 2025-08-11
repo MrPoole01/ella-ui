@@ -110,7 +110,6 @@
     flex-direction: column;
     align-items: stretch;
     padding-right: 12px;
-    padding-top: 16px;
     padding-bottom: 16px;
   }
 
@@ -1447,8 +1446,12 @@
 
     &:hover {
       background: var(--theme-bg-secondary);
-      border-color: var(--theme-border-secondary);
-      color: var(--theme-text-primary);
+      // border-color: var(--theme-border-secondary);
+      // color: var(--theme-text-primary);
+
+      transform: translateY(-2px);
+      border-color: var(--theme-primary);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 20px var(--theme-orange-subtle), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
   }
 
