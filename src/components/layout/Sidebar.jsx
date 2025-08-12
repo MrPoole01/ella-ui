@@ -27,6 +27,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedEllament, setSelectedEllament] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
+  const [activeProjectMenu, setActiveProjectMenu] = useState(null);
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
   const sectionMenuRef = useRef(null);
@@ -34,6 +35,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const savedWorkMenuRef = useRef(null);
   const ellipsisMenuRef = useRef(null);
   const documentMenuRef = useRef(null);
+  const projectMenuDropdownRef = useRef(null);
 
   // Sample documents data based on Motiff design
   const sampleDocuments = [
@@ -321,6 +323,42 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     setActiveDocumentMenu(null);
   };
 
+  const handleProjectCardMenuClick = (projectId, e) => {
+    e.stopPropagation();
+    setActiveProjectMenu(activeProjectMenu === projectId ? null : projectId);
+  };
+
+  const handleProjectCardMenuClose = () => {
+    setActiveProjectMenu(null);
+  };
+
+  const handleProjectAction = (action, projectId) => {
+    // Handle the different project menu actions
+    console.log(`Action: ${action}, Project ID: ${projectId}`);
+    setActiveProjectMenu(null);
+    
+    // TODO: Implement actual functionality for each action
+    switch(action) {
+      case 'edit':
+        // Open edit modal
+        break;
+      case 'share':
+        // Launch share modal
+        break;
+      case 'archive':
+        // Move to archive
+        break;
+      case 'delete':
+        // Show confirmation modal then delete
+        break;
+      case 'move':
+        // Open move to workspace modal
+        break;
+      default:
+        break;
+    }
+  };
+
   const handleDocumentAction = (action, docId) => {
     // Handle the different document menu actions
     console.log(`Document Action: ${action}, Doc ID: ${docId}`);
@@ -427,16 +465,24 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           setActiveDocumentMenu(null);
         }
       }
+      // Handle project menu click outside
+      if (activeProjectMenu && projectMenuDropdownRef.current && !projectMenuDropdownRef.current.contains(event.target)) {
+        // Check if the clicked element is a project ellipsis button
+        const isProjectButton = event.target.closest('.project-menu__project-menu');
+        if (!isProjectButton) {
+          setActiveProjectMenu(null);
+        }
+      }
     };
 
     // Only listen for click outside on other menus, not workspace menu
-    if (isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen || activeEllipsisMenu || activeDocumentMenu) {
+    if (isProjectMenuOpen || isSectionMenuOpen || isFilesMenuOpen || isSavedWorkMenuOpen || activeEllipsisMenu || activeDocumentMenu || activeProjectMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => {
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen, activeEllipsisMenu, activeDocumentMenu]);
+  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen, activeEllipsisMenu, activeDocumentMenu, activeProjectMenu]);
 
   return (
     <>
@@ -784,9 +830,65 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                     <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
                   </svg>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M6 3V9M3 6H9" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <div className="project-menu__project-menu-container">
+                    <button 
+                      className="project-menu__project-menu"
+                      onClick={(e) => handleProjectCardMenuClick('project-a', e)}
+                    >
+                      <EllipsisIcon width={12} height={12} />
+                    </button>
+                    
+                    {activeProjectMenu === 'project-a' && (
+                      <div className="project-menu__project-dropdown" ref={projectMenuDropdownRef}>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('edit', 'project-a')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('share', 'project-a')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('archive', 'project-a')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('move', 'project-a')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="project-menu__project-dropdown-divider" />
+                        <button 
+                          className="project-menu__project-dropdown-option project-menu__project-dropdown-option--danger"
+                          onClick={() => handleProjectAction('delete', 'project-a')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 6.5L5.25 10.5M8.75 6.5L8.75 10.5M2.625 3.5L2.625 11.375C2.625 11.9273 3.07272 12.375 3.625 12.375L10.375 12.375C10.9273 12.375 11.375 11.9273 11.375 11.375L11.375 3.5M5.25 3.5L5.25 2.625C5.25 2.07272 5.69772 1.625 6.25 1.625L7.75 1.625C8.30228 1.625 8.75 2.07272 8.75 2.625L8.75 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               <p className="project-menu__project-description">
@@ -812,9 +914,65 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <div className="project-menu__project-header">
                 <h3 className="project-menu__project-title">Project B</h3>
                 <div className="project-menu__project-actions">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M6 3V9M3 6H9" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <div className="project-menu__project-menu-container">
+                    <button 
+                      className="project-menu__project-menu"
+                      onClick={(e) => handleProjectCardMenuClick('project-b', e)}
+                    >
+                      <EllipsisIcon width={12} height={12} />
+                    </button>
+                    
+                    {activeProjectMenu === 'project-b' && (
+                      <div className="project-menu__project-dropdown" ref={projectMenuDropdownRef}>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('edit', 'project-b')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('share', 'project-b')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('archive', 'project-b')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('move', 'project-b')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="project-menu__project-dropdown-divider" />
+                        <button 
+                          className="project-menu__project-dropdown-option project-menu__project-dropdown-option--danger"
+                          onClick={() => handleProjectAction('delete', 'project-b')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 6.5L5.25 10.5M8.75 6.5L8.75 10.5M2.625 3.5L2.625 11.375C2.625 11.9273 3.07272 12.375 3.625 12.375L10.375 12.375C10.9273 12.375 11.375 11.9273 11.375 11.375L11.375 3.5M5.25 3.5L5.25 2.625C5.25 2.07272 5.69772 1.625 6.25 1.625L7.75 1.625C8.30228 1.625 8.75 2.07272 8.75 2.625L8.75 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               <p className="project-menu__project-description">
@@ -840,9 +998,65 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <div className="project-menu__project-header">
                 <h3 className="project-menu__project-title">Project C</h3>
                 <div className="project-menu__project-actions">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M6 3V9M3 6H9" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <div className="project-menu__project-menu-container">
+                    <button 
+                      className="project-menu__project-menu"
+                      onClick={(e) => handleProjectCardMenuClick('project-c', e)}
+                    >
+                      <EllipsisIcon width={12} height={12} />
+                    </button>
+                    
+                    {activeProjectMenu === 'project-c' && (
+                      <div className="project-menu__project-dropdown" ref={projectMenuDropdownRef}>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('edit', 'project-c')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('share', 'project-c')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('archive', 'project-c')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="project-menu__project-dropdown-option"
+                          onClick={() => handleProjectAction('move', 'project-c')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="project-menu__project-dropdown-divider" />
+                        <button 
+                          className="project-menu__project-dropdown-option project-menu__project-dropdown-option--danger"
+                          onClick={() => handleProjectAction('delete', 'project-c')}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 6.5L5.25 10.5M8.75 6.5L8.75 10.5M2.625 3.5L2.625 11.375C2.625 11.9273 3.07272 12.375 3.625 12.375L10.375 12.375C10.9273 12.375 11.375 11.9273 11.375 11.375L11.375 3.5M5.25 3.5L5.25 2.625C5.25 2.07272 5.69772 1.625 6.25 1.625L7.75 1.625C8.30228 1.625 8.75 2.07272 8.75 2.625L8.75 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               <p className="project-menu__project-description">
