@@ -35,7 +35,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 40px 15px 23px;
+    padding: 40px 15px 0px;
   }
 
   &__header {
@@ -566,6 +566,33 @@
     }
   }
 
+  // Footer
+  &__footer {
+    border-top: 1px solid var(--theme-border-primary);
+    padding: 14px 25px 14px 25px;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+  }
+
+  &__close-btn {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    color: var(--theme-text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 11px 24.5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+    }
+  }
+
   // Electric Dark theme special effects
   .theme-electric-dark & {
     box-shadow: 
@@ -648,6 +675,19 @@
     .template-drawer__browse-text {
       text-shadow: 0 0 4px rgba(184, 197, 214, 0.2);
     }
+    
+    .template-drawer__close-btn {
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 10px var(--theme-glow-cyan);
+      
+      &:hover {
+        box-shadow: 
+          0 4px 12px rgba(0, 0, 0, 0.5),
+          0 0 20px var(--theme-glow-cyan);
+        transform: translateY(-1px);
+      }
+    }
   }
 
   .theme-neumorphism & {
@@ -718,6 +758,19 @@
           -2px -2px 6px rgba(255, 255, 255, 0.7);
       }
     }
+
+    .template-drawer__close-btn {
+      box-shadow: 
+        3px 3px 6px rgba(163, 177, 198, 0.3),
+        -3px -3px 6px rgba(255, 255, 255, 0.6);
+      border: none;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(163, 177, 198, 0.4),
+          -1px -1px 3px rgba(255, 255, 255, 0.7);
+      }
+    }
   }
 
   .theme-neumorphism-dark & {
@@ -786,6 +839,19 @@
         box-shadow: 
           2px 2px 6px rgba(0, 0, 0, 0.5),
           -2px -2px 6px rgba(255, 255, 255, 0.08);
+      }
+    }
+
+    .template-drawer__close-btn {
+      box-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4),
+        -3px -3px 6px rgba(255, 255, 255, 0.06);
+      border: none;
+
+      &:hover {
+        box-shadow: 
+          1px 1px 3px rgba(0, 0, 0, 0.5),
+          -1px -1px 3px rgba(255, 255, 255, 0.08);
       }
     }
   }

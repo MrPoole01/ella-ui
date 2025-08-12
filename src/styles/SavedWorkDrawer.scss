@@ -423,7 +423,7 @@
     align-items: center;
   }
 
-  &__cancel-btn {
+  &__close-btn {
     background: var(--theme-bg-primary);
     border: 1px solid var(--theme-border-primary);
     border-radius: 8px;
@@ -438,24 +438,6 @@
     &:hover {
       border-color: var(--theme-border-secondary);
       color: var(--theme-text-primary);
-    }
-  }
-
-  &__select-btn {
-    background: var(--theme-interactive-primary);
-    border: none;
-    border-radius: 8px;
-    color: var(--theme-bg-primary);
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 24px;
-    padding: 10px 11px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 1px 0;
-    
-    &:hover {
-      background: var(--theme-interactive-accent);
     }
   }
 }

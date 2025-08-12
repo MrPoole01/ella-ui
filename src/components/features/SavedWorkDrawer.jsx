@@ -541,13 +541,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
         {/* Footer - Matching Elements design */}
         <div className="saved-work-drawer__footer">
           <button 
-            className="saved-work-drawer__cancel-btn"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button 
-            className="saved-work-drawer__select-btn"
+            className="saved-work-drawer__close-btn"
             onClick={onClose}
           >
             Close

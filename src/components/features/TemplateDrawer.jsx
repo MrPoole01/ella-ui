@@ -739,6 +739,16 @@ const TemplateDrawer = ({
               </div>
             )}
           </div>
+
+          {/* Footer */}
+          <div className="template-drawer__footer">
+            <button 
+              className="template-drawer__close-btn"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
         </div>
       </div>
 
