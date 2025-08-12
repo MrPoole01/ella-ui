@@ -6,6 +6,10 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
   const [showPlanningAssets, setShowPlanningAssets] = useState(false);
   const [showMarketingAssets, setShowMarketingAssets] = useState(false);
   const [showStrategyDocuments, setShowStrategyDocuments] = useState(false);
+  
+  // Mic menu states
+  const [showMicMenu, setShowMicMenu] = useState(false);
+  const [micMenuLevel, setMicMenuLevel] = useState(1); // 1: main, 2: projects, 3: export
 
   const planningAssets = [
     "I need to plan a marketing roadmap for the next quarter to align with business objectives",
@@ -284,16 +288,40 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
     setShowStrategyDocuments(false);
   };
 
+  // Mic menu handlers
+  const handleMicClick = () => {
+    setShowMicMenu(!showMicMenu);
+    setMicMenuLevel(1);
+  };
+
+  const handleMicMenuBack = () => {
+    if (micMenuLevel > 1) {
+      setMicMenuLevel(micMenuLevel - 1);
+    } else {
+      setShowMicMenu(false);
+    }
+  };
+
+  const handleProjectsClick = () => {
+    setMicMenuLevel(2);
+  };
+
+  const handleSaveAsProjectClick = () => {
+    setMicMenuLevel(3);
+  };
+
   // Hide planning assets when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.chat-interface__input-area') && 
           !event.target.closest('.chat-interface__planning-assets') &&
           !event.target.closest('.chat-interface__marketing-assets') &&
-          !event.target.closest('.chat-interface__strategy-documents')) {
+          !event.target.closest('.chat-interface__strategy-documents') &&
+          !event.target.closest('.chat-interface__mic-menu')) {
         setShowPlanningAssets(false);
         setShowMarketingAssets(false);
         setShowStrategyDocuments(false);
+        setShowMicMenu(false);
       }
     };
 
@@ -383,7 +411,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
         {/* Input Controls */}
         <div className="chat-interface__controls">
           <div className="chat-interface__left-controls">
-                      <div className="chat-interface__mic-container">
+                      <div className="chat-interface__mic-container" onClick={handleMicClick}>
             <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 20 20" className="mic-icon">
               <g style={{stroke: 'none', strokeWidth: 0, strokeDasharray: 'none', strokeLinecap: 'butt', strokeLinejoin: 'miter', strokeMiterlimit: 10, fill: 'white', fillRule: 'nonzero', opacity: 1}}>
                 <rect x="1" y="1" width="18" height="18" rx="3" ry="3" style={{fill: 'none', stroke: 'white', strokeWidth: 0.5}}/>
@@ -444,6 +472,148 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
             </div>
           </div>
         </div>
+
+        {/* Mic Menu */}
+        {showMicMenu && (
+          <div className="chat-interface__mic-menu">
+            {micMenuLevel === 1 && (
+              <div className="chat-interface__mic-menu-main">
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M9 1.5L9 16.5M1.5 9L16.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Upload a file</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+                    <circle cx="9.5" cy="9.5" r="8.5" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6.5 9.5L8.5 11.5L12.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Crawl a website</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18.94" height="15.56" viewBox="0 0 19 16" fill="none">
+                    <rect x="1" y="1" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M1 4L19 4" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Take a screenshot</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18.92" height="19.59" viewBox="0 0 19 20" fill="none">
+                    <path d="M10 1L17 8L10 15M17 8L1 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Add a link/URL</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="15.32" height="18.19" viewBox="0 0 15 18" fill="none">
+                    <path d="M1 1L1 17L14 9L1 1Z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Download as a PDF</span>
+                </div>
+                <div className="chat-interface__mic-menu-item chat-interface__mic-menu-item--expandable">
+                  <div className="chat-interface__mic-menu-item-content">
+                    <svg width="17.78" height="17.78" viewBox="0 0 18 18" fill="none">
+                      <path d="M9 1L12 4L9 7M12 4L1 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span>Export to...</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="chat-interface__mic-menu-divider"></div>
+                <div className="chat-interface__mic-menu-item chat-interface__mic-menu-item--expandable" onClick={handleProjectsClick}>
+                  <div className="chat-interface__mic-menu-item-content">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                      <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                    </svg>
+                    <span>Projects</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M7 6L11 10L7 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {micMenuLevel === 2 && (
+              <div className="chat-interface__mic-menu-projects">
+                <div className="chat-interface__mic-menu-header">
+                  <button className="chat-interface__mic-menu-back" onClick={handleMicMenuBack}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M11 6L7 10L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <div className="chat-interface__mic-menu-search">
+                    <input type="text" placeholder="Search projects" />
+                  </div>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 1</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 2</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 3</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 4</span>
+                </div>
+                <div className="chat-interface__mic-menu-divider"></div>
+                <div className="chat-interface__mic-menu-item" onClick={handleSaveAsProjectClick}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M9 1L9 17M1 9L17 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Save as a project</span>
+                </div>
+              </div>
+            )}
+
+            {micMenuLevel === 3 && (
+              <div className="chat-interface__mic-menu-export">
+                <div className="chat-interface__mic-menu-header">
+                  <button className="chat-interface__mic-menu-back" onClick={handleMicMenuBack}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M11 6L7 10L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="17.78" height="17.78" viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="8" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 9L8 11L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Dropbox</span>
+                </div>
+                <div className="chat-interface__mic-menu-item">
+                  <svg width="17.78" height="17.78" viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="8" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 9L8 11L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Google Drive</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         
         {/* Planning Assets List */}
         {showPlanningAssets && (
@@ -463,7 +633,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="12" height="12" viewBox="0 0 15 15">
+                        <svg width="15" height="15" viewBox="0 0 15 15">
                           <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
@@ -482,7 +652,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                     <div className="chat-interface__mini-card-footer">
                       <MiniCardTags tags={data.tags} />
                       <div className="chat-interface__mini-card-pill" aria-hidden>
-                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="34" height="18" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
                           <defs>
                             <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
                               <stop offset="0" stopColor="#fed830"/>
@@ -521,7 +691,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="12" height="12" viewBox="0 0 15 15">
+                        <svg width="15" height="15" viewBox="0 0 15 15">
                           <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
@@ -540,7 +710,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                     <div className="chat-interface__mini-card-footer">
                       <MiniCardTags tags={data.tags} />
                       <div className="chat-interface__mini-card-pill" aria-hidden>
-                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="34" height="18" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
                           <defs>
                             <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
                               <stop offset="0" stopColor="#fed830"/>
@@ -579,7 +749,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="12" height="12" viewBox="0 0 15 15">
+                        <svg width="15" height="15" viewBox="0 0 15 15">
                           <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
@@ -598,7 +768,7 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                     <div className="chat-interface__mini-card-footer">
                       <MiniCardTags tags={data.tags} />
                       <div className="chat-interface__mini-card-pill" aria-hidden>
-                        <svg width="28" height="12" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="34" height="18" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
                           <defs>
                             <linearGradient id="linear-gradient" x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
                               <stop offset="0" stopColor="#fed830"/>

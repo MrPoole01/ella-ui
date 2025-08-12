@@ -504,21 +504,30 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           style={{ cursor: 'pointer' }}
         >
           <div className="sidebar__tab-content">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="chat-icon">
-              <defs>
-                <clipPath id="clipPath7274651217-chat">
-                  <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
-                </clipPath>
-              </defs>
-              <g clipPath="url(#clipPath7274651217-chat)">
-                <defs>
-                  <clipPath id="clipPath7136715570-chat">
-                    <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
-                  </clipPath>
-                </defs>
-                <g clipPath="url(#clipPath7136715570-chat)">
-                  <path d="M11.25 1.25C11.25 1.62021 11.0891 1.95282 10.8333 2.18171L10.8333 3.75L15 3.75C16.3808 3.75 17.5 4.86929 17.5 6.25L17.5 14.5833C17.5 15.9641 16.3808 17.0833 15 17.0833L5 17.0833C3.61929 17.0833 2.5 15.9641 2.5 14.5833L2.5 6.25C2.5 4.86929 3.61929 3.75 5 3.75L9.16667 3.75L9.16667 2.18171C8.91092 1.95282 8.75 1.62021 8.75 1.25C8.75 0.559642 9.30967 0 10 0C10.6903 0 11.25 0.559642 11.25 1.25ZM5 5.41667C4.53977 5.41667 4.16667 5.78977 4.16667 6.25L4.16667 14.5833C4.16667 15.0436 4.53977 15.4167 5 15.4167L15 15.4167C15.4602 15.4167 15.8333 15.0436 15.8333 14.5833L15.8333 6.25C15.8333 5.78977 15.4602 5.41667 15 5.41667L10.8333 5.41667L9.16667 5.41667L5 5.41667ZM1.66667 7.91667L0 7.91667L0 12.9167L1.66667 12.9167L1.66667 7.91667ZM18.3333 7.91667L20 7.91667L20 12.9167L18.3333 12.9167L18.3333 7.91667ZM7.5 11.6667C8.19036 11.6667 8.75 11.107 8.75 10.4167C8.75 9.72633 8.19036 9.16667 7.5 9.16667C6.80964 9.16667 6.25 9.72633 6.25 10.4167C6.25 11.107 6.80964 11.6667 7.5 11.6667ZM12.5 11.6667C13.1903 11.6667 13.75 11.107 13.75 10.4167C13.75 9.72633 13.1903 9.16667 12.5 9.16667C11.8097 9.16667 11.25 9.72633 11.25 10.4167C11.25 11.107 11.8097 11.6667 12.5 11.6667Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0.416667)" fill="var(--theme-primary-deep)"/>
-                </g>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="50"
+              height="50"
+              viewBox="0 0 1275.12 1225.43"
+              className="chat-icon"
+            >
+              <path
+                d="M833.45,622.12v96.07c0,55.59-45.06,100.65-100.65,100.65h-192.13c-55.59,0-100.65-45.06-100.65-100.65v-192.13c0-55.59,45.06-100.65,100.65-100.65h96.07"
+                fill="none"
+                stroke="var(--theme-primary-deep)"
+                strokeLinecap="round"
+                strokeMiterlimit="10"
+                strokeWidth="28"
+              />
+              <g>
+                <path
+                  d="M708.49,630.13c3.21,7.6,5.81,15.52,7.75,23.7.44,1.87,2.1,3.21,4.02,3.21h.07c1.92,0,3.58-1.34,4.02-3.21,1.94-8.18,4.54-16.1,7.75-23.7,18.41-43.53,56.77-76.57,103.62-87.67,1.87-.44,3.21-2.1,3.21-4.02v-.07c0-1.92-1.34-3.58-3.21-4.02-46.85-11.1-85.21-44.14-103.62-87.67-3.21-7.6-5.81-15.52-7.75-23.7-.44-1.87-2.1-3.21-4.02-3.21h-.07c-1.92,0-3.58,1.34-4.02,3.21-1.94,8.18-4.54,16.1-7.75,23.7-18.41,43.53-56.77,76.57-103.62,87.67-1.87.44-3.21,2.1-3.21,4.02v.07c0,1.92,1.34,3.58,3.21,4.02,46.85,11.1,85.21,44.14,103.62,87.67Z"
+                  fill="var(--theme-primary-deep)"
+                />
+                <path
+                  d="M571.91,732.21c1.83,4.33,3.32,8.85,4.42,13.52.25,1.07,1.2,1.83,2.29,1.83h.04c1.1,0,2.04-.77,2.29-1.83,1.1-4.66,2.59-9.18,4.42-13.52,10.5-24.83,32.38-43.67,59.1-50.01,1.07-.25,1.83-1.2,1.83-2.29v-.04c0-1.09-.77-2.04-1.83-2.29-26.72-6.33-48.6-25.18-59.1-50.01-1.83-4.33-3.32-8.85-4.42-13.52-.25-1.07-1.2-1.83-2.29-1.83h-.04c-1.1,0-2.04.77-2.29,1.83-1.1,4.66-2.59,9.18-4.42,13.52-10.5,24.83-32.38,43.67-59.1,50.01-1.07.25-1.83,1.2-1.83,2.29v.04c0,1.09.77,2.04,1.83,2.29,26.72,6.33,48.6,25.18,59.1,50.01Z"
+                  fill="var(--theme-primary-deep)"
+                />
               </g>
             </svg>
             <span className="sidebar__tab-text">Brand Bot Ellaments</span>
@@ -710,7 +719,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
           {/* Create Project Button */}
           <div className="project-menu__create">
-            <button className="project-menu__create-btn">
+            <button 
+              className="project-menu__create-btn"
+              onClick={() => console.log('Create Project clicked')}
+            >
               + Create Project
             </button>
           </div>
@@ -886,6 +898,16 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             </button>
           </div>
 
+          {/* New Project Chat Button */}
+          <div className="section-menu__create">
+            <button 
+              className="section-menu__create-btn"
+              onClick={() => console.log('New Project Chat clicked')}
+            >
+              + New Project Chat
+            </button>
+          </div>
+
           {/* Search and Filter */}
           <div className="section-menu__search-container">
             <div className="section-menu__search">
@@ -1024,8 +1046,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
           {/* Upload Button */}
           <div className="files-menu__create">
-            <button className="files-menu__create-btn">
-              + Upload Document
+            <button 
+              className="files-menu__create-btn"
+              onClick={() => console.log('Upload Document clicked')}
+            >
+              + Upload Files
             </button>
           </div>
 
@@ -1038,7 +1063,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               </svg>
               <input 
                 type="text" 
-                placeholder="Search documents..."
+                placeholder="Search files..."
                 className="files-menu__search-input"
               />
             </div>
@@ -1175,6 +1200,19 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M11.25 13.5L6.75 9L11.25 4.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+            </button>
+          </div>
+
+          {/* View All Saved Work Button */}
+          <div className="saved-work-menu__create">
+            <button 
+              className="saved-work-menu__create-btn"
+              onClick={() => {
+                setShowSavedWorkDrawer(true);
+                setIsSavedWorkMenuOpen(false);
+              }}
+            >
+              View All Saved Work
             </button>
           </div>
 

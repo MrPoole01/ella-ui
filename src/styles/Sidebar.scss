@@ -132,6 +132,8 @@
     .chat-icon {
       margin-top: 2px;
       margin-bottom: 2px;
+      margin-left: -13px;
+      margin-right: -5px;
     }
   }
 
@@ -1577,7 +1579,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px 40px;
+    padding: 10px 0px;
     margin-bottom: 2px;
     background: var(--theme-bg-accent);
 
@@ -1589,9 +1591,9 @@
   }
 
   &__create-btn {
-    background: none;
+    background: var(--theme-primary);
     border: none;
-    color: var(--theme-interactive-primary);
+    color: white;
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -1599,17 +1601,18 @@
     cursor: pointer;
     font-size: 14px;
     min-height: 18px;
+    padding: 8px 16px;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 16px;
     border-radius: 4px;
     transition: all 0.2s ease;
     width: 100%;
-
-    &:hover {
-      background: rgba(59, 130, 246, 0.1);
-    }
 
     // Theme-light specific styling
     .theme-light & {
@@ -1619,6 +1622,30 @@
 
   &__search {
     margin-bottom: 12px;
+  }
+
+  &__create {
+    margin-bottom: 8px;
+  }
+
+  &__create-btn {
+    background: var(--theme-primary);
+    border: none;
+    color: white;
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
   }
 
   &__search-container {
@@ -2058,6 +2085,54 @@
     }
   }
 
+  &__create {
+    margin-bottom: 8px;
+  }
+
+  &__create-btn {
+    background: var(--theme-primary);
+    border: none;
+    color: white;
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+  }
+
+  &__create {
+    margin-bottom: 8px;
+  }
+
+  &__create-btn {
+    background: var(--theme-primary);
+    border: none;
+    color: white;
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+  }
+
   &__search-container {
     display: flex;
     gap: 8px;
@@ -2066,18 +2141,17 @@
 
   &__search {
     flex: 1;
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: var(--theme-bg-secondary);
-    border: 1px solid var(--theme-border-secondary);
-    border-radius: 8px;
     padding: 9px 13px;
     transition: all 0.2s ease;
 
     &:focus-within {
       border-color: var(--theme-interactive-primary);
-      box-shadow: 0 0 0 2px var(--theme-interactive-focus);
     }
 
     svg {
@@ -3309,6 +3383,30 @@
     }
   }
 
+  &__create {
+    margin-bottom: 8px;
+  }
+
+  &__create-btn {
+    background: var(--theme-primary);
+    border: none;
+    color: white;
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+  }
+
   &__search-container {
     display: flex;
     gap: 8px;
@@ -3464,9 +3562,9 @@
   }
 
   &__create-btn {
-    background: none;
+    background: var(--theme-primary);
     border: none;
-    color: var(--theme-interactive-primary);
+    color: white;
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -3474,6 +3572,13 @@
     cursor: pointer;
     font-size: 14px;
     min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3481,10 +3586,6 @@
     border-radius: 4px;
     transition: all 0.2s ease;
     width: 100%;
-
-    &:hover {
-      background: rgba(59, 130, 246, 0.1);
-    }
 
     // Theme-light specific styling
     .theme-light & {
@@ -4122,6 +4223,30 @@
       &:hover {
         filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
       }
+    }
+  }
+
+  &__create {
+    margin-bottom: 8px;
+  }
+
+  &__create-btn {
+    background: var(--theme-primary);
+    border: none;
+    color: white;
+    font-family: 'Geist', sans-serif;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+    min-height: 18px;
+    border-radius: 6px;
+    padding: 8px 16px;
+    width: 100%;
+    
+    &:hover {
+      background: var(--theme-primary-deep);
     }
   }
 

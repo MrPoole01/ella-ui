@@ -531,7 +531,97 @@ const TemplateDrawer = ({
               <div className="template-drawer__section">
                 <h2 className="template-drawer__section-title">Special Addition Templates</h2>
                 <div className="template-drawer__grid">
-                  {digitalAssets.slice(0, 6).map(renderTemplateCard)}
+                  {digitalAssets.slice(0, 6).map((template) => (
+                    <div 
+                      key={template.id} 
+                      className="template-drawer__card"
+                      onClick={() => { 
+                        if (onTemplateSelected) onTemplateSelected(template.prompt || template.title); 
+                        if (onClose) onClose(); 
+                      }}
+                    >
+                      <div className="template-drawer__card-left-edge"></div>
+                      <div className="template-drawer__card-content">
+                        <div className="template-drawer__card-header">
+                          <div className="template-drawer__card-title-section">
+                            <div className="template-drawer__card-icon">
+                              {template.icon}
+                            </div>
+                            <h3 className="template-drawer__card-title">{template.title}</h3>
+                          </div>
+                          <div className="template-drawer__card-info-container">
+                            <svg 
+                              className="template-drawer__card-info-icon"
+                              xmlns="http://www.w3.org/2000/svg" 
+                              width="15" 
+                              height="15" 
+                              viewBox="0 0 15 15"
+                            >
+                              <path 
+                                d="M7.5 0C3.35786 0 0 3.35786 0 7.5L0 7.51125C0 11.6534 3.34661 15 7.48875 15L7.5 15C11.6421 15 15 11.6534 15 7.51125L15 7.5C15 3.35786 11.6534 0 7.51125 0L7.5 0Z" 
+                                fillRule="nonzero" 
+                                className="template-drawer__card-info-bg"
+                              />
+                              <defs>
+                                <clipPath id={`clipPath-${template.id}`}>
+                                  <path d="M0 0L11 0L11 11L0 11L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 2 2)"/>
+                                </clipPath>
+                              </defs>
+                              <g clipPath={`url(#clipPath-${template.id})`}>
+                                <path 
+                                  d="M4.29688 0C1.92758 0 0 1.92758 0 4.29688C0 6.66617 1.92758 8.59375 4.29688 8.59375C6.66617 8.59375 8.59375 6.66617 8.59375 4.29688C8.59375 1.92758 6.66617 0 4.29688 0ZM4.29688 1.76172C4.45113 1.76172 4.58279 1.81625 4.69186 1.92533C4.80093 2.0344 4.85547 2.16606 4.85547 2.32031C4.85547 2.47456 4.80093 2.60623 4.69186 2.7153C4.58279 2.82437 4.45113 2.87891 4.29688 2.87891C4.14262 2.87891 4.01096 2.82437 3.90189 2.7153C3.79282 2.60623 3.73828 2.47456 3.73828 2.32031C3.73828 2.16606 3.79282 2.0344 3.90189 1.92533C4.01096 1.81625 4.14262 1.76172 4.29688 1.76172ZM5.32812 6.61719L3.4375 6.61719C3.34258 6.61719 3.26155 6.58363 3.19443 6.5165C3.12731 6.44938 3.09375 6.36836 3.09375 6.27344C3.09375 6.17851 3.12731 6.09749 3.19443 6.03037C3.26155 5.96325 3.34258 5.92969 3.4375 5.92969L4.03906 5.92969L4.03906 4.03906L3.69531 4.03906C3.60039 4.03906 3.51937 4.0055 3.45224 3.93838C3.38512 3.87126 3.35156 3.79024 3.35156 3.69531C3.35156 3.60039 3.38512 3.51937 3.45224 3.45224C3.51937 3.38512 3.60039 3.35156 3.69531 3.35156L4.38281 3.35156C4.47774 3.35156 4.55876 3.38512 4.62588 3.45224C4.693 3.51937 4.72656 3.60039 4.72656 3.69531L4.72656 5.92969L5.32812 5.92969C5.42305 5.92969 5.50407 5.96325 5.57119 6.03037C5.63831 6.09749 5.67188 6.17851 5.67188 6.27344C5.67188 6.36836 5.63831 6.44938 5.57119 6.51651C5.50407 6.58363 5.42305 6.61719 5.32812 6.61719Z" 
+                                  fillRule="nonzero" 
+                                  transform="matrix(1 0 0 1 3.20312 3.20312)" 
+                                  className="template-drawer__card-info-icon-inner"
+                                  style={{ fill: 'var(--theme-primary)' }}
+                                />
+                              </g>
+                            </svg>
+                            <div className="template-drawer__card-tooltip">
+                              <div className="template-drawer__card-tooltip-content">
+                                <h4>{template.title}</h4>
+                                <p>{template.description}</p>
+                                <div className="template-drawer__card-tooltip-tags">
+                                  {template.tags.map((tag, index) => (
+                                    <span key={index} className={`template-drawer__card-tooltip-tag template-drawer__card-tooltip-tag--${tag.toLowerCase()}`}>
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="template-drawer__card-description">{template.description}</p>
+                        <div className="template-drawer__card-footer">
+                          <div className="template-drawer__card-tags">
+                            {template.tags.map((tag, index) => (
+                              <div key={index} className={`template-drawer__card-tag template-drawer__card-tag--${tag.toLowerCase()}`}>
+                                <span className="template-drawer__card-tag-dot"></span>
+                                <span className="template-drawer__card-tag-text">{tag}</span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="template-drawer__card-rating">
+                            <svg height="14" viewBox="0 0 90.44 90.68" xmlns="http://www.w3.org/2000/svg">
+                              <defs>
+                                <style>
+                                  {`.cls-1{fill:#fbfcfc;}.cls-2{fill:#0f3e65;}.cls-3{fill:#00bae3;}`}
+                                </style>
+                              </defs>
+                              <g id="IZHrlL.tif">
+                                <path className="cls-2" d="M85.5,3.96v67.23c-.65,7.82-6.85,14.03-14.68,14.67H3.6s0-68.12,0-68.12c.42-1.27.63-2.61,1.12-3.86,1.78-4.5,5.7-7.98,10.34-9.31l2.46-.61h67.98ZM14.25,36.11c-.12.73,0,2.06,0,2.87,0,.01.19.2.2.2h8.05c.95,0,2.48,1.1,3.07,1.85,2.01,2.55,1.51,7.02-1.37,8.72-.29.17-1.3.63-1.56.63h-8.19s-.2.19-.2.2v2.87c0,.58.84,1.37,1.43,1.44,2.03.24,7.13.13,9.08-.34,9.81-2.4,9.82-17.08,0-19.52-1.94-.48-7.06-.58-9.08-.34-.66.08-1.32.79-1.43,1.44ZM49.46,34.68h-15.08c-.72,0-1.84,1.42-1.84,2.12v2.12h15.36c.35,0,1.57-1.22,1.57-1.57v-2.66ZM58.68,34.68h-6.07v20.34h2.66c.53,0,1.62-.77,1.9-1.24.05-.09.35-.83.35-.88v-10.99l4.2,9.93c.91,1.5,2.83,1.73,3.96.36l4.25-9.87v12.7h2.53c.35,0,1.38-.52,1.64-.81.21-.23.74-1.31.74-1.58v-17.95h-5.94c-.34,0-1.07.74-1.26,1.06l-3.79,9.18-3.84-9.13c-.18-.45-.89-1.03-1.35-1.11ZM38.54,55.15h3.21c.72,0,1.84-1.42,1.84-2.12v-12.01s-.19-.2-.2-.2h-3.14c-.62,0-1.71.95-1.71,1.57v12.76Z"/>
+                                <path className="cls-3" d="M58.68,34.68c.46.08,1.16.66,1.35,1.11l3.84,9.13,3.79-9.18c.19-.32.92-1.06,1.26-1.06h5.94v17.95c0,.26-.53,1.34-.74,1.58-.27.29-1.29.81-1.64.81h-2.53v-12.7l-4.25,9.87c-1.14,1.37-3.06,1.14-3.96-.36l-4.2-9.93v10.99s-.3.79-.35.88c-.28.47-1.37,1.24-1.9,1.24h-2.66v-20.34h6.07Z"/>
+                                <path className="cls-1" d="M14.25,36.11c.11-.65.77-1.36,1.43-1.44,2.02-.24,7.14-.14,9.08.34,9.82,2.44,9.81,17.13,0,19.52-1.95.48-7.05.58-9.08.34-.59-.07-1.43-.86-1.43-1.44v-2.87s.19-.2.2-.2h8.19c.26,0,1.27-.46,1.56-.63,2.89-1.7,3.38-6.17,1.37-8.72-.59-.75-2.12-1.85-3.07-1.85h-8.05s-.2-.19-.2-.2c0-.81-.12-2.14,0-2.87Z"/>
+                                <path className="cls-1" d="M38.54,55.15v-12.76c0-.62,1.08-1.57,1.71-1.57h3.14s.2.19.2.2v12.01c0,.69-1.13,2.12-1.84,2.12h-3.21Z"/>
+                                <path className="cls-1" d="M49.46,34.68v2.66c0,.35-1.22,1.57-1.57,1.57h-15.36v-2.12c0-.69,1.13-2.12,1.84-2.12h15.08Z"/>
+                              </g>
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}

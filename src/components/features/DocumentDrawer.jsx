@@ -286,12 +286,8 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
             </div>
           ) : (
             /* View Mode - Single Panel */
-            <div className="document-drawer__view-content">
-              <div className="document-drawer__execution-info">
-                Execution: {formatDate(document.lastUpdated)} 09:25
-              </div>
-
-              {/* Row 1: Title and Project */}
+            <>
+              {/* Combined Info Row: Title, Project, Content Type, and Tags */}
               <div className="document-drawer__info-row">
                 <div className="document-drawer__document-section">
                   <div className="document-drawer__section-label">Title:</div>
@@ -306,10 +302,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                     {document.project}
                   </div>
                 </div>
-              </div>
 
-              {/* Row 2: Content Type and Tags */}
-              <div className="document-drawer__info-row">
                 <div className="document-drawer__document-section">
                   <div className="document-drawer__section-label">Content Type:</div>
                   <div className="document-drawer__section-content">
@@ -354,15 +347,21 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                 </div>
               </div>
 
-              <div className="document-drawer__document-section">
-                <div className="document-drawer__section-label">Sample Content:</div>
-                <div className="document-drawer__section-content document-drawer__sample-content">
-                  This is where the actual document content would be displayed. 
-                  In a real implementation, this would show the full document content 
-                  with proper formatting, images, and other media elements.
+              <div className="document-drawer__view-content">
+                <div className="document-drawer__execution-info">
+                  Execution: {formatDate(document.lastUpdated)} 09:25
+                </div>
+
+                <div className="document-drawer__document-section">
+                  <div className="document-drawer__section-label">Sample Content:</div>
+                  <div className="document-drawer__section-content document-drawer__sample-content">
+                    This is where the actual document content would be displayed. 
+                    In a real implementation, this would show the full document content 
+                    with proper formatting, images, and other media elements.
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </div>
 

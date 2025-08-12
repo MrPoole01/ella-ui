@@ -347,7 +347,7 @@
     gap: 9px;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100% - 7%);
   }
 
   &__execution-info {
@@ -412,7 +412,7 @@
     border-radius: 6px;
     padding: 16px;
     border: 1px solid var(--theme-border-light);
-    height: calc(100vh - 670%);
+    height: calc(100vh - 560%);
     overflow-y: auto;
     margin: 10px 0 0 0;
   }
