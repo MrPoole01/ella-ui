@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { SearchInput, Button, Select, Dropdown, DropdownItem, DropdownDivider, ContextMenu, TagManagementModal } from '../ui';
+import { SearchInput, Button, Select, MultiSelect, Dropdown, DropdownItem, DropdownDivider, ContextMenu, TagManagementModal } from '../ui';
 import { EllipsisIcon, PlusIcon } from '../icons';
 import '../../styles/SavedWorkDrawer.scss';
 
@@ -84,8 +84,8 @@ const getUniqueProjects = (documents) => {
 
 const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProject, setSelectedProject] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all'); // Single category selection
+  const [selectedProjects, setSelectedProjects] = useState([]); // Multi-select projects
+  const [selectedCategories, setSelectedCategories] = useState([]); // Multi-select categories
   const [sortBy, setSortBy] = useState('date_desc');
   const [documents, setDocuments] = useState(mockSavedDocuments);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
@@ -105,17 +105,11 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     }
   }, [activeDocumentMenu]);
 
-  // Get unique projects for filter
-  const projectOptions = useMemo(() => [
-    { value: 'all', label: 'All Projects' },
-    ...getUniqueProjects(documents)
-  ], [documents]);
+  // Get unique projects for filter (no "All" option for multi-select)
+  const projectOptions = useMemo(() => getUniqueProjects(documents), [documents]);
 
-  // Category options for dropdown
-  const categoryOptions = useMemo(() => [
-    { value: 'all', label: 'All Categories' },
-    ...predefinedTags
-  ], []);
+  // Category options for dropdown (no "All" option for multi-select)
+  const categoryOptions = useMemo(() => predefinedTags, []);
 
   // Sort options
   const sortOptions = [
@@ -127,12 +121,12 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
 
   // Helper functions
   const clearFilters = () => {
-    setSelectedCategory('all');
-    setSelectedProject('all');
+    setSelectedCategories([]);
+    setSelectedProjects([]);
     setSearchTerm('');
   };
 
-  const hasActiveFilters = selectedCategory !== 'all' || selectedProject !== 'all' || searchTerm.length >= 3;
+  const hasActiveFilters = selectedCategories.length > 0 || selectedProjects.length > 0 || searchTerm.length >= 3;
 
   // Filter and sort documents
   const filteredDocuments = useMemo(() => {
@@ -147,15 +141,15 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       );
     }
 
-    // Apply project filter
-    if (selectedProject !== 'all') {
-      filtered = filtered.filter(doc => doc.project === selectedProject);
+    // Apply project filter (multi-select)
+    if (selectedProjects.length > 0) {
+      filtered = filtered.filter(doc => selectedProjects.includes(doc.project));
     }
 
-    // Apply category filter
-    if (selectedCategory !== 'all') {
+    // Apply category filter (multi-select)
+    if (selectedCategories.length > 0) {
       filtered = filtered.filter(doc => 
-        (doc.tags || []).includes(selectedCategory)
+        doc.tags && doc.tags.some(tag => selectedCategories.includes(tag))
       );
     }
 
@@ -178,7 +172,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     });
 
     return filtered;
-  }, [documents, searchTerm, selectedProject, selectedCategory, sortBy]);
+  }, [documents, searchTerm, selectedProjects, selectedCategories, sortBy]);
 
   const handleDocumentClick = (document) => {
     if (onDocumentSelect) {
@@ -356,11 +350,12 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
             </div>
             )}
             <div className="saved-work-drawer__filter-group">
-              <label className="saved-work-drawer__filter-label">Category:</label>
-              <Select
-                value={selectedCategory}
-                onChange={(value) => setSelectedCategory(value)}
+              <label className="saved-work-drawer__filter-label">Tags:</label>
+              <MultiSelect
+                value={selectedCategories}
+                onChange={(value) => setSelectedCategories(value)}
                 options={categoryOptions}
+                placeholder="Select tags..."
                 className="saved-work-drawer__category-select"
               />
             </div>
@@ -368,10 +363,11 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
             {/* Project Filter */}
             <div className="saved-work-drawer__filter-group">
               <label className="saved-work-drawer__filter-label">Project:</label>
-              <Select
-                value={selectedProject}
-                onChange={(value) => setSelectedProject(value)}
+              <MultiSelect
+                value={selectedProjects}
+                onChange={(value) => setSelectedProjects(value)}
                 options={projectOptions}
+                placeholder="Select projects..."
                 className="saved-work-drawer__project-select"
               />
             </div>

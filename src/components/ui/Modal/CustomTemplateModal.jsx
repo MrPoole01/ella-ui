@@ -21,6 +21,7 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
   const [title, setTitle] = useState('');
   const [preview, setPreview] = useState('');
   const [prompt, setPrompt] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [tags, setTags] = useState([]);
   const [errors, setErrors] = useState({});
   const [customTagName, setCustomTagName] = useState('');
@@ -31,6 +32,7 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
       setTitle(initialValues?.title || '');
       setPreview(initialValues?.preview || '');
       setPrompt(initialValues?.prompt || '');
+      setUploadedFiles(initialValues?.files || []);
       setTags(initialValues?.tags || []);
       setErrors({});
       setCustomTagName('');
@@ -79,6 +81,30 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
     setShowCustomTagInput(false);
   };
 
+  const handleFileUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const newFiles = files.map(file => ({
+      id: Date.now() + Math.random(),
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      file: file
+    }));
+    setUploadedFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const removeFile = (fileId) => {
+    setUploadedFiles(prev => prev.filter(file => file.id !== fileId));
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   const handleSave = () => {
     const nextErrors = {};
     if (!title.trim()) nextErrors.title = 'Title is required';
@@ -86,7 +112,13 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    onSave({ title: title.trim(), preview: preview.trim(), prompt: prompt.trim(), tags });
+    onSave({ 
+      title: title.trim(), 
+      preview: preview.trim(), 
+      prompt: prompt.trim(), 
+      files: uploadedFiles,
+      tags 
+    });
   };
 
   const handleCancel = () => {
@@ -139,6 +171,53 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
               placeholder="Enter the instruction or base prompt"
             />
             {errors.prompt && <div className="custom-template-modal__error">{errors.prompt}</div>}
+          </div>
+
+          {/* File Upload Area */}
+          <div className="custom-template-modal__field">
+            <label>Files (Optional)</label>
+            <div className="custom-template-modal__file-upload">
+              <div className="custom-template-modal__upload-area">
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="custom-template-modal__file-input"
+                  multiple
+                  onChange={handleFileUpload}
+                  accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+                />
+                <label htmlFor="file-upload" className="custom-template-modal__upload-label">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 10L12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 15V3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Click to upload files or drag and drop</span>
+                  <span className="custom-template-modal__upload-hint">PDF, DOC, TXT, Images up to 10MB each</span>
+                </label>
+              </div>
+              
+              {uploadedFiles.length > 0 && (
+                <div className="custom-template-modal__uploaded-files">
+                  {uploadedFiles.map(file => (
+                    <div key={file.id} className="custom-template-modal__file-item">
+                      <div className="custom-template-modal__file-info">
+                        <span className="custom-template-modal__file-name">{file.name}</span>
+                        <span className="custom-template-modal__file-size">{formatFileSize(file.size)}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="custom-template-modal__remove-file"
+                        onClick={() => removeFile(file.id)}
+                        title="Remove file"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="custom-template-modal__field">

@@ -6,6 +6,7 @@ import {
 } from '../icons';
 import { useTheme } from '../../context';
 import WorkspaceDropdown from '../features/WorkspaceDropdown';
+import EllamentDrawer from '../features/EllamentDrawer';
 import { WorkspaceCreateModal } from '../ui/Modal';
 import '../../styles/Header.scss';
 import { ReactComponent as EllaTextLogo } from '../icons/ella_ai_text_logo.svg';
@@ -21,6 +22,7 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
+  const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [orgBrandBots, setOrgBrandBots] = useState([]);
   const themeDropdownRef = useRef(null);
   const workspaceDropdownRef = useRef(null);
@@ -486,8 +488,17 @@ const Header = () => {
         onSubmit={(payload) => {
           console.log('Workspace created:', payload);
           setIsCreateWorkspaceOpen(false);
+          
+          // If user selected "Start building my Brand Bot Ellaments", open EllamentDrawer
+          if (payload.setupPath === 'fresh') {
+            setIsEllamentDrawerOpen(true);
+          }
         }}
         orgBrandBots={orgBrandBots}
+      />
+      <EllamentDrawer
+        isOpen={isEllamentDrawerOpen}
+        onClose={() => setIsEllamentDrawerOpen(false)}
       />
     </div>
   );
