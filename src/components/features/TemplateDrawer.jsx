@@ -687,7 +687,7 @@ const TemplateDrawer = ({
                                   <div className="template-drawer__card-tooltip-tags">
                                   {(template.tags || []).map((tagValue, index) => {
                                     const variant = tagValueToVariant[tagValue];
-                                    const label = tagValueToLabel[tagValue] || tagValue;
+                                    const label = tagValueToLabel[tagValue] || tagValue.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                                     const cls = variant
                                       ? `template-drawer__card-tooltip-tag template-drawer__card-tooltip-tag--${variant}`
                                       : 'template-drawer__card-tooltip-tag';
@@ -705,7 +705,7 @@ const TemplateDrawer = ({
                             <div className="template-drawer__card-tags">
                               {(template.tags || []).map((tagValue) => {
                                 const variant = tagValueToVariant[tagValue];
-                                const label = tagValueToLabel[tagValue] || tagValue;
+                                const label = tagValueToLabel[tagValue] || tagValue.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
                                 const cls = variant
                                   ? `template-drawer__card-tag template-drawer__card-tag--${variant}`
                                   : 'template-drawer__card-tag';

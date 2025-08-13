@@ -1801,6 +1801,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
+    // Star SVG positioning
+    > svg {
+      margin-left: 5px;
+      margin-right: auto;
+    }
   }
 
   &__project-title {

@@ -604,6 +604,13 @@
     align-items: center;
     justify-content: center;
     padding: 7.81px 9px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      svg path {
+        fill: var(--theme-interactive-primary) !important;
+      }
+    }
 
     // Neumorphism theme - square raised button
     .theme-neumorphism & {
@@ -1360,6 +1367,16 @@
     
     &:hover {
       opacity: 0.8;
+      
+      .mic-icon {
+        rect {
+          stroke: var(--theme-interactive-primary) !important;
+        }
+        
+        path {
+          fill: var(--theme-interactive-primary) !important;
+        }
+      }
     }
   }
 

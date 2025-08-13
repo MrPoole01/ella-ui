@@ -826,10 +826,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             >
               <div className="project-menu__project-header">
                 <h3 className="project-menu__project-title">Project A</h3>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
+                </svg>
                 <div className="project-menu__project-actions">
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                    <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
-                  </svg>
                   <div className="project-menu__project-menu-container">
                     <button 
                       className="project-menu__project-menu"

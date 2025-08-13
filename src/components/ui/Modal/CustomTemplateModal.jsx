@@ -13,7 +13,8 @@ const predefinedTags = [
   { value: 'linkedin', label: 'LinkedIn' },
   { value: 'facebook', label: 'Facebook' },
   { value: 'twitter', label: 'Twitter' },
-  { value: 'newsletter', label: 'Newsletter' }
+  { value: 'newsletter', label: 'Newsletter' },
+  { value: 'other', label: 'Other' }
 ];
 
 const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
@@ -22,6 +23,8 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
   const [prompt, setPrompt] = useState('');
   const [tags, setTags] = useState([]);
   const [errors, setErrors] = useState({});
+  const [customTagName, setCustomTagName] = useState('');
+  const [showCustomTagInput, setShowCustomTagInput] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -30,6 +33,8 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
       setPrompt(initialValues?.prompt || '');
       setTags(initialValues?.tags || []);
       setErrors({});
+      setCustomTagName('');
+      setShowCustomTagInput(false);
     }
   }, [isOpen, initialValues]);
 
@@ -38,11 +43,40 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
     [tags]
   );
 
+  const customTags = useMemo(
+    () => tags.filter(tag => !predefinedTags.some(pt => pt.value === tag))
+      .map(tag => ({ value: tag, label: tag.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), selected: true })),
+    [tags]
+  );
+
+  const removeCustomTag = (tagValue) => {
+    setTags(prev => prev.filter(t => t !== tagValue));
+  };
+
   const toggleTag = (tagValue) => {
+    if (tagValue === 'other') {
+      setShowCustomTagInput(true);
+      return;
+    }
+    
     setTags(prev => prev.includes(tagValue)
       ? prev.filter(t => t !== tagValue)
       : [...prev, tagValue]
     );
+  };
+
+  const handleCustomTagAdd = () => {
+    if (customTagName.trim()) {
+      const customTag = customTagName.trim().toLowerCase().replace(/\s+/g, '_');
+      setTags(prev => [...prev, customTag]);
+      setCustomTagName('');
+      setShowCustomTagInput(false);
+    }
+  };
+
+  const handleCustomTagCancel = () => {
+    setCustomTagName('');
+    setShowCustomTagInput(false);
   };
 
   const handleSave = () => {
@@ -121,6 +155,62 @@ const CustomTemplateModal = ({ isOpen, onClose, onSave, initialValues }) => {
                 </button>
               ))}
             </div>
+            
+            {customTags.length > 0 && (
+              <div className="custom-template-modal__custom-tags">
+                <div className="custom-template-modal__custom-tags-label">Custom Tags:</div>
+                <div className="custom-template-modal__tags-grid">
+                  {customTags.map(tag => (
+                    <div key={tag.value} className="custom-template-modal__custom-tag">
+                      <span>{tag.label}</span>
+                      <button
+                        type="button"
+                        className="custom-template-modal__remove-tag"
+                        onClick={() => removeCustomTag(tag.value)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showCustomTagInput && (
+              <div className="custom-template-modal__custom-tag-input">
+                <input
+                  type="text"
+                  className="custom-template-modal__input"
+                  value={customTagName}
+                  onChange={(e) => setCustomTagName(e.target.value)}
+                  placeholder="Enter custom tag name"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleCustomTagAdd();
+                    } else if (e.key === 'Escape') {
+                      handleCustomTagCancel();
+                    }
+                  }}
+                  autoFocus
+                />
+                <div className="custom-template-modal__custom-tag-buttons">
+                  <button
+                    type="button"
+                    className="custom-template-modal__custom-tag-add"
+                    onClick={handleCustomTagAdd}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    className="custom-template-modal__custom-tag-cancel"
+                    onClick={handleCustomTagCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div className="custom-template-modal__footer">
