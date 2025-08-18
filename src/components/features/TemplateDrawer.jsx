@@ -372,26 +372,13 @@ const TemplateDrawer = ({
               xmlns="http://www.w3.org/2000/svg" 
               width="15" 
               height="15" 
-              viewBox="0 0 15 15"
+              viewBox="0 0 512 512"
+              style={{ fill: 'var(--theme-primary-deep, #E6A429)' }}
             >
-              <path 
-                d="M7.5 0C3.35786 0 0 3.35786 0 7.5L0 7.51125C0 11.6534 3.34661 15 7.48875 15L7.5 15C11.6421 15 15 11.6534 15 7.51125L15 7.5C15 3.35786 11.6534 0 7.51125 0L7.5 0Z" 
-                fillRule="nonzero" 
-                className="template-drawer__card-info-bg"
-              />
-              <defs>
-                <clipPath id={`clipPath-${template.id}`}>
-                  <path d="M0 0L11 0L11 11L0 11L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 2 2)"/>
-                </clipPath>
-              </defs>
-              <g clipPath={`url(#clipPath-${template.id})`}>
-                <path 
-                  d="M4.29688 0C1.92758 0 0 1.92758 0 4.29688C0 6.66617 1.92758 8.59375 4.29688 8.59375C6.66617 8.59375 8.59375 6.66617 8.59375 4.29688C8.59375 1.92758 6.66617 0 4.29688 0ZM4.29688 1.76172C4.45113 1.76172 4.58279 1.81625 4.69186 1.92533C4.80093 2.0344 4.85547 2.16606 4.85547 2.32031C4.85547 2.47456 4.80093 2.60623 4.69186 2.7153C4.58279 2.82437 4.45113 2.87891 4.29688 2.87891C4.14262 2.87891 4.01096 2.82437 3.90189 2.7153C3.79282 2.60623 3.73828 2.47456 3.73828 2.32031C3.73828 2.16606 3.79282 2.0344 3.90189 1.92533C4.01096 1.81625 4.14262 1.76172 4.29688 1.76172ZM5.32812 6.61719L3.4375 6.61719C3.34258 6.61719 3.26155 6.58363 3.19443 6.5165C3.12731 6.44938 3.09375 6.36836 3.09375 6.27344C3.09375 6.17851 3.12731 6.09749 3.19443 6.03037C3.26155 5.96325 3.34258 5.92969 3.4375 5.92969L4.03906 5.92969L4.03906 4.03906L3.69531 4.03906C3.60039 4.03906 3.51937 4.0055 3.45224 3.93838C3.38512 3.87126 3.35156 3.79024 3.35156 3.69531C3.35156 3.60039 3.38512 3.51937 3.45224 3.45224C3.51937 3.38512 3.60039 3.35156 3.69531 3.35156L4.38281 3.35156C4.47774 3.35156 4.55876 3.38512 4.62588 3.45224C4.693 3.51937 4.72656 3.60039 4.72656 3.69531L4.72656 5.92969L5.32812 5.92969C5.42305 5.92969 5.50407 5.96325 5.57119 6.03037C5.63831 6.09749 5.67188 6.17851 5.67188 6.27344C5.67188 6.36836 5.63831 6.44938 5.57119 6.51651C5.50407 6.58363 5.42305 6.61719 5.32812 6.61719Z" 
-                  fillRule="nonzero" 
-                  transform="matrix(1 0 0 1 3.20312 3.20312)" 
-                  className="template-drawer__card-info-icon-inner"
-                  style={{ fill: 'var(--theme-primary)' }}
-                />
+              <g>
+                <path d="M322.4,173.9l-129,16.2l-4.6,21.4l25.3,4.7c16.5,3.9,19.8,9.9,16.2,26.4l-41.5,195.3c-10.9,50.5,5.9,74.3,45.5,74.3
+                  c30.7,0,66.3-14.2,82.5-33.6l4.9-23.4c-11.3,9.9-27.7,13.9-38.6,13.9c-15.5,0-21.1-10.9-17.1-30L322.4,173.9z"/>
+                <circle cx="270.1" cy="56.3" r="56.3"/>
               </g>
             </svg>
             <div className="template-drawer__card-tooltip">
@@ -412,11 +399,13 @@ const TemplateDrawer = ({
         <p className="template-drawer__card-description">{template.description}</p>
         <div className="template-drawer__card-footer">
           <div className="template-drawer__card-tags">
+            <button className="template-drawer__add-tag" title="Manage Tags">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+              </svg>
+            </button>
             {template.tags.map((tag, index) => (
-              <div key={index} className={`template-drawer__card-tag template-drawer__card-tag--${tag.toLowerCase()}`}>
-                <span className="template-drawer__card-tag-dot"></span>
-                <span className="template-drawer__card-tag-text">{tag}</span>
-              </div>
+              <span key={index} className="template-drawer__tag-chip">{tag}</span>
             ))}
           </div>
           <div className="template-drawer__card-rating">
@@ -555,26 +544,13 @@ const TemplateDrawer = ({
                               xmlns="http://www.w3.org/2000/svg" 
                               width="15" 
                               height="15" 
-                              viewBox="0 0 15 15"
+                              viewBox="0 0 512 512"
+                              style={{ fill: 'var(--theme-primary-deep, #E6A429)' }}
                             >
-                              <path 
-                                d="M7.5 0C3.35786 0 0 3.35786 0 7.5L0 7.51125C0 11.6534 3.34661 15 7.48875 15L7.5 15C11.6421 15 15 11.6534 15 7.51125L15 7.5C15 3.35786 11.6534 0 7.51125 0L7.5 0Z" 
-                                fillRule="nonzero" 
-                                className="template-drawer__card-info-bg"
-                              />
-                              <defs>
-                                <clipPath id={`clipPath-${template.id}`}>
-                                  <path d="M0 0L11 0L11 11L0 11L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 2 2)"/>
-                                </clipPath>
-                              </defs>
-                              <g clipPath={`url(#clipPath-${template.id})`}>
-                                <path 
-                                  d="M4.29688 0C1.92758 0 0 1.92758 0 4.29688C0 6.66617 1.92758 8.59375 4.29688 8.59375C6.66617 8.59375 8.59375 6.66617 8.59375 4.29688C8.59375 1.92758 6.66617 0 4.29688 0ZM4.29688 1.76172C4.45113 1.76172 4.58279 1.81625 4.69186 1.92533C4.80093 2.0344 4.85547 2.16606 4.85547 2.32031C4.85547 2.47456 4.80093 2.60623 4.69186 2.7153C4.58279 2.82437 4.45113 2.87891 4.29688 2.87891C4.14262 2.87891 4.01096 2.82437 3.90189 2.7153C3.79282 2.60623 3.73828 2.47456 3.73828 2.32031C3.73828 2.16606 3.79282 2.0344 3.90189 1.92533C4.01096 1.81625 4.14262 1.76172 4.29688 1.76172ZM5.32812 6.61719L3.4375 6.61719C3.34258 6.61719 3.26155 6.58363 3.19443 6.5165C3.12731 6.44938 3.09375 6.36836 3.09375 6.27344C3.09375 6.17851 3.12731 6.09749 3.19443 6.03037C3.26155 5.96325 3.34258 5.92969 3.4375 5.92969L4.03906 5.92969L4.03906 4.03906L3.69531 4.03906C3.60039 4.03906 3.51937 4.0055 3.45224 3.93838C3.38512 3.87126 3.35156 3.79024 3.35156 3.69531C3.35156 3.60039 3.38512 3.51937 3.45224 3.45224C3.51937 3.38512 3.60039 3.35156 3.69531 3.35156L4.38281 3.35156C4.47774 3.35156 4.55876 3.38512 4.62588 3.45224C4.693 3.51937 4.72656 3.60039 4.72656 3.69531L4.72656 5.92969L5.32812 5.92969C5.42305 5.92969 5.50407 5.96325 5.57119 6.03037C5.63831 6.09749 5.67188 6.17851 5.67188 6.27344C5.67188 6.36836 5.63831 6.44938 5.57119 6.51651C5.50407 6.58363 5.42305 6.61719 5.32812 6.61719Z" 
-                                  fillRule="nonzero" 
-                                  transform="matrix(1 0 0 1 3.20312 3.20312)" 
-                                  className="template-drawer__card-info-icon-inner"
-                                  style={{ fill: 'var(--theme-primary)' }}
-                                />
+                              <g>
+                                <path d="M322.4,173.9l-129,16.2l-4.6,21.4l25.3,4.7c16.5,3.9,19.8,9.9,16.2,26.4l-41.5,195.3c-10.9,50.5,5.9,74.3,45.5,74.3
+                                  c30.7,0,66.3-14.2,82.5-33.6l4.9-23.4c-11.3,9.9-27.7,13.9-38.6,13.9c-15.5,0-21.1-10.9-17.1-30L322.4,173.9z"/>
+                                <circle cx="270.1" cy="56.3" r="56.3"/>
                               </g>
                             </svg>
                             <div className="template-drawer__card-tooltip">
@@ -595,11 +571,13 @@ const TemplateDrawer = ({
                         <p className="template-drawer__card-description">{template.description}</p>
                         <div className="template-drawer__card-footer">
                           <div className="template-drawer__card-tags">
+                            <button className="template-drawer__add-tag" title="Manage Tags">
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                              </svg>
+                            </button>
                             {template.tags.map((tag, index) => (
-                              <div key={index} className={`template-drawer__card-tag template-drawer__card-tag--${tag.toLowerCase()}`}>
-                                <span className="template-drawer__card-tag-dot"></span>
-                                <span className="template-drawer__card-tag-text">{tag}</span>
-                              </div>
+                              <span key={index} className="template-drawer__tag-chip">{tag}</span>
                             ))}
                           </div>
                           <div className="template-drawer__card-rating">
@@ -658,26 +636,13 @@ const TemplateDrawer = ({
                                 xmlns="http://www.w3.org/2000/svg" 
                                 width="15" 
                                 height="15" 
-                                viewBox="0 0 15 15"
+                                viewBox="0 0 512 512"
+                                style={{ fill: 'var(--theme-primary-deep, #E6A429)' }}
                               >
-                                <path 
-                                  d="M7.5 0C3.35786 0 0 3.35786 0 7.5L0 7.51125C0 11.6534 3.34661 15 7.48875 15L7.5 15C11.6421 15 15 11.6534 15 7.51125L15 7.5C15 3.35786 11.6534 0 7.51125 0L7.5 0Z" 
-                                  fillRule="nonzero" 
-                                  className="template-drawer__card-info-bg"
-                                />
-                                <defs>
-                                  <clipPath id={`clipPath-custom-${template.id}`}>
-                                    <path d="M0 0L11 0L11 11L0 11L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 2 2)"/>
-                                  </clipPath>
-                                </defs>
-                                <g clipPath={`url(#clipPath-custom-${template.id})`}>
-                                  <path 
-                                    d="M4.29688 0C1.92758 0 0 1.92758 0 4.29688C0 6.66617 1.92758 8.59375 4.29688 8.59375C6.66617 8.59375 8.59375 6.66617 8.59375 4.29688C8.59375 1.92758 6.66617 0 4.29688 0ZM4.29688 1.76172C4.45113 1.76172 4.58279 1.81625 4.69186 1.92533C4.80093 2.0344 4.85547 2.16606 4.85547 2.32031C4.85547 2.47456 4.80093 2.60623 4.69186 2.7153C4.58279 2.82437 4.45113 2.87891 4.29688 2.87891C4.14262 2.87891 4.01096 2.82437 3.90189 2.7153C3.79282 2.60623 3.73828 2.47456 3.73828 2.32031C3.73828 2.16606 3.79282 2.0344 3.90189 1.92533C4.01096 1.81625 4.14262 1.76172 4.29688 1.76172ZM5.32812 6.61719L3.4375 6.61719C3.34258 6.61719 3.26155 6.58363 3.19443 6.5165C3.12731 6.44938 3.09375 6.36836 3.09375 6.27344C3.09375 6.17851 3.12731 6.09749 3.19443 6.03037C3.26155 5.96325 3.34258 5.92969 3.4375 5.92969L4.03906 5.92969L4.03906 4.03906L3.69531 4.03906C3.60039 4.03906 3.51937 4.0055 3.45224 3.93838C3.38512 3.87126 3.35156 3.79024 3.35156 3.69531C3.35156 3.60039 3.38512 3.51937 3.45224 3.45224C3.51937 3.38512 3.60039 3.35156 3.69531 3.35156L4.38281 3.35156C4.47774 3.35156 4.55876 3.38512 4.62588 3.45224C4.693 3.51937 4.72656 3.60039 4.72656 3.69531L4.72656 5.92969L5.32812 5.92969C5.42305 5.92969 5.50407 5.96325 5.57119 6.03037C5.63831 6.09749 5.67188 6.17851 5.67188 6.27344C5.67188 6.36836 5.63831 6.44938 5.57119 6.51651C5.50407 6.58363 5.42305 6.61719 5.32812 6.61719Z" 
-                                    fillRule="nonzero" 
-                                    transform="matrix(1 0 0 1 3.20312 3.20312)" 
-                                    className="template-drawer__card-info-icon-inner"
-                                    style={{ fill: 'var(--theme-primary)' }}
-                                  />
+                                <g>
+                                  <path d="M322.4,173.9l-129,16.2l-4.6,21.4l25.3,4.7c16.5,3.9,19.8,9.9,16.2,26.4l-41.5,195.3c-10.9,50.5,5.9,74.3,45.5,74.3
+                                    c30.7,0,66.3-14.2,82.5-33.6l4.9-23.4c-11.3,9.9-27.7,13.9-38.6,13.9c-15.5,0-21.1-10.9-17.1-30L322.4,173.9z"/>
+                                  <circle cx="270.1" cy="56.3" r="56.3"/>
                                 </g>
                               </svg>
                               <div className="template-drawer__card-tooltip">
@@ -703,17 +668,15 @@ const TemplateDrawer = ({
                           <p className="template-drawer__card-description">{template.preview || 'Custom template'}</p>
                           <div className="template-drawer__card-footer">
                             <div className="template-drawer__card-tags">
+                              <button className="template-drawer__add-tag" title="Manage Tags">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                  <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                                </svg>
+                              </button>
                               {(template.tags || []).map((tagValue) => {
-                                const variant = tagValueToVariant[tagValue];
                                 const label = tagValueToLabel[tagValue] || tagValue.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                const cls = variant
-                                  ? `template-drawer__card-tag template-drawer__card-tag--${variant}`
-                                  : 'template-drawer__card-tag';
                                 return (
-                                  <div key={tagValue} className={cls}>
-                                    <span className="template-drawer__card-tag-dot"></span>
-                                    <span className="template-drawer__card-tag-text">{label}</span>
-                                  </div>
+                                  <span key={tagValue} className="template-drawer__tag-chip">{label}</span>
                                 );
                               })}
                             </div>

@@ -306,6 +306,20 @@
       border-color: var(--theme-interactive-secondary);
     }
 
+    &--active {
+      background: var(--theme-primary-deep, #E6A429);
+      border-color: var(--theme-primary-deep, #E6A429);
+
+      .sidebar__project-section-content {
+        color: var(--theme-secondary, #1A1A1A);
+      }
+
+      &:hover {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+      }
+    }
+
     // Light theme specific styling
     .theme-light & {
       background: var(--theme-bg-primary);
@@ -327,6 +341,22 @@
         background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
         border-color: var(--theme-interactive-secondary);
         box-shadow: 0 0 12px var(--theme-glow-cyan);
+      }
+
+      &.sidebar__project-section-item--active {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+        box-shadow: 0 0 15px rgba(230, 164, 41, 0.4);
+
+        .sidebar__project-section-content {
+          color: var(--theme-secondary, #1A1A1A);
+        }
+
+        &:hover {
+          background: var(--theme-primary-deep, #E6A429);
+          border-color: var(--theme-primary-deep, #E6A429);
+          box-shadow: 0 0 20px rgba(230, 164, 41, 0.6);
+        }
       }
     }
 
@@ -407,6 +437,20 @@
       border-color: var(--theme-interactive-secondary);
     }
 
+    &.sidebar__project-section-item--active {
+      background: var(--theme-primary-deep, #E6A429);
+      border-color: var(--theme-primary-deep, #E6A429);
+
+      .sidebar__project-section-content {
+        color: var(--theme-secondary, #1A1A1A);
+      }
+
+      &:hover {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+      }
+    }
+
     // Light theme specific styling
     .theme-light & {
       background: var(--theme-bg-primary);
@@ -428,6 +472,22 @@
         background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
         border-color: var(--theme-interactive-secondary);
         box-shadow: 0 0 12px var(--theme-glow-purple);
+      }
+
+      &.sidebar__project-section-item--active {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+        box-shadow: 0 0 15px rgba(230, 164, 41, 0.4);
+
+        .sidebar__project-section-content {
+          color: var(--theme-secondary, #1A1A1A);
+        }
+
+        &:hover {
+          background: var(--theme-primary-deep, #E6A429);
+          border-color: var(--theme-primary-deep, #E6A429);
+          box-shadow: 0 0 20px rgba(230, 164, 41, 0.6);
+        }
       }
     }
 
@@ -508,6 +568,20 @@
       border-color: var(--theme-interactive-secondary);
     }
 
+    &.sidebar__project-section-item--active {
+      background: var(--theme-primary-deep, #E6A429);
+      border-color: var(--theme-primary-deep, #E6A429);
+
+      .sidebar__project-section-content {
+        color: var(--theme-secondary, #1A1A1A);
+      }
+
+      &:hover {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+      }
+    }
+
     // Light theme specific styling
     .theme-light & {
       background: var(--theme-bg-primary);
@@ -529,6 +603,22 @@
         background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
         border-color: var(--theme-interactive-secondary);
         box-shadow: 0 0 12px var(--theme-glow-green);
+      }
+
+      &.sidebar__project-section-item--active {
+        background: var(--theme-primary-deep, #E6A429);
+        border-color: var(--theme-primary-deep, #E6A429);
+        box-shadow: 0 0 15px rgba(230, 164, 41, 0.4);
+
+        .sidebar__project-section-content {
+          color: var(--theme-secondary, #1A1A1A);
+        }
+
+        &:hover {
+          background: var(--theme-primary-deep, #E6A429);
+          border-color: var(--theme-primary-deep, #E6A429);
+          box-shadow: 0 0 20px rgba(230, 164, 41, 0.6);
+        }
       }
     }
 
@@ -2904,11 +2994,7 @@
     }
   }
 
-  &__task-priority {
-    width: 16px;
-    height: 8px;
-    border-radius: 4px;
-  }
+
 
   &__task-title {
     color: var(--theme-text-primary);
@@ -3026,7 +3112,6 @@
   }
 
   &__task-details {
-    margin-left: 30px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -3066,153 +3151,65 @@
     }
   }
 
-  &__task-meta {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: var(--theme-text-muted);
-    font-size: 12px;
-    line-height: 15px;
-    margin-bottom: 8px;
-    font-family: 'Inter', sans-serif;
 
-    svg {
-      width: 14px;
-      height: 14px;
-      color: var(--theme-text-muted);
-    }
-
-    span {
-      margin-right: 7px;
-      color: var(--theme-text-muted);
-    }
-
-    // Theme-specific styling
-    .theme-light & {
-      color: var(--theme-text-muted);
-    }
-
-    .theme-electric-dark & {
-      color: var(--theme-text-muted);
-      
-      svg {
-        filter: drop-shadow(0 0 2px rgba(0, 255, 255, 0.1));
-      }
-    }
-
-    .theme-modern-dark & {
-      color: var(--theme-text-muted);
-      
-      svg {
-        filter: drop-shadow(0 0 1px var(--theme-data-glow));
-      }
-    }
-
-    .theme-citrus-grove & {
-      color: var(--theme-text-muted);
-    }
-
-    .theme-neumorphism & {
-      color: var(--theme-text-muted);
-    }
-
-    .theme-neumorphism-dark & {
-      color: var(--theme-text-muted);
-    }
-  }
 
   &__task-tags {
     display: flex;
-    gap: 6px;
     flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
   }
 
-  &__task-tag {
-    padding: 2px 8px 3px;
-    border-radius: 4px;
-    font-size: 11px;
-    line-height: 13px;
-    font-weight: 400;
-    font-family: 'Inter', sans-serif;
+  &__tag-chip {
     background: var(--theme-bg-tertiary);
-    color: var(--theme-text-secondary);
+    color: var(--theme-text-primary);
     border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__tag-more {
+    color: var(--theme-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  &__add-tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
 
     &:hover {
-      background: var(--theme-bg-accent);
-      color: var(--theme-text-primary);
-    }
-
-    // Theme-specific styling
-    .theme-light & {
-      background: var(--theme-bg-tertiary);
-      color: var(--theme-text-tertiary);
-      border-color: var(--theme-border-tertiary);
-      
-      &:hover {
-        background: var(--theme-bg-accent);
-        color: var(--theme-text-primary);
-      }
-    }
-
-    .theme-electric-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-accent));
-      color: var(--theme-text-secondary);
+      background: var(--theme-bg-secondary);
       border-color: var(--theme-interactive-primary);
-      
-      &:hover {
-        background: linear-gradient(135deg, var(--theme-bg-accent), var(--theme-interactive-primary));
-        color: var(--theme-bg-primary);
-        box-shadow: 0 0 6px var(--theme-glow-cyan);
-      }
+      color: var(--theme-interactive-primary);
     }
 
-    .theme-modern-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-accent));
-      color: var(--theme-text-secondary);
-      border-color: var(--theme-border-primary);
-      
-      &:hover {
-        background: var(--theme-interactive-primary);
-        color: var(--theme-bg-primary);
-        box-shadow: 0 0 4px var(--theme-data-glow);
-      }
-    }
-
-    .theme-citrus-grove & {
-      background: var(--theme-bg-elevated);
-      color: var(--theme-text-secondary);
-      border-color: var(--theme-border-primary);
-      
-      &:hover {
-        background: var(--theme-interactive-primary);
-        color: var(--theme-bg-primary);
-      }
-    }
-
-    .theme-neumorphism & {
-      background: var(--theme-bg-primary);
-      color: var(--theme-text-secondary);
-      border: none;
-      box-shadow: var(--theme-neomorphic-flat);
-      
-      &:hover {
-        box-shadow: var(--theme-neomorphic-subtle);
-        color: var(--theme-interactive-primary);
-      }
-    }
-
-    .theme-neumorphism-dark & {
-      background: var(--theme-bg-primary);
-      color: var(--theme-text-secondary);
-      border: none;
-      box-shadow: var(--theme-neomorphic-flat);
-      
-      &:hover {
-        box-shadow: var(--theme-neomorphic-subtle);
-        color: var(--theme-interactive-primary);
-      }
+    svg {
+      width: 12px;
+      height: 12px;
+      color: inherit;
     }
   }
 
@@ -3437,6 +3434,33 @@
     }
   }
 } 
+
+// EV2 Dark theme enhancements for section menu
+.theme-ev2-dark {
+  .section-menu {
+    &__tag-chip {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+    }
+
+    &__add-tag {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      
+      &:hover {
+        background: var(--theme-primary);
+        border-color: var(--theme-primary-bright);
+        color: var(--theme-bg-primary);
+        
+        svg {
+          color: var(--theme-bg-primary);
+        }
+      }
+    }
+  }
+}
 
 // Files Menu - Positioned next to left nav like project-menu
 .files-menu {
@@ -4108,8 +4132,10 @@
 
   &__document-footer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: left;
+    flex-flow: column;
+    gap: 12px;
+    align-items: self-start;
     margin-top: 6px;
   }
 
@@ -4124,36 +4150,62 @@
   }
 
   &__document-category {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
+  }
+
+  &__tag-chip {
     background: var(--theme-bg-tertiary);
-    border-radius: 4px;
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__tag-more {
     color: var(--theme-text-secondary);
     font-size: 11px;
     font-weight: 500;
-    line-height: 13px;
-    padding: 2px 8px;
-    text-align: center;
-    border: 1px solid var(--theme-border-primary);
+    font-style: italic;
+  }
 
-    // Electric Dark theme
-    .theme-electric-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
-      color: var(--theme-text-primary);
-      border-color: var(--theme-border-secondary);
+  &__add-tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-interactive-primary);
+      color: var(--theme-interactive-primary);
     }
 
-    // Modern Dark theme
-    .theme-modern-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
-      color: var(--theme-text-primary);
-      border-color: var(--theme-border-secondary);
-    }
-
-    // Neumorphism themes
-    .theme-neumorphism &,
-    .theme-neumorphism-dark & {
-      background: var(--theme-bg-primary);
-      border: none;
-      box-shadow: var(--theme-neomorphic-pressed);
+    svg {
+      width: 12px;
+      height: 12px;
+      color: inherit;
     }
   }
 
@@ -4280,6 +4332,33 @@
     }
   }
 } 
+
+// EV2 Dark theme enhancements for files menu
+.theme-ev2-dark {
+  .files-menu {
+    &__tag-chip {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+    }
+
+    &__add-tag {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      
+      &:hover {
+        background: var(--theme-primary);
+        border-color: var(--theme-primary-bright);
+        color: var(--theme-bg-primary);
+        
+        svg {
+          color: var(--theme-bg-primary);
+        }
+      }
+    }
+  }
+}
 
 // Saved Work Menu - Positioned next to left nav like other menus
 .saved-work-menu {
@@ -4734,43 +4813,61 @@
 
   &__item-tags {
     display: flex;
-    gap: 6px;
     flex-wrap: wrap;
-    margin-top: 6px;
+    gap: 6px;
+    align-items: center;
+    margin-top: 8px;
   }
 
-  &__item-tag {
+  &__tag-chip {
     background: var(--theme-bg-tertiary);
-    border-radius: 4px;
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__tag-more {
     color: var(--theme-text-secondary);
     font-size: 11px;
     font-weight: 500;
-    line-height: 13px;
-    padding: 2.5px 7.5px;
-    text-align: center;
+    font-style: italic;
+  }
+
+  &__add-tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
     white-space: nowrap;
-    border: 1px solid var(--theme-border-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
 
-    // Electric Dark theme
-    .theme-electric-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
-      color: var(--theme-text-primary);
-      border-color: var(--theme-border-secondary);
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-interactive-primary);
+      color: var(--theme-interactive-primary);
     }
 
-    // Modern Dark theme
-    .theme-modern-dark & {
-      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-interactive-primary));
-      color: var(--theme-text-primary);
-      border-color: var(--theme-border-secondary);
-    }
-
-    // Neumorphism themes
-    .theme-neumorphism &,
-    .theme-neumorphism-dark & {
-      background: var(--theme-gradient-elevated);
-      border: none;
-      box-shadow: var(--theme-neomorphic-subtle);
+    svg {
+      width: 12px;
+      height: 12px;
+      color: inherit;
     }
   }
 
@@ -4779,6 +4876,7 @@
     align-items: flex-start;
     margin-top: 3px;
     min-height: 10px;
+    gap: 6px;
   }
 
   &__item-saved {
@@ -5047,6 +5145,33 @@
     }
   }
 } 
+
+// EV2 Dark theme enhancements for saved work menu
+.theme-ev2-dark {
+  .saved-work-menu {
+    &__tag-chip {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+    }
+
+    &__add-tag {
+      background: var(--theme-orange-subtle);
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      
+      &:hover {
+        background: var(--theme-primary);
+        border-color: var(--theme-primary-bright);
+        color: var(--theme-bg-primary);
+        
+        svg {
+          color: var(--theme-bg-primary);
+        }
+      }
+    }
+  }
+}
 
 // ✅ CONSOLIDATED: MUI CircularProgress theme styling (removed duplicates)
 .MuiCircularProgress-root {

@@ -45,7 +45,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       name: 'Service Contract v2.1',
       description: 'Legal agreement for software services and maintenance',
       updated: '05/13/2025 @ 4:15pm',
-      category: 'Legal',
+      tags: ['Legal', 'Contract'],
       typeColor: '#DC2626',
       typeBg: '#FEE2E2'
     },
@@ -55,7 +55,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       name: 'Customer Agreement',
       description: 'Terms and conditions for new customer onboarding',
       updated: '05/10/2025 @ 2:30pm',
-      category: 'Contract',
+      tags: ['Contract', 'Customer'],
       typeColor: '#2563EB',
       typeBg: '#DBEAFE'
     },
@@ -65,7 +65,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       name: 'Q2 Financial Report',
       description: 'Quarterly financial analysis and projections',
       updated: '05/08/2025 @ 9:45am',
-      category: 'Finance',
+      tags: ['Finance', 'Reports'],
       typeColor: '#059669',
       typeBg: '#D1FAE5'
     },
@@ -75,7 +75,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       name: 'Brand Guidelines',
       description: 'Official brand identity and usage guidelines',
       updated: '05/01/2025 @ 11:20am',
-      category: 'Marketing',
+      tags: ['Marketing', 'Brand'],
       typeColor: '#DC2626',
       typeBg: '#FEE2E2'
     },
@@ -85,7 +85,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       name: 'Product Specifications',
       description: 'Technical specifications and requirements',
       updated: '04/28/2025 @ 3:45pm',
-      category: 'Technical',
+      tags: ['Technical', 'Product'],
       typeColor: '#2563EB',
       typeBg: '#DBEAFE'
     }
@@ -136,50 +136,40 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       id: 1,
       title: 'User Experience',
       description: 'Planning for next week\'s user research sessions',
-      date: '12 Oct',
-      progress: '0/4',
+      updated: '10/12/2025 @ 2:30pm',
       tags: ['Design 2021', 'Work'],
-      priority: 'high',
       completed: false
     },
     {
       id: 2,
       title: 'Market Analysis',
       description: 'Competitive analysis and market research findings',
-      date: '24 Oct',
-      progress: '0/4',
+      updated: '10/24/2025 @ 9:15am',
       tags: ['Design 2021'],
-      priority: 'medium',
       completed: false
     },
     {
       id: 3,
       title: 'Define Problem Statement',
       description: 'Team discussion on project scope and challenges',
-      date: '22 Oct',
-      progress: '0/4',
+      updated: '10/22/2025 @ 4:45pm',
       tags: ['Design 2021'],
-      priority: 'low',
       completed: true
     },
     {
       id: 4,
       title: 'Set Objectives',
       description: 'Defining key goals and success metrics',
-      date: '16 Oct',
-      progress: '0/4',
+      updated: '10/16/2025 @ 11:20am',
       tags: ['Design 2021', 'Work'],
-      priority: 'medium',
       completed: false
     },
     {
       id: 5,
       title: 'Create Wireframes',
       description: 'Initial sketches and wireframes for the new dashboard',
-      date: '18 Oct',
-      progress: '2/5',
+      updated: '10/18/2025 @ 3:10pm',
       tags: ['Design', 'Daily'],
-      priority: 'high',
       completed: false
     }
   ];
@@ -245,6 +235,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   };
 
   const handleSectionClick = (sectionType) => {
+    // Close other menus first
+    setIsFilesMenuOpen(false);
+    setIsSavedWorkMenuOpen(false);
+    
     // Toggle behavior: close if same section is clicked while menu is open
     if (isSectionMenuOpen && activeSectionType === sectionType) {
       setIsSectionMenuOpen(false);
@@ -261,6 +255,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   };
 
   const handleFilesMenuClick = () => {
+    // Close other menus first
+    setIsSectionMenuOpen(false);
+    setIsSavedWorkMenuOpen(false);
+    setActiveSectionType('');
+    
     setIsFilesMenuOpen(!isFilesMenuOpen);
   };
 
@@ -270,6 +269,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   };
 
   const handleSavedWorkMenuClick = () => {
+    // Close other menus first
+    setIsSectionMenuOpen(false);
+    setIsFilesMenuOpen(false);
+    setActiveSectionType('');
+    
     setIsSavedWorkMenuOpen(!isSavedWorkMenuOpen);
   };
 
@@ -395,24 +399,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch(priority) {
-      case 'high': return '#EF4444';
-      case 'medium': return '#F59E0B';
-      case 'low': return '#10B981';
-      default: return '#9CA3AF';
-    }
-  };
 
-  const getTagStyle = (tag) => {
-    const tagStyles = {
-      'Design 2021': { bg: '#FFEDD5', color: '#C2410C' },
-      'Work': { bg: '#FEF9C3', color: '#A16207' },
-      'Design': { bg: '#F3E8FF', color: '#7E22CE' },
-      'Daily': { bg: '#DCFCE7', color: '#15803D' }
-    };
-    return tagStyles[tag] || { bg: '#F3F4F6', color: '#6B7280' };
-  };
+
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -714,29 +703,29 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         {/* Project-specific sections - only show when a project is selected */}
         {selectedProject && (
           <div className="sidebar__project-sections">
-            <div 
-              className="sidebar__project-section-item"
-              onClick={() => handleSectionClick('chats')}
-              style={{ cursor: 'pointer' }}
-            >
+                          <div 
+                className={`sidebar__project-section-item ${isSectionMenuOpen ? 'sidebar__project-section-item--active' : ''}`}
+                onClick={() => handleSectionClick('chats')}
+                style={{ cursor: 'pointer' }}
+              >
               <div className="sidebar__project-section-content">
                 Project Chats
               </div>
             </div>
-            <div 
-              className="sidebar__uploaded-files-item"
-              onClick={handleFilesMenuClick}
-              style={{ cursor: 'pointer' }}
-            >
+                          <div 
+                className={`sidebar__project-section-item sidebar__uploaded-files-item ${isFilesMenuOpen ? 'sidebar__project-section-item--active' : ''}`}
+                onClick={handleFilesMenuClick}
+                style={{ cursor: 'pointer' }}
+              >
               <div className="sidebar__project-section-content">
                 Uploaded Files
               </div>
             </div>
-            <div 
-              className="sidebar__saved-work-item"
-              onClick={handleSavedWorkMenuClick}
-              style={{ cursor: 'pointer' }}
-            >
+                          <div 
+                className={`sidebar__project-section-item sidebar__saved-work-item ${isSavedWorkMenuOpen ? 'sidebar__project-section-item--active' : ''}`}
+                onClick={handleSavedWorkMenuClick}
+                style={{ cursor: 'pointer' }}
+              >
               <div className="sidebar__project-section-content">
                 Saved Work
               </div>
@@ -1170,17 +1159,13 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <div key={task.id} className="section-menu__task">
                 <div className="section-menu__task-header">
                   <div className="section-menu__task-left">
-                    <div className="section-menu__task-checkbox">
+                    {/* <div className="section-menu__task-checkbox">
                       <input 
                         type="checkbox" 
                         checked={task.completed}
                         onChange={() => {}}
                       />
-                    </div>
-                    <div 
-                      className="section-menu__task-priority"
-                      style={{ backgroundColor: getPriorityColor(task.priority) }}
-                    ></div>
+                    </div> */}
                     <div className="section-menu__task-title">{task.title}</div>
                   </div>
                   <div className="section-menu__task-actions">
@@ -1191,34 +1176,20 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 </div>
                 <div className="section-menu__task-details">
                   <div className="section-menu__task-description">{task.description}</div>
-                  <div className="section-menu__task-meta">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <circle cx="7" cy="7" r="6" stroke="#9CA3AF" strokeWidth="1.5"/>
-                      <path d="M7 3.5V7l2.5 2.5" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    <span>{task.date}</span>
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M7 1v6h6" stroke="#9CA3AF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      <circle cx="7" cy="7" r="6" stroke="#9CA3AF" strokeWidth="1.5"/>
-                    </svg>
-                    <span>{task.progress}</span>
+                  <div className="files-menu__document-updated">
+                    Updated: {task.updated}
                   </div>
                   <div className="section-menu__task-tags">
-                    {task.tags.map((tag, index) => {
-                      const tagStyle = getTagStyle(tag);
-                      return (
-                        <span 
-                          key={index} 
-                          className="section-menu__task-tag"
-                          style={{ 
-                            backgroundColor: tagStyle.bg,
-                            color: tagStyle.color
-                          }}
-                        >
-                          {tag}
-                        </span>
-                      );
-                    })}
+                    <button className="section-menu__add-tag" title="Manage Tags">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                      </svg>
+                    </button>
+                    {task.tags.map((tag, index) => (
+                      <span key={index} className="section-menu__tag-chip">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -1377,7 +1348,16 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                     Updated: {doc.updated}
                   </div>
                   <div className="files-menu__document-category">
-                    {doc.category}
+                    <button className="files-menu__add-tag" title="Manage Tags">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                      </svg>
+                    </button>
+                    {doc.tags.map((tag, index) => (
+                      <span key={index} className="files-menu__tag-chip">
+                        {tag}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -1524,16 +1504,21 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   {item.description}
                 </div>
                 <div className="saved-work-menu__item-tags">
-                  {item.tags.map((tag, index) => (
-                    <div key={index} className="saved-work-menu__item-tag">
-                      {tag}
-                    </div>
-                  ))}
-                </div>
-                <div className="saved-work-menu__item-footer">
-                  <div className="saved-work-menu__item-saved">
+                <div className="saved-work-menu__item-saved">
                     Saved: {item.saved}
                   </div>
+                </div>
+                <div className="saved-work-menu__item-footer">
+                  <button className="saved-work-menu__add-tag" title="Manage Tags">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                    </svg>
+                  </button>
+                  {item.tags.map((tag, index) => (
+                    <span key={index} className="saved-work-menu__tag-chip">
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
@@ -1707,7 +1692,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           lastUpdated: ellament.lastUpdated || new Date().toISOString().slice(0, 10),
           project: 'Ellaments',
           type: ellament.category || 'ellament',
-          tags: ellament.category ? [ellament.category] : []
+          tags: ellament.tags || (ellament.category ? [ellament.category] : [])
         };
         setSelectedDocument(mappedDocument);
         setShowDocumentDrawer(true);

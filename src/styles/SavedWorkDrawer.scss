@@ -208,6 +208,9 @@
     line-height: 24px;
     flex: 1;
     margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__card-menu-container {
@@ -347,7 +350,7 @@
   // Tags on Cards
   &__card-tags {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
     align-items: center;
     margin-top: 8px;
@@ -359,11 +362,16 @@
     border: 1px solid var(--theme-border-secondary);
     border-radius: 6px;
     padding: 4px 8px;
-    font-size: 11px;
+    font-size: 12px; // Default size when no "more" tags or when content fits within 334px
     font-weight: 500;
     text-transform: capitalize;
     letter-spacing: 0.3px;
     white-space: nowrap;
+  }
+
+  // Compact mode: when tags + "more" exceed 334px, reduce font size
+  &__card-tags--compact &__tag-chip {
+    font-size: 9px;
   }
 
   &__tag-more {
@@ -371,6 +379,13 @@
     font-size: 11px;
     font-weight: 500;
     font-style: italic;
+    white-space: nowrap;
+    cursor: help;
+    position: relative;
+
+    &:hover {
+      color: var(--theme-text-primary);
+    }
   }
 
   &__add-tag {
@@ -439,6 +454,30 @@
     &:hover {
       border-color: var(--theme-border-secondary);
       color: var(--theme-text-primary);
+    }
+  }
+
+  &__custom-tooltip {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--theme-text-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.95;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: var(--theme-bg-primary);
     }
   }
 }

@@ -508,53 +508,61 @@
 
   &__card-tags {
     display: flex;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 6px;
     align-items: center;
+    margin-top: 8px;
   }
 
-  &__card-tag {
+  &__tag-chip {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__tag-more {
+    color: var(--theme-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    font-style: italic;
+  }
+
+  &__add-tag {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-  }
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
 
-  &__card-tag-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  &__card-tag-text {
-    font-size: 12px;
-    line-height: 18px;
-  }
-
-  &__card-tag--marketing {
-    .template-drawer__card-tag-dot {
-      background: var(--theme-interactive-primary);
-    }
-    .template-drawer__card-tag-text {
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-interactive-primary);
       color: var(--theme-interactive-primary);
     }
-  }
 
-  &__card-tag--social {
-    .template-drawer__card-tag-dot {
-      background: var(--theme-interactive-secondary);
-    }
-    .template-drawer__card-tag-text {
-      color: var(--theme-interactive-secondary);
-    }
-  }
-
-  // Default styling for any other tags
-  .template-drawer__card-tag:not(.template-drawer__card-tag--marketing):not(.template-drawer__card-tag--social) {
-    .template-drawer__card-tag-dot {
-      background: var(--theme-border-secondary);
-    }
-    .template-drawer__card-tag-text {
-      color: var(--theme-text-secondary);
+    svg {
+      width: 12px;
+      height: 12px;
+      color: inherit;
     }
   }
 

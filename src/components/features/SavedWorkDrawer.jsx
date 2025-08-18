@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { SearchInput, Button, Select, MultiSelect, Dropdown, DropdownItem, DropdownDivider, ContextMenu, TagManagementModal } from '../ui';
 import { EllipsisIcon, PlusIcon } from '../icons';
 import '../../styles/SavedWorkDrawer.scss';
@@ -55,10 +55,43 @@ const mockSavedDocuments = [
     title: 'LinkedIn Post Series - Thought Leadership',
     type: 'social_post',
     project: 'Content Marketing',
-    tags: ['social_post', 'linkedin'],
+    tags: ['social_post', 'linkedin', 'thought_leadership', 'content_marketing', 'professional'],
     status: 'approved',
     lastUpdated: '2024-12-06',
     createdDate: '2024-11-28',
+    author: 'Brand Bot'
+  },
+  {
+    id: 6,
+    title: 'Comprehensive Marketing Campaign - Multi-Channel Strategy',
+    type: 'campaign',
+    project: 'Global Marketing Initiative',
+    tags: ['campaign', 'social_post', 'email', 'paid_ad', 'content_marketing', 'thought_leadership', 'professional', 'landing_page', 'blog'],
+    status: 'in_review',
+    lastUpdated: '2024-12-11',
+    createdDate: '2024-12-01',
+    author: 'Brand Bot'
+  },
+  {
+    id: 7,
+    title: 'Medium Tag Test - Should Show 12px',
+    type: 'campaign',
+    project: 'Test Project',
+    tags: ['campaign', 'email', 'social_post'],
+    status: 'draft',
+    lastUpdated: '2024-12-12',
+    createdDate: '2024-12-01',
+    author: 'Brand Bot'
+  },
+  {
+    id: 8,
+    title: 'Long Tag Names Test - Check Font Sizing',
+    type: 'campaign',
+    project: 'Test Project',
+    tags: ['content_marketing', 'thought_leadership', 'professional', 'landing_page'],
+    status: 'approved',
+    lastUpdated: '2024-12-12',
+    createdDate: '2024-12-01',
     author: 'Brand Bot'
   }
 ];
@@ -73,7 +106,15 @@ const predefinedTags = [
   { value: 'paid_ad', label: 'Paid Ad' },
   { value: 'internal', label: 'Internal' },
   { value: 'sales_copy', label: 'Sales Copy' },
-  { value: 'other', label: 'Other' }
+  { value: 'other', label: 'Other' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'thought_leadership', label: 'Thought Leadership' },
+  { value: 'content_marketing', label: 'Content Marketing' },
+  { value: 'professional', label: 'Professional' },
+  { value: 'press_release', label: 'Press Release' },
+  { value: 'launch', label: 'Launch' },
+  { value: 'holiday', label: 'Holiday' },
+  { value: 'onboarding', label: 'Onboarding' }
 ];
 
 // Get unique projects from documents
@@ -90,6 +131,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
   const [documents, setDocuments] = useState(mockSavedDocuments);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
   const [tagManagementModal, setTagManagementModal] = useState({ isOpen: false, document: null });
+  const [tooltipState, setTooltipState] = useState({ isVisible: false, content: '', position: { x: 0, y: 0 } });
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -230,13 +272,144 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
     console.log(`Updated tags for document ${documentId}:`, newTags);
   };
 
-  // Helper function to render document tags with truncation
-  const renderDocumentTags = (tags, maxVisible = 3, document) => {
-    const visibleTags = tags && tags.length > 0 ? tags.slice(0, maxVisible) : [];
-    const remainingCount = tags ? tags.length - maxVisible : 0;
+  // Tooltip handlers
+  const handleTooltipShow = (event, content) => {
+    const rect = event.target.getBoundingClientRect();
+    setTooltipState({
+      isVisible: true,
+      content: content,
+      position: {
+        x: rect.left + rect.width / 2,
+        y: rect.top - 10
+      }
+    });
+  };
+
+  const handleTooltipHide = () => {
+    setTooltipState({ isVisible: false, content: '', position: { x: 0, y: 0 } });
+  };
+
+  // Component for document tags with dynamic sizing
+  const DocumentTags = ({ tags, document }) => {
+    const [visibleTagCount, setVisibleTagCount] = useState(tags ? tags.length : 0);
+    const [isCompact, setIsCompact] = useState(false);
+    const tagsContainerRef = useRef(null);
+
+    // Simple calculation based on tag length estimation
+    useEffect(() => {
+      if (!tags || tags.length === 0) {
+        setVisibleTagCount(0);
+        setIsCompact(false);
+        return;
+      }
+
+      // More accurate width estimation
+              const baseWidth = 30; // Add tag button (24px + 6px gap)
+      let visibleCount = 0;
+      let needsCompact = false;
+
+      // First, try to fit as many tags as possible at 12px
+      let totalWidth12px = baseWidth;
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagInfo = predefinedTags.find(t => t.value === tag);
+        const tagText = tagInfo ? tagInfo.label : tag;
+        // More accurate estimation: 5.8px per character at 12px + 16px padding + 6px gap
+        const estimatedTagWidth = Math.ceil(tagText.length * 5.8) + 16 + 6;
+        console.log(`[Doc ${document?.id}] Tag "${tagText}" (${tagText.length} chars) estimated width: ${estimatedTagWidth}px, running total: ${totalWidth12px + estimatedTagWidth}px`);
+        
+        if (totalWidth12px + estimatedTagWidth <= 334) {
+          totalWidth12px += estimatedTagWidth;
+          visibleCount = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      // If all tags fit, no need for compact mode
+      if (visibleCount >= tags.length) {
+        console.log(`[Doc ${document?.id}] All ${tags.length} tags fit at 12px, total width: ${totalWidth12px}px`);
+        setVisibleTagCount(tags.length);
+        setIsCompact(false);
+        return;
+      }
+
+      // If we can't fit all tags, we need "+X more"
+      const remainingCount = tags.length - visibleCount;
+      const moreText = `+${remainingCount} more`;
+      // "+X more" estimation: 5.0px per character + 6px gap (italic, slightly smaller)
+      const moreWidth = Math.ceil(moreText.length * 5.0) + 6;
+      console.log(`[Doc ${document?.id}] "+X more" text: "${moreText}" estimated width: ${moreWidth}px`);
+
+      // Check if current visible tags + "+X more" fit within 334px at 12px
+      console.log(`[Doc ${document?.id}] Tags calculation: ${visibleCount} visible tags, width: ${totalWidth12px}px, +more width: ${moreWidth}px, total: ${totalWidth12px + moreWidth}px`);
+      
+      if (totalWidth12px + moreWidth <= 334) {
+        // Perfect! Use 12px font size
+        console.log(`[Doc ${document?.id}] Using 12px font: ${visibleCount} tags + "${moreText}" fits in ${totalWidth12px + moreWidth}px`);
+        setVisibleTagCount(visibleCount);
+        setIsCompact(false);
+        return;
+      }
+
+      // If it doesn't fit, we need to try compact mode (9px)
+      // Recalculate everything with 9px font
+      let totalWidth9px = 30; // Same base width for compact mode
+      let visibleCountCompact = 0;
+      
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagInfo = predefinedTags.find(t => t.value === tag);
+        const tagText = tagInfo ? tagInfo.label : tag;
+        // 9px font estimation: 4.5px per character + 16px padding + 6px gap
+        const estimatedTagWidth = Math.ceil(tagText.length * 4.2) + 16 + 6;
+        
+        // Calculate remaining count for this iteration
+        const currentRemainingCount = tags.length - (i + 1);
+        const currentMoreText = `+${currentRemainingCount} more`;
+        const currentMoreWidth = currentRemainingCount > 0 ? Math.ceil(currentMoreText.length * 4.2) + 6 : 0;
+        
+        if (totalWidth9px + estimatedTagWidth + currentMoreWidth <= 334) {
+          totalWidth9px += estimatedTagWidth;
+          visibleCountCompact = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      // Use compact mode results
+      console.log(`[Doc ${document?.id}] Using 9px compact mode: ${visibleCountCompact} tags, estimated width: ${totalWidth9px}px`);
+      setVisibleTagCount(Math.max(1, visibleCountCompact)); // Ensure at least 1 tag
+      setIsCompact(true);
+    }, [tags]);
+
+    if (!tags || tags.length === 0) {
+      return (
+        <div className="saved-work-drawer__card-tags">
+          <button 
+            className="saved-work-drawer__add-tag"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDocumentAction('manage_tags', document);
+            }}
+            title="Manage Tags"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      );
+    }
+
+    const visibleTags = tags.slice(0, visibleTagCount);
+    const remainingCount = tags.length - visibleTagCount;
 
     return (
-      <div className="saved-work-drawer__card-tags">
+      <div 
+        ref={tagsContainerRef}
+        className={`saved-work-drawer__card-tags ${isCompact ? 'saved-work-drawer__card-tags--compact' : ''}`}
+      >
         {/* Add Tag Button */}
         <button 
           className="saved-work-drawer__add-tag"
@@ -251,7 +424,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
           </svg>
         </button>
         
-        {/* Existing Tags */}
+        {/* Visible Tags */}
         {visibleTags.map(tag => {
           const tagInfo = predefinedTags.find(t => t.value === tag);
           return (
@@ -260,11 +433,32 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
             </span>
           );
         })}
+
+        {/* More Tags Indicator */}
         {remainingCount > 0 && (
-          <span className="saved-work-drawer__tag-more">+{remainingCount} more</span>
+          <span 
+            className="saved-work-drawer__tag-more"
+            onClick={(e) => e.stopPropagation()}
+            onMouseEnter={(e) => {
+              const remainingTags = tags.slice(visibleTagCount);
+              const tooltipText = remainingTags.map(tag => {
+                const tagInfo = predefinedTags.find(t => t.value === tag);
+                return tagInfo ? tagInfo.label : tag;
+              }).join(', ');
+              handleTooltipShow(e, tooltipText);
+            }}
+            onMouseLeave={handleTooltipHide}
+          >
+            +{remainingCount} more
+          </span>
         )}
       </div>
     );
+  };
+
+  // Helper function to render document tags with truncation
+  const renderDocumentTags = (tags, maxVisible = 3, document) => {
+    return <DocumentTags tags={tags} document={document} />;
   };
 
   const getStatusColor = (status) => {
@@ -553,6 +747,22 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
           predefinedTags={predefinedTags}
         />
       </div>
+
+      {/* Custom Tooltip */}
+      {tooltipState.isVisible && (
+        <div 
+          className="saved-work-drawer__custom-tooltip"
+          style={{
+            position: 'fixed',
+            left: tooltipState.position.x,
+            top: tooltipState.position.y,
+            transform: 'translate(-50%, -100%)',
+            zIndex: 10000,
+          }}
+        >
+          {tooltipState.content}
+        </div>
+      )}
     </>
   );
 };
