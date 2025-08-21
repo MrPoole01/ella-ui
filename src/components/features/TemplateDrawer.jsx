@@ -631,16 +631,16 @@ const TemplateDrawer = ({
           <div className="template-drawer__header">
             <div className="template-drawer__tabs">
               <button 
-                className={`template-drawer__tab ${activeTab === 'special-additions' ? 'template-drawer__tab--active' : ''}`}
-                onClick={() => setActiveTab('special-additions')}
-              >
-                Special Edition Templates
-              </button>
-              <button 
                 className={`template-drawer__tab ${activeTab === 'ella-templates' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('ella-templates')}
               >
                 All Templates
+              </button>
+              <button 
+                className={`template-drawer__tab ${activeTab === 'special-additions' ? 'template-drawer__tab--active' : ''}`}
+                onClick={() => setActiveTab('special-additions')}
+              >
+                Special Edition Templates
               </button>
               <button 
                 className={`template-drawer__tab ${activeTab === 'saved-templates' ? 'template-drawer__tab--active' : ''}`}

@@ -287,18 +287,6 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
         {/* Tab Navigation */}
         <div className="ellament-drawer__tabs">
           <button 
-            className={`ellament-drawer__tab ${activeTab === 'special_edition' ? 'ellament-drawer__tab--active' : ''}`}
-            onClick={() => handleTabClick('special_edition')}
-          >
-            Special Edition
-          </button>
-          <button 
-            className={`ellament-drawer__tab ${activeTab === 'custom_instructions' ? 'ellament-drawer__tab--active' : ''}`}
-            onClick={() => handleTabClick('custom_instructions')}
-          >
-            Custom Instructions
-          </button>
-          <button 
             className={`ellament-drawer__tab ${activeTab === 'product' ? 'ellament-drawer__tab--active' : ''}`}
             onClick={() => handleTabClick('product')}
           >
@@ -354,11 +342,26 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             Character
           </button>
           <button 
+            className={`ellament-drawer__tab ${activeTab === 'special_edition' ? 'ellament-drawer__tab--active' : ''}`}
+            onClick={() => handleTabClick('special_edition')}
+          >
+            Special Edition
+          </button>
+          <button 
             className={`ellament-drawer__tab ${activeTab === 'uploaded_files' ? 'ellament-drawer__tab--active' : ''}`}
             onClick={() => handleTabClick('uploaded_files')}
           >
             Uploaded Files
           </button>
+          {/* HIDDEN: Custom Instructions tab - commented out but preserved */}
+          {/* 
+          <button 
+            className={`ellament-drawer__tab ${activeTab === 'custom_instructions' ? 'ellament-drawer__tab--active' : ''}`}
+            onClick={() => handleTabClick('custom_instructions')}
+          >
+            Custom Instructions
+          </button>
+          */}
         </div>
 
         {/* Content */}
