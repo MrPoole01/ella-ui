@@ -314,11 +314,12 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
         const tag = tags[i];
         const tagInfo = predefinedTags.find(t => t.value === tag);
         const tagText = tagInfo ? tagInfo.label : tag;
-        // More accurate estimation: 5.8px per character at 12px + 16px padding + 6px gap
-        const estimatedTagWidth = Math.ceil(tagText.length * 5.8) + 16 + 6;
+        // More conservative estimation for longer tags: scale up character width for longer text
+        const charWidth = tagText.length > 12 ? 6.5 : 5.8; // Wider characters for longer tags
+        const estimatedTagWidth = Math.ceil(tagText.length * charWidth) + 16 + 6;
         console.log(`[Doc ${document?.id}] Tag "${tagText}" (${tagText.length} chars) estimated width: ${estimatedTagWidth}px, running total: ${totalWidth12px + estimatedTagWidth}px`);
         
-        if (totalWidth12px + estimatedTagWidth <= 334) {
+        if (totalWidth12px + estimatedTagWidth <= 328) { // 6px safety margin
           totalWidth12px += estimatedTagWidth;
           visibleCount = i + 1;
         } else {
@@ -337,14 +338,14 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       // If we can't fit all tags, we need "+X more"
       const remainingCount = tags.length - visibleCount;
       const moreText = `+${remainingCount} more`;
-      // "+X more" estimation: 5.0px per character + 6px gap (italic, slightly smaller)
-      const moreWidth = Math.ceil(moreText.length * 5.0) + 6;
+      // "+X more" estimation: 5.5px per character + 6px gap (more conservative)
+      const moreWidth = Math.ceil(moreText.length * 5.5) + 6;
       console.log(`[Doc ${document?.id}] "+X more" text: "${moreText}" estimated width: ${moreWidth}px`);
 
       // Check if current visible tags + "+X more" fit within 334px at 12px
       console.log(`[Doc ${document?.id}] Tags calculation: ${visibleCount} visible tags, width: ${totalWidth12px}px, +more width: ${moreWidth}px, total: ${totalWidth12px + moreWidth}px`);
       
-      if (totalWidth12px + moreWidth <= 334) {
+      if (totalWidth12px + moreWidth <= 328) { // 6px safety margin
         // Perfect! Use 12px font size
         console.log(`[Doc ${document?.id}] Using 12px font: ${visibleCount} tags + "${moreText}" fits in ${totalWidth12px + moreWidth}px`);
         setVisibleTagCount(visibleCount);
@@ -361,15 +362,16 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
         const tag = tags[i];
         const tagInfo = predefinedTags.find(t => t.value === tag);
         const tagText = tagInfo ? tagInfo.label : tag;
-        // 9px font estimation: 4.5px per character + 16px padding + 6px gap
-        const estimatedTagWidth = Math.ceil(tagText.length * 4.2) + 16 + 6;
+        // 9px font estimation: scale up for longer tags
+        const charWidth9px = tagText.length > 12 ? 4.8 : 4.2;
+        const estimatedTagWidth = Math.ceil(tagText.length * charWidth9px) + 16 + 6;
         
         // Calculate remaining count for this iteration
         const currentRemainingCount = tags.length - (i + 1);
         const currentMoreText = `+${currentRemainingCount} more`;
         const currentMoreWidth = currentRemainingCount > 0 ? Math.ceil(currentMoreText.length * 4.2) + 6 : 0;
         
-        if (totalWidth9px + estimatedTagWidth + currentMoreWidth <= 334) {
+        if (totalWidth9px + estimatedTagWidth + currentMoreWidth <= 328) { // 6px safety margin
           totalWidth9px += estimatedTagWidth;
           visibleCountCompact = i + 1;
         } else {
@@ -439,15 +441,6 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
           <span 
             className="saved-work-drawer__tag-more"
             onClick={(e) => e.stopPropagation()}
-            onMouseEnter={(e) => {
-              const remainingTags = tags.slice(visibleTagCount);
-              const tooltipText = remainingTags.map(tag => {
-                const tagInfo = predefinedTags.find(t => t.value === tag);
-                return tagInfo ? tagInfo.label : tag;
-              }).join(', ');
-              handleTooltipShow(e, tooltipText);
-            }}
-            onMouseLeave={handleTooltipHide}
           >
             +{remainingCount} more
           </span>

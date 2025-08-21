@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { PlusIcon } from '../icons';
 import '../../styles/TemplateDrawer.scss';
 import { CustomTemplateModal } from '../ui';
+import TagManagementModal from '../ui/Modal/TagManagementModal';
 
 // Template Icon Components
 const MailIcon = () => (
@@ -127,6 +128,10 @@ const TemplateDrawer = ({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const storageKey = useMemo(() => `brandbot:${brandBotId}:custom_templates`, [brandBotId]);
   const [savedTemplates, setSavedTemplates] = useState([]);
+  
+  // Tag management state
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [tagModalTemplate, setTagModalTemplate] = useState(null);
 
   // Tag label and variant mappings for consistent styling/colors
   const tagValueToLabel = {
@@ -157,6 +162,197 @@ const TemplateDrawer = ({
     linkedin: 'social',
     facebook: 'social',
     twitter: 'social'
+  };
+
+  // Predefined tags for the tag management modal (matching template tag values)
+  const predefinedTags = [
+    { value: 'Marketing', label: 'Marketing' },
+    { value: 'Social', label: 'Social' },
+    { value: 'email', label: 'Email' },
+    { value: 'social_post', label: 'Social Post' },
+    { value: 'campaign', label: 'Campaign' },
+    { value: 'press_release', label: 'Press Release' },
+    { value: 'onboarding', label: 'Onboarding' },
+    { value: 'launch', label: 'Launch' },
+    { value: 'holiday', label: 'Holiday' },
+    { value: 'linkedin', label: 'LinkedIn' },
+    { value: 'facebook', label: 'Facebook' },
+    { value: 'twitter', label: 'Twitter' },
+    { value: 'newsletter', label: 'Newsletter' },
+    { value: 'other', label: 'Other...' }
+  ];
+
+  // Tag management functions
+  const handleOpenTagModal = (template) => {
+    console.log('Opening tag modal for template:', template);
+    console.log('Template tags:', template.tags);
+    console.log('Predefined tags:', predefinedTags.map(t => t.value));
+    setTagModalTemplate(template);
+    setIsTagModalOpen(true);
+  };
+
+  // Dynamic tag sizing component for template cards (160px limit)
+  const TemplateDynamicTags = ({ template, onClick }) => {
+    const tags = template.tags || [];
+    const targetWidth = 160; // 160px limit for template cards
+    const safetyMargin = 10; // Conservative margin
+    const effectiveTargetWidth = targetWidth - safetyMargin;
+    
+    // Character width estimation (similar to SavedWorkDrawer)
+    const getCharWidth = (text, fontSize) => {
+      if (fontSize === 9) return text.length > 12 ? 4.5 : 4.2;
+      return text.length > 12 ? 6.5 : 5.8;
+    };
+    
+    const estimateTagWidth = (tagText, fontSize) => {
+      const charWidth = getCharWidth(tagText, fontSize);
+      const padding = fontSize === 9 ? 12 : 16; // padding + border
+      return Math.ceil(tagText.length * charWidth + padding);
+    };
+    
+    const estimateMoreWidth = (moreText, fontSize) => {
+      const charWidth = fontSize === 9 ? 4.2 : 5.5;
+      const padding = fontSize === 9 ? 12 : 16;
+      return Math.ceil(moreText.length * charWidth + padding);
+    };
+    
+    // Calculate visible tags and compact mode
+    let visibleTagCount = tags.length;
+    let isCompact = false;
+    
+    if (tags.length > 0) {
+      const addTagWidth = 30; // Add tag button width
+      let totalWidth = addTagWidth + 6; // Base width + gap
+      
+      // First try: fit all tags at 12px
+      for (let i = 0; i < tags.length; i++) {
+        const tagWidth = estimateTagWidth(tags[i], 12);
+        if (totalWidth + tagWidth + (i > 0 ? 6 : 0) <= effectiveTargetWidth) {
+          totalWidth += tagWidth + 6;
+        } else {
+          visibleTagCount = i;
+          break;
+        }
+      }
+      
+      // Second try: if we can't fit all, try with "+X more" at 12px
+      if (visibleTagCount < tags.length) {
+        const remainingCount = tags.length - visibleTagCount;
+        const moreText = `+${remainingCount} more`;
+        const moreWidth = estimateMoreWidth(moreText, 12);
+        
+        totalWidth = addTagWidth + 6;
+        for (let i = 0; i < tags.length; i++) {
+          const tagWidth = estimateTagWidth(tags[i], 12);
+          const nextWidth = totalWidth + tagWidth + 6 + moreWidth + 6;
+          
+          if (nextWidth <= effectiveTargetWidth) {
+            totalWidth += tagWidth + 6;
+            visibleTagCount = i + 1;
+          } else {
+            break;
+          }
+        }
+        
+        // Third try: if still not enough space, use 9px compact mode
+        if (visibleTagCount === 0) {
+          isCompact = true;
+          totalWidth = addTagWidth + 6;
+          const moreWidth9 = estimateMoreWidth(moreText, 9);
+          
+          for (let i = 0; i < tags.length; i++) {
+            const tagWidth = estimateTagWidth(tags[i], 9);
+            const nextWidth = totalWidth + tagWidth + 6 + moreWidth9 + 6;
+            
+            if (nextWidth <= effectiveTargetWidth) {
+              totalWidth += tagWidth + 6;
+              visibleTagCount = i + 1;
+            } else {
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    const visibleTags = tags.slice(0, visibleTagCount);
+    const hiddenTags = tags.slice(visibleTagCount);
+    const shouldShowMore = hiddenTags.length > 0;
+    
+    return (
+      <>
+        <div className={`template-drawer__card-tags${isCompact ? ' template-drawer__card-tags--compact' : ''}`}>
+          <button className="template-drawer__add-tag" title="Manage Tags" onClick={onClick}>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+          </button>
+          {visibleTags.map((tag, index) => (
+            <span key={index} className="template-drawer__tag-chip">{tag}</span>
+          ))}
+          {shouldShowMore && (
+            <span 
+              className="template-drawer__tag-more"
+              onClick={(e) => e.stopPropagation()}
+            >
+              +{hiddenTags.length} more
+            </span>
+          )}
+        </div>
+
+      </>
+    );
+  };
+
+  const handleCloseTagModal = () => {
+    setIsTagModalOpen(false);
+    setTagModalTemplate(null);
+  };
+
+  const handleSaveTagChanges = (templateId, newTags) => {
+    console.log('Saving tag changes for template ID:', templateId, 'New tags:', newTags);
+    
+    // Check if it's a digital asset template
+    const isDigitalAsset = digitalAssets.some(template => template.id === templateId);
+    if (isDigitalAsset) {
+      console.log('Updating digital asset template');
+      setDigitalAssets(prev => 
+        prev.map(template => 
+          template.id === templateId ? { ...template, tags: newTags } : template
+        )
+      );
+      return;
+    }
+    
+    // Check if it's an advertising asset template
+    const isAdvertisingAsset = advertisingAssets.some(template => template.id === templateId);
+    if (isAdvertisingAsset) {
+      console.log('Updating advertising asset template');
+      setAdvertisingAssets(prev => 
+        prev.map(template => 
+          template.id === templateId ? { ...template, tags: newTags } : template
+        )
+      );
+      return;
+    }
+    
+    // Must be a saved template - update localStorage
+    console.log('Updating saved template');
+    setSavedTemplates(prev => 
+      prev.map(template => 
+        template.id === templateId ? { ...template, tags: newTags } : template
+      )
+    );
+    
+    // Update localStorage for saved templates
+    const updatedTemplates = savedTemplates.map(template => 
+      template.id === templateId ? { ...template, tags: newTags } : template
+    );
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(updatedTemplates));
+    } catch (e) {
+      console.error('Failed to save template tags:', e);
+    }
   };
 
   useEffect(() => {
@@ -193,8 +389,8 @@ const TemplateDrawer = ({
     setActiveTab('saved-templates');
   };
 
-  // Digital Assets templates
-  const digitalAssets = [
+  // Digital Assets templates (now stateful to allow tag updates)
+  const [digitalAssets, setDigitalAssets] = useState([
     {
       id: 1,
       icon: <MailIcon />,
@@ -300,10 +496,10 @@ const TemplateDrawer = ({
       description: 'Plan for next email campaign and outreach',
       tags: ['Marketing', 'Social']
     }
-  ];
+  ]);
 
-  // Advertising Assets templates
-  const advertisingAssets = [
+  // Advertising Assets templates (now stateful to allow tag updates)
+  const [advertisingAssets, setAdvertisingAssets] = useState([
     {
       id: 16,
       icon: <SearchIcon />,
@@ -332,7 +528,7 @@ const TemplateDrawer = ({
       description: 'Plan for next email campaign and outreach',
       tags: ['Marketing', 'Social']
     }
-  ];
+  ]);
 
   // Close drawer when clicking outside
   useEffect(() => {
@@ -398,16 +594,10 @@ const TemplateDrawer = ({
         </div>
         <p className="template-drawer__card-description">{template.description}</p>
         <div className="template-drawer__card-footer">
-          <div className="template-drawer__card-tags">
-            <button className="template-drawer__add-tag" title="Manage Tags">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-              </svg>
-            </button>
-            {template.tags.map((tag, index) => (
-              <span key={index} className="template-drawer__tag-chip">{tag}</span>
-            ))}
-          </div>
+          <TemplateDynamicTags 
+            template={template} 
+            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
+          />
           <div className="template-drawer__card-rating">
             <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
               <defs>
@@ -570,16 +760,10 @@ const TemplateDrawer = ({
                         </div>
                         <p className="template-drawer__card-description">{template.description}</p>
                         <div className="template-drawer__card-footer">
-                          <div className="template-drawer__card-tags">
-                            <button className="template-drawer__add-tag" title="Manage Tags">
-                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                              </svg>
-                            </button>
-                            {template.tags.map((tag, index) => (
-                              <span key={index} className="template-drawer__tag-chip">{tag}</span>
-                            ))}
-                          </div>
+                          <TemplateDynamicTags 
+                            template={template} 
+                            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
+                          />
                           <div className="template-drawer__card-rating">
                             <svg height="14" viewBox="0 0 90.44 90.68" xmlns="http://www.w3.org/2000/svg">
                               <defs>
@@ -667,19 +851,15 @@ const TemplateDrawer = ({
                           </div>
                           <p className="template-drawer__card-description">{template.preview || 'Custom template'}</p>
                           <div className="template-drawer__card-footer">
-                            <div className="template-drawer__card-tags">
-                              <button className="template-drawer__add-tag" title="Manage Tags">
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                  <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                                </svg>
-                              </button>
-                              {(template.tags || []).map((tagValue) => {
-                                const label = tagValueToLabel[tagValue] || tagValue.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                                return (
-                                  <span key={tagValue} className="template-drawer__tag-chip">{label}</span>
-                                );
-                              })}
-                            </div>
+                            <TemplateDynamicTags 
+                              template={{
+                                ...template,
+                                tags: (template.tags || []).map(tagValue => 
+                                  tagValueToLabel[tagValue] || tagValue.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
+                                )
+                              }} 
+                              onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
+                            />
                             <div className="template-drawer__card-rating">
                               <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
                                 <defs>
@@ -720,6 +900,15 @@ const TemplateDrawer = ({
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onSave={handleCreateTemplate}
+      />
+
+      {/* Tag Management Modal */}
+      <TagManagementModal
+        isOpen={isTagModalOpen}
+        onClose={handleCloseTagModal}
+        onSave={handleSaveTagChanges}
+        document={tagModalTemplate}
+        predefinedTags={predefinedTags}
       />
     </>
   );

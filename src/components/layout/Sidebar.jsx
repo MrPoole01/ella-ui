@@ -8,6 +8,7 @@ import ChatItem from '../ui/ChatItem';
 import SavedWorkDrawer from '../features/SavedWorkDrawer';
 import DocumentDrawer from '../features/DocumentDrawer';
 import EllamentDrawer from '../features/EllamentDrawer';
+import TagManagementModal from '../ui/Modal/TagManagementModal';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -28,6 +29,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [selectedEllament, setSelectedEllament] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
   const [activeProjectMenu, setActiveProjectMenu] = useState(null);
+  const [isTagModalOpen, setIsTagModalOpen] = useState(false);
+  const [tagModalDocument, setTagModalDocument] = useState(null);
+  const [tagModalType, setTagModalType] = useState(''); // 'document', 'task', 'savedWork'
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
   const sectionMenuRef = useRef(null);
@@ -37,8 +41,33 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const documentMenuRef = useRef(null);
   const projectMenuDropdownRef = useRef(null);
 
-  // Sample documents data based on Motiff design
-  const sampleDocuments = [
+  // Predefined tags for the tag management modal (values match existing data)
+  const predefinedTags = [
+    { value: 'Legal', label: 'Legal' },
+    { value: 'Contract', label: 'Contract' },
+    { value: 'Customer', label: 'Customer' },
+    { value: 'Marketing', label: 'Marketing' },
+    { value: 'Technical', label: 'Technical' },
+    { value: 'Product', label: 'Product' },
+    { value: 'Support', label: 'Support' },
+    { value: 'Order', label: 'Order' },
+    { value: 'Sales', label: 'Sales' },
+    { value: 'Products', label: 'Products' },
+    { value: 'Feedback', label: 'Feedback' },
+    { value: 'Survey', label: 'Survey' },
+    { value: 'Design 2021', label: 'Design 2021' },
+    { value: 'Work', label: 'Work' },
+    { value: 'Design', label: 'Design' },
+    { value: 'Daily', label: 'Daily' },
+    { value: 'Social Post', label: 'Social Post' },
+    { value: 'Campaign', label: 'Campaign' },
+    { value: 'LinkedIn', label: 'LinkedIn' },
+    { value: 'Professional', label: 'Professional' },
+    { value: 'other', label: 'Other...' }
+  ];
+
+  // Sample documents data based on Motiff design (now stateful for tag updates)
+  const [sampleDocuments, setSampleDocuments] = useState([
     {
       id: 1,
       type: 'PDF',
@@ -89,10 +118,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       typeColor: '#2563EB',
       typeBg: '#DBEAFE'
     }
-  ];
+  ]);
 
-  // Sample saved work data based on Motiff design
-  const sampleSavedWork = [
+  // Sample saved work data based on Motiff design (now stateful for tag updates)
+  const [sampleSavedWork, setSampleSavedWork] = useState([
     {
       id: 1,
       title: 'Customer Support Response',
@@ -128,10 +157,10 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       tags: ['Feedback', 'Survey'],
       saved: '05/01/2025 @ 9:10am'
     }
-  ];
+  ]);
 
-  // Sample tasks data based on Motiff design
-  const sampleTasks = [
+  // Sample tasks data based on Motiff design (now stateful for tag updates)
+  const [sampleTasks, setSampleTasks] = useState([
     {
       id: 1,
       title: 'User Experience',
@@ -172,7 +201,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       tags: ['Design', 'Daily'],
       completed: false
     }
-  ];
+  ]);
 
   const recentChats = [
     {
@@ -212,6 +241,189 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       updated: "Updated: 05/13/2025 @ 4:15pm"
     }
   ];
+
+  // Dynamic Tags Component for sidebar menus (239px width limit)
+  const SidebarDynamicTags = ({ tags, item, type, containerClass, addButtonClass, tagChipClass, tagMoreClass }) => {
+    const [visibleTagCount, setVisibleTagCount] = useState(tags ? tags.length : 0);
+    const [isCompact, setIsCompact] = useState(false);
+
+    // Calculate visible tags and compact mode (239px limit for sidebar)
+    useEffect(() => {
+      if (!tags || tags.length === 0) {
+        setVisibleTagCount(0);
+        setIsCompact(false);
+        return;
+      }
+
+      const baseWidth = 30; // Add tag button width
+      const safetyMargin = 20; // More conservative margin for sidebar
+      const targetWidth = 239 - safetyMargin; // 239px limit for sidebar (219px effective)
+      let visibleCount = 0;
+
+      console.log(`[${type}] Calculating tags for ${tags.length} tags with ${targetWidth}px target width`);
+
+      // First, try to fit as many tags as possible at 12px
+      let totalWidth12px = baseWidth;
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagInfo = predefinedTags.find(t => t.value === tag);
+        const tagText = tagInfo ? tagInfo.label : tag;
+        // More conservative estimation for longer tags: scale up character width for longer text
+        const charWidth = tagText.length > 12 ? 6.5 : 5.8;
+        const estimatedTagWidth = Math.ceil(tagText.length * charWidth) + 16 + 6;
+        
+        console.log(`[${type}] Tag "${tagText}" (${tagText.length} chars) estimated width: ${estimatedTagWidth}px, running total: ${totalWidth12px + estimatedTagWidth}px`);
+        
+        if (totalWidth12px + estimatedTagWidth <= targetWidth) {
+          totalWidth12px += estimatedTagWidth;
+          visibleCount = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      // If all tags fit, no need for compact mode
+      if (visibleCount >= tags.length) {
+        console.log(`[${type}] All ${tags.length} tags fit at 12px font`);
+        setVisibleTagCount(tags.length);
+        setIsCompact(false);
+        return;
+      }
+
+      // If we can't fit all tags, we need "+X more"
+      const remainingCount = tags.length - visibleCount;
+      const moreText = `+${remainingCount} more`;
+      // "+X more" estimation: 5.5px per character + 6px gap (more conservative)
+      const moreWidth = Math.ceil(moreText.length * 5.5) + 6;
+      console.log(`[${type}] "+X more" text: "${moreText}" estimated width: ${moreWidth}px`);
+
+      // Check if current visible tags + "+X more" fit within 239px at 12px
+      console.log(`[${type}] Tags calculation: ${visibleCount} visible tags, width: ${totalWidth12px}px, +more width: ${moreWidth}px, total: ${totalWidth12px + moreWidth}px`);
+      
+      if (totalWidth12px + moreWidth <= targetWidth) {
+        // Perfect! Use 12px font size
+        console.log(`[${type}] Using 12px font: ${visibleCount} tags + "${moreText}" fits in ${totalWidth12px + moreWidth}px`);
+        setVisibleTagCount(visibleCount);
+        setIsCompact(false);
+        return;
+      }
+
+      // If it doesn't fit, we need to try compact mode (9px)
+      // Recalculate everything with 9px font
+      let totalWidth9px = 30; // Same base width for compact mode
+      let visibleCountCompact = 0;
+      
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagInfo = predefinedTags.find(t => t.value === tag);
+        const tagText = tagInfo ? tagInfo.label : tag;
+        // 9px font estimation: scale up for longer tags
+        const charWidth9px = tagText.length > 12 ? 4.8 : 4.2;
+        const estimatedTagWidth = Math.ceil(tagText.length * charWidth9px) + 16 + 6;
+        
+        // Calculate remaining count for this iteration
+        const currentRemainingCount = tags.length - (i + 1);
+        const currentMoreText = `+${currentRemainingCount} more`;
+        const currentMoreWidth = currentRemainingCount > 0 ? Math.ceil(currentMoreText.length * 4.2) + 6 : 0;
+        
+        if (totalWidth9px + estimatedTagWidth + currentMoreWidth <= targetWidth) {
+          totalWidth9px += estimatedTagWidth;
+          visibleCountCompact = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      console.log(`[${type}] Using 9px compact mode: ${visibleCountCompact} visible tags`);
+      setVisibleTagCount(visibleCountCompact);
+      setIsCompact(true);
+    }, [tags, type]);
+
+
+
+    if (!tags || tags.length === 0) return null;
+
+    const visibleTags = tags.slice(0, visibleTagCount);
+    const remainingTags = tags.slice(visibleTagCount);
+    const remainingCount = remainingTags.length;
+
+    console.log(`[${type}] Final render: ${visibleTagCount} visible tags, ${remainingCount} remaining, isCompact: ${isCompact}`);
+
+    return (
+      <>
+        <div className={`${containerClass}${isCompact ? ` ${containerClass}--compact` : ''}`}>
+          <button 
+            className={addButtonClass} 
+            title="Manage Tags" 
+            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(item, type); }}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            </svg>
+          </button>
+          {visibleTags.map((tag, index) => (
+            <span key={index} className={tagChipClass}>
+              {predefinedTags.find(t => t.value === tag)?.label || tag}
+            </span>
+          ))}
+          {remainingCount > 0 && (
+            <span 
+              className={tagMoreClass}
+              onClick={(e) => e.stopPropagation()}
+            >
+              +{remainingCount} more
+            </span>
+          )}
+        </div>
+
+
+      </>
+    );
+  };
+
+  // Tag management functions
+  const handleOpenTagModal = (item, type) => {
+    // Normalize the item structure for the modal
+    const normalizedItem = {
+      ...item,
+      title: item.title || item.name, // Ensure title exists for all types
+      tags: item.tags || [] // Ensure tags array exists
+    };
+    console.log('Opening tag modal for:', type, 'Item:', normalizedItem);
+    console.log('Item tags:', normalizedItem.tags);
+    console.log('Predefined tags:', predefinedTags.map(t => t.value));
+    setTagModalDocument(normalizedItem);
+    setTagModalType(type);
+    setIsTagModalOpen(true);
+  };
+
+  const handleCloseTagModal = () => {
+    setIsTagModalOpen(false);
+    setTagModalDocument(null);
+    setTagModalType('');
+  };
+
+  const handleSaveTagChanges = (itemId, newTags) => {
+    if (tagModalType === 'document') {
+      setSampleDocuments(prev => 
+        prev.map(doc => 
+          doc.id === itemId ? { ...doc, tags: newTags } : doc
+        )
+      );
+    } else if (tagModalType === 'task') {
+      setSampleTasks(prev => 
+        prev.map(task => 
+          task.id === itemId ? { ...task, tags: newTags } : task
+        )
+      );
+    } else if (tagModalType === 'savedWork') {
+      setSampleSavedWork(prev => 
+        prev.map(work => 
+          work.id === itemId ? { ...work, tags: newTags } : work
+        )
+      );
+    }
+  };
 
   const handleWorkspaceMenuClick = () => {
     setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen);
@@ -405,6 +617,14 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Ignore clicks on the tag management modal or when modal is open
+      if (isTagModalOpen || 
+          event.target.closest('.tag-management-modal') || 
+          event.target.closest('.tag-management-modal__backdrop') ||
+          event.target.classList.contains('tag-management-modal__backdrop')) {
+        return;
+      }
+      
       // Workspace menu should only close via the close button, so no click-outside behavior
       
       if (projectMenuRef.current && !projectMenuRef.current.contains(event.target)) {
@@ -471,7 +691,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
-  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen, activeEllipsisMenu, activeDocumentMenu, activeProjectMenu]);
+  }, [isProjectMenuOpen, isSectionMenuOpen, isFilesMenuOpen, isSavedWorkMenuOpen, activeEllipsisMenu, activeDocumentMenu, activeProjectMenu, isTagModalOpen]);
 
   return (
     <>
@@ -505,29 +725,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           </svg>
           <span className="sidebar__workspace-name">Workspace 1</span>
         </div>
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="4" 
-          height="17.5" 
-          viewBox="0 0 4 17.5" 
-          className="chevron-down-icon workspace-ellipsis"
-        >
-          <defs>
-            <clipPath id="clipPath9062581315-ellipsis">
-              <path d="M0 0L4 0L4 16L0 16L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 1.5)"/>
-            </clipPath>
-          </defs>
-          <g clipPath="url(#clipPath9062581315-ellipsis)">
-            <defs>
-              <mask id="mask5370462388-ellipsis" style={{maskType: 'alpha'}}>
-                <path d="M0 0L4 0L4 16L0 16L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 1.5)" fill="rgb(0, 0, 0)"/>
-              </mask>
-            </defs>
-            <g mask="url(#mask5370462388-ellipsis)">
-              <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 1.5)" fill="rgb(93, 93, 93)"/>
-            </g>
-          </g>
-        </svg>
+
 
       </div>
 
@@ -1071,7 +1269,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Pagination */}
           <div className="project-menu__pagination">
             <span className="project-menu__pagination-info">
-              Showing 1-6 of 20 projects
+              Showing 1-6 of 20
             </span>
             <div className="project-menu__pagination-controls">
               <button className="project-menu__page-btn project-menu__page-btn--active">1</button>
@@ -1179,18 +1377,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   <div className="files-menu__document-updated">
                     Updated: {task.updated}
                   </div>
-                  <div className="section-menu__task-tags">
-                    <button className="section-menu__add-tag" title="Manage Tags">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                      </svg>
-                    </button>
-                    {task.tags.map((tag, index) => (
-                      <span key={index} className="section-menu__tag-chip">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                                     <SidebarDynamicTags
+                     tags={task.tags}
+                     item={task}
+                     type="task"
+                     containerClass="section-menu__task-tags"
+                     addButtonClass="section-menu__add-tag"
+                     tagChipClass="section-menu__tag-chip"
+                     tagMoreClass="section-menu__tag-more"
+                   />
                 </div>
               </div>
             ))}
@@ -1199,7 +1394,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Pagination */}
           <div className="section-menu__pagination">
             <span className="section-menu__pagination-info">
-              Showing 1-6 of 20 chats
+              Showing 1-6 of 20
             </span>
             <div className="section-menu__pagination-controls">
               <button className="section-menu__page-btn section-menu__page-btn--active">1</button>
@@ -1347,18 +1542,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   <div className="files-menu__document-updated">
                     Updated: {doc.updated}
                   </div>
-                  <div className="files-menu__document-category">
-                    <button className="files-menu__add-tag" title="Manage Tags">
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                      </svg>
-                    </button>
-                    {doc.tags.map((tag, index) => (
-                      <span key={index} className="files-menu__tag-chip">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                                     <SidebarDynamicTags
+                     tags={doc.tags}
+                     item={doc}
+                     type="document"
+                     containerClass="files-menu__document-category"
+                     addButtonClass="files-menu__add-tag"
+                     tagChipClass="files-menu__tag-chip"
+                     tagMoreClass="files-menu__tag-more"
+                   />
                 </div>
               </div>
             ))}
@@ -1367,7 +1559,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Pagination */}
           <div className="files-menu__pagination">
             <div className="files-menu__pagination-info">
-              Showing 1-6 of 20 files
+              Showing 1-6 of 20
             </div>
             <div className="files-menu__pagination-controls">
               <button className="files-menu__page-btn files-menu__page-btn--active">1</button>
@@ -1508,18 +1700,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                     Saved: {item.saved}
                   </div>
                 </div>
-                <div className="saved-work-menu__item-footer">
-                  <button className="saved-work-menu__add-tag" title="Manage Tags">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-                    </svg>
-                  </button>
-                  {item.tags.map((tag, index) => (
-                    <span key={index} className="saved-work-menu__tag-chip">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                                 <SidebarDynamicTags
+                   tags={item.tags}
+                   item={item}
+                   type="savedWork"
+                   containerClass="saved-work-menu__item-footer"
+                   addButtonClass="saved-work-menu__add-tag"
+                   tagChipClass="saved-work-menu__tag-chip"
+                   tagMoreClass="saved-work-menu__tag-more"
+                 />
               </div>
             ))}
           </div>
@@ -1527,7 +1716,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           {/* Pagination */}
           <div className="saved-work-menu__pagination">
             <div className="saved-work-menu__pagination-info">
-              Showing 1-6 of 20 docs
+              Showing 1-6 of 20
             </div>
             <div className="saved-work-menu__pagination-controls">
               <button className="saved-work-menu__page-btn saved-work-menu__page-btn--active">1</button>
@@ -1698,6 +1887,15 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         setShowDocumentDrawer(true);
         setShowEllamentDrawer(false);
       }}
+    />
+
+    {/* Tag Management Modal */}
+    <TagManagementModal
+      isOpen={isTagModalOpen}
+      onClose={handleCloseTagModal}
+      onSave={handleSaveTagChanges}
+      document={tagModalDocument}
+      predefinedTags={predefinedTags}
     />
     </>
   );

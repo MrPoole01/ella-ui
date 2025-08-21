@@ -357,9 +357,9 @@
   }
 
   &__tag-chip {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 12px; // Default size when no "more" tags or when content fits within 334px
@@ -380,18 +380,14 @@
     font-weight: 500;
     font-style: italic;
     white-space: nowrap;
-    cursor: help;
     position: relative;
-
-    &:hover {
-      color: var(--theme-text-primary);
-    }
+    margin-left: auto; // Always right-justified in flex container
   }
 
   &__add-tag {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;

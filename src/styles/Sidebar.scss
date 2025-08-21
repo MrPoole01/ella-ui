@@ -44,6 +44,10 @@
     padding: 14px 14px;
     background-color: var(--theme-bg-modal);
     border-radius: 4px;
+
+    &:hover {
+      opacity: 0.8;
+    }
   }
 
   &__workspace-info {
@@ -1721,7 +1725,7 @@
   &__create-btn {
     background: var(--theme-primary);
     border: none;
-    color: white;
+    color: var(--theme-bg-primary);
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -1918,8 +1922,9 @@
       color: var(--theme-text-muted);
 
       &:hover {
-        opacity: 0.7;
-        color: var(--theme-text-secondary);
+        circle {
+          fill: var(--theme-primary-bright);
+        }
       }
     }
   }
@@ -2390,7 +2395,7 @@
   &__create-btn {
     background: var(--theme-primary);
     border: none;
-    color: white;
+    color: var(--theme-bg-primary);
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -3036,18 +3041,14 @@
     transition: opacity 0.2s ease;
     color: var(--theme-text-muted);
 
-    &:hover {
-      opacity: 1;
-      color: var(--theme-interactive-primary);
-    }
-
     svg {
       color: var(--theme-text-muted);
       transition: color 0.2s ease;
-    }
-
-    &:hover svg {
-      color: var(--theme-interactive-primary);
+   
+      &:hover 
+        path {
+          fill: var(--theme-primary-bright);
+        }
     }
 
     // Theme-specific styling
@@ -3162,9 +3163,9 @@
   }
 
   &__tag-chip {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -3182,9 +3183,9 @@
   }
 
   &__add-tag {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -3772,7 +3773,7 @@
   &__create-btn {
     background: var(--theme-primary);
     border: none;
-    color: white;
+    color: var(--theme-bg-primary);
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -3958,9 +3959,14 @@
     color: var(--theme-text-secondary);
     transition: all 0.2s ease;
 
-    &:hover {
-      opacity: 0.7;
-      color: var(--theme-text-primary);
+    svg {
+      color: var(--theme-text-muted);
+      transition: color 0.2s ease;
+   
+      &:hover 
+        path {
+          fill: var(--theme-primary-bright);
+        }
     }
 
     // Electric Dark theme
@@ -4158,9 +4164,9 @@
   }
 
   &__tag-chip {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -4178,9 +4184,9 @@
   }
 
   &__add-tag {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -4270,7 +4276,7 @@
 
     &--active {
       background: var(--theme-interactive-primary);
-      color: var(--theme-text-on-primary);
+      color: var(--theme-bg-primary);
       border-color: var(--theme-interactive-primary);
     }
 
@@ -4496,7 +4502,7 @@
   &__create-btn {
     background: var(--theme-primary);
     border: none;
-    color: white;
+    color: var(--theme-bg-primary);
     font-family: 'Geist', sans-serif;
     font-weight: 500;
     line-height: 16px;
@@ -4773,9 +4779,14 @@
     color: var(--theme-text-secondary);
     transition: all 0.2s ease;
 
-    &:hover {
-      opacity: 0.7;
-      color: var(--theme-text-primary);
+    svg {
+      color: var(--theme-text-muted);
+      transition: color 0.2s ease;
+   
+      &:hover 
+        path {
+          fill: var(--theme-primary-bright);
+        }
     }
 
     // Electric Dark theme
@@ -4820,9 +4831,9 @@
   }
 
   &__tag-chip {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -4840,9 +4851,9 @@
   }
 
   &__add-tag {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
@@ -5083,7 +5094,7 @@
 
     &--active {
       background: var(--theme-interactive-primary);
-      color: var(--theme-text-on-primary);
+      color: var(--theme-bg-primary);
       border-color: var(--theme-interactive-primary);
     }
 
@@ -5305,4 +5316,108 @@ circle.css-1hs7rf2-JoyCircularProgress-progress {
 [class*="css-"][class*="JoyCircularProgress-progress"] {
   stroke: var(--theme-interactive-primary) !important;
   color: var(--theme-interactive-primary) !important;
+}
+
+// Sidebar Dynamic Tags Styles (239px width limit)
+.sidebar-dynamic-tags {
+  &__custom-tooltip {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--theme-text-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0.95;
+    max-width: 300px;
+    word-wrap: break-word;
+    white-space: normal;
+
+    &-arrow {
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 5px solid var(--theme-border-secondary);
+    }
+
+    &-arrow::after {
+      content: '';
+      position: absolute;
+      bottom: 1px;
+      left: -4px;
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid var(--theme-bg-primary);
+    }
+  }
+}
+
+// Compact mode styles for sidebar tags (9px font when exceeding 239px) with high specificity
+.sidebar .section-menu__task-tags--compact .section-menu__tag-chip,
+.sidebar .files-menu__document-category--compact .files-menu__tag-chip,
+.sidebar .saved-work-menu__item-footer--compact .saved-work-menu__tag-chip {
+  font-size: 9px !important;
+}
+
+// Sidebar tag containers - prevent wrapping and enforce 239px limit with high specificity
+.sidebar .section-menu__task-tags,
+.sidebar .files-menu__document-category,
+.sidebar .saved-work-menu__item-footer {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important; // Override existing wrap styles
+  overflow: visible !important; // Hide overflow
+  max-width: 239px !important; // Enforce width limit
+  width: 100% !important; // Take available width up to max
+  box-sizing: border-box !important;
+  
+  // Force single line layout
+  height: 32px !important; // Fixed height to prevent vertical expansion
+  min-height: 32px !important; // Ensure minimum height
+}
+
+// Specific overrides for each container type
+.sidebar .section-menu__task-tags,
+.sidebar .files-menu__document-category {
+  margin-top: 8px !important; // Maintain existing spacing
+}
+
+.sidebar .saved-work-menu__item-footer {
+  margin-top: 3px !important; // Maintain existing spacing
+  min-height: 32px !important; // Override to match other containers
+}
+
+// Right-justify tag more elements in sidebar with high specificity
+.sidebar .section-menu__tag-more,
+.sidebar .files-menu__tag-more,
+.sidebar .saved-work-menu__tag-more {
+  margin-left: auto !important;
+  flex-shrink: 0 !important; // Prevent shrinking
+  white-space: nowrap !important; // Prevent text wrapping
+}
+
+// Ensure tag chips don't wrap or shrink with high specificity
+.sidebar .section-menu__tag-chip,
+.sidebar .files-menu__tag-chip,
+.sidebar .saved-work-menu__tag-chip {
+  flex-shrink: 0 !important; // Prevent shrinking
+  white-space: nowrap !important; // Prevent text wrapping
+}
+
+// Ensure add tag buttons don't shrink with high specificity
+.sidebar .section-menu__add-tag,
+.sidebar .files-menu__add-tag,
+.sidebar .saved-work-menu__add-tag {
+  flex-shrink: 0 !important; // Prevent shrinking
 }

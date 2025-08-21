@@ -62,7 +62,7 @@
 
     &--active {
       background: var(--theme-interactive-primary);
-      color: var(--theme-text-primary);
+      color: var(--theme-bg-primary);
       font-weight: 700;
       border-color: var(--theme-interactive-primary);
       
@@ -507,44 +507,86 @@
   }
 
   &__card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    align-items: center !important;
     margin-top: 8px;
+    overflow: visible !important;
+    max-width: 160px !important;
+    width: 100% !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    box-sizing: border-box !important;
   }
 
   &__tag-chip {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-orange-subtle);
+    border-color: var(--theme-primary);
+    color: var(--theme-primary-bright);
     border-radius: 6px;
     padding: 4px 8px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     text-transform: capitalize;
     letter-spacing: 0.3px;
-    white-space: nowrap;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
 
   &__tag-more {
-    color: var(--theme-text-secondary);
-    font-size: 11px;
+    // background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-accent-primary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 500;
-    font-style: italic;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    margin-left: auto;
+  }
+
+  // Compact mode for template tags
+  &__card-tags--compact &__tag-chip {
+    font-size: 9px;
+  }
+
+  &__card-tags--compact &__tag-more {
+    font-size: 9px;
+  }
+
+  &__custom-tooltip {
+    position: fixed;
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10020;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--theme-border-primary);
+    pointer-events: none;
+    max-width: 300px;
+    word-wrap: break-word;
+    white-space: normal;
   }
 
   &__add-tag {
-    background: var(--theme-bg-tertiary);
-    color: var(--theme-text-primary);
-    border: 1px solid var(--theme-border-secondary);
+    background: var(--theme-orange-subtle);
+    color: var(--theme-primary-bright);
+    border: none !important; // Remove any border that could cause embossed effect
     border-radius: 6px;
     padding: 4px 8px;
     font-size: 11px;
     font-weight: 500;
     text-transform: capitalize;
     letter-spacing: 0.3px;
-    white-space: nowrap;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -552,11 +594,28 @@
     transition: all 0.2s ease;
     min-width: 24px;
     height: 22px;
+    box-shadow: none !important; // Remove any box-shadow that could cause raised appearance
+    outline: none !important; // Remove focus outline
+    appearance: none !important; // Remove default button styling
+    text-shadow: none !important; // Remove any text shadow
+    filter: none !important; // Remove any filters that could cause raised effect
 
     &:hover {
-      background: var(--theme-bg-secondary);
-      border-color: var(--theme-interactive-primary);
-      color: var(--theme-interactive-primary);
+      background: var(--theme-primary);
+      color: var(--theme-bg-primary);
+      border: none !important; // Ensure no border on hover
+      box-shadow: none !important; // Ensure no shadow on hover
+      text-shadow: none !important; // Ensure no text shadow on hover
+      filter: none !important; // Ensure no filter effects on hover
+    }
+
+    &:focus,
+    &:active {
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+      text-shadow: none !important;
+      filter: none !important;
     }
 
     svg {
@@ -779,6 +838,12 @@
           -1px -1px 3px rgba(255, 255, 255, 0.7);
       }
     }
+
+    .template-drawer__add-tag {
+      box-shadow: none !important; // Override any inherited neumorphism effects
+      border: none !important;
+      appearance: none !important;
+    }
   }
 
   .theme-neumorphism-dark & {
@@ -861,6 +926,12 @@
           1px 1px 3px rgba(0, 0, 0, 0.5),
           -1px -1px 3px rgba(255, 255, 255, 0.08);
       }
+    }
+
+    .template-drawer__add-tag {
+      box-shadow: none !important; // Override any inherited neumorphism effects
+      border: none !important;
+      appearance: none !important;
     }
   }
 
