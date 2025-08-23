@@ -1870,6 +1870,7 @@
     flex-direction: column;
     gap: 2px;
     transition: all 0.2s ease;
+    height: 114px;
     cursor: pointer;
 
     &:hover {
@@ -2110,6 +2111,7 @@
   &__project-description {
     color: var(--theme-text-secondary);
     line-height: 24px;
+    height: initial;
     margin: 0;
     font-size: 12px;
   }

@@ -48,6 +48,32 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
     setTagManagementModal({ isOpen: true, document: currentDocument });
   };
 
+  // Chat response action handlers
+  const handleThumbsUp = () => {
+    console.log('Document chat thumbs up clicked');
+    // Add your thumbs up logic here
+  };
+
+  const handleThumbsDown = () => {
+    console.log('Document chat thumbs down clicked');
+    // Add your thumbs down logic here
+  };
+
+  const handleCopy = async () => {
+    try {
+      // Get the chat message text
+      const chatMessageElement = document.querySelector('.document-drawer__chat-message');
+      if (chatMessageElement) {
+        const messageText = chatMessageElement.innerText;
+        await navigator.clipboard.writeText(messageText);
+        console.log('Document chat message copied to clipboard');
+        // You could add a toast notification here
+      }
+    } catch (err) {
+      console.error('Failed to copy chat message: ', err);
+    }
+  };
+
   if (!isOpen || !document) return null;
 
   const handleEdit = () => {
@@ -266,6 +292,25 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                       <li>Update tags and categorization</li>
                     </ul>
                     <p>What would you like to work on first?</p>
+                    
+                    {/* Chat Response Actions */}
+                    <div className="document-drawer__response-actions">
+                      <button className="document-drawer__response-button document-drawer__thumbs-up" title="Thumbs up" onClick={handleThumbsUp}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M8.864 1.6c.8 0 1.45.65 1.45 1.45v2.9H14.1c.8 0 1.45.65 1.45 1.45 0 .25-.05.5-.15.75l-2 5.5c-.2.5-.65.85-1.2.85H5.4c-.8 0-1.45-.65-1.45-1.45V8.5c0-.4.15-.75.4-1.05l3.5-4.5c.3-.35.7-.55 1.15-.55h.05c.1 0 .2 0 .3.05.1.05.15.15.15.25v1.45c0 .8-.65 1.45-1.45 1.45H6.9l1.95-2.5v-.5zM2.5 7h1v6.5h-1c-.55 0-1-.45-1-1V8c0-.55.45-1 1-1z" fill="currentColor"/>
+                        </svg>
+                      </button>
+                      <button className="document-drawer__response-button document-drawer__thumbs-down" title="Thumbs down" onClick={handleThumbsDown}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M7.136 14.4c-.8 0-1.45-.65-1.45-1.45v-2.9H1.9c-.8 0-1.45-.65-1.45-1.45 0-.25.05-.5.15-.75l2-5.5c.2-.5.65-.85 1.2-.85H10.6c.8 0 1.45.65 1.45 1.45V7.5c0 .4-.15.75-.4 1.05l-3.5 4.5c-.3.35-.7.55-1.15.55h-.05c-.1 0-.2 0-.3-.05-.1-.05-.15-.15-.15-.25v-1.45c0-.8.65-1.45 1.45-1.45H9.1l-1.95 2.5v.5zM13.5 9h-1V2.5h1c.55 0 1 .45 1 1V8c0 .55-.45 1-1 1z" fill="currentColor"/>
+                        </svg>
+                      </button>
+                      <button className="document-drawer__response-button document-drawer__copy" title="Copy" onClick={handleCopy}>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 2h8c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2zm0 1.5c-.275 0-.5.225-.5.5v8c0 .275.225.5.5.5h8c.275 0 .5-.225.5-.5V4c0-.275-.225-.5-.5-.5H4zM1 6v9c0 1.1.9 2 2 2h9v-1.5H3c-.275 0-.5-.225-.5-.5V6H1z" fill="currentColor"/>
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
 

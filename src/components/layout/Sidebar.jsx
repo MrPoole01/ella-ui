@@ -8,7 +8,9 @@ import ChatItem from '../ui/ChatItem';
 import SavedWorkDrawer from '../features/SavedWorkDrawer';
 import DocumentDrawer from '../features/DocumentDrawer';
 import EllamentDrawer from '../features/EllamentDrawer';
+import ManageTagsDrawer from '../features/ManageTagsDrawer';
 import TagManagementModal from '../ui/Modal/TagManagementModal';
+import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -25,6 +27,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [showSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
   const [showDocumentDrawer, setShowDocumentDrawer] = useState(false);
   const [showEllamentDrawer, setShowEllamentDrawer] = useState(false);
+  const [showManageTagsDrawer, setShowManageTagsDrawer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedEllament, setSelectedEllament] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
@@ -32,6 +35,27 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [tagModalDocument, setTagModalDocument] = useState(null);
   const [tagModalType, setTagModalType] = useState(''); // 'document', 'task', 'savedWork'
+  const [isProjectCreateModalOpen, setIsProjectCreateModalOpen] = useState(false);
+  const [projects, setProjects] = useState([
+    {
+      id: 1,
+      name: 'Marketing Campaign Q4',
+      description: 'End-of-year marketing push for holiday season',
+      createdAt: '2024-11-15T10:30:00Z'
+    },
+    {
+      id: 2,
+      name: 'Product Launch Beta',
+      description: 'Beta testing and feedback collection for new features',
+      createdAt: '2024-11-10T14:20:00Z'
+    },
+    {
+      id: 3,
+      name: 'Customer Onboarding',
+      description: 'Streamlining the new customer experience process',
+      createdAt: '2024-11-05T09:15:00Z'
+    }
+  ]);
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
   const sectionMenuRef = useRef(null);
@@ -401,6 +425,24 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     setIsTagModalOpen(false);
     setTagModalDocument(null);
     setTagModalType('');
+  };
+
+  // Project Create Modal handlers
+  const handleCreateProjectClick = () => {
+    setIsProjectCreateModalOpen(true);
+  };
+
+  const handleProjectCreateClose = () => {
+    setIsProjectCreateModalOpen(false);
+  };
+
+  const handleProjectCreateSubmit = (projectData) => {
+    // Add new project to the list
+    setProjects(prev => [projectData, ...prev]);
+    setIsProjectCreateModalOpen(false);
+    
+    // Show success message (you could implement a toast notification here)
+    console.log('Project created successfully:', projectData.name);
   };
 
   const handleSaveTagChanges = (itemId, newTags) => {
@@ -954,7 +996,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           <div className="project-menu__create">
             <button 
               className="project-menu__create-btn"
-              onClick={() => console.log('Create Project clicked')}
+              onClick={handleCreateProjectClick}
             >
               + Create Project
             </button>
@@ -984,7 +1026,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 </svg>
                 <span>All Projects</span>
               </div>
-              <div className="project-menu__filter-count">8</div>
+              <div className="project-menu__filter-count">{projects.length}</div>
             </div>
 
             <div className="project-menu__filter-item">
@@ -1000,6 +1042,102 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
           {/* Projects List */}
           <div className="project-menu__projects">
+            {projects.map((project) => (
+              <div 
+                key={project.id}
+                className="project-menu__project-card"
+                onClick={() => handleProjectSelect({
+                  id: project.id,
+                  name: project.name,
+                  description: project.description,
+                  workspace: 'Workspace 1',
+                  updatedDate: new Date(project.createdAt).toLocaleDateString()
+                })}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="project-menu__project-header">
+                  <h3 className="project-menu__project-title">{project.name}</h3>
+                  <div className="project-menu__project-actions">
+                    <div className="project-menu__project-menu-container">
+                      <button 
+                        className="project-menu__project-menu"
+                        onClick={(e) => handleProjectCardMenuClick(project.id, e)}
+                      >
+                        <EllipsisIcon width={12} height={12} />
+                      </button>
+                      
+                      {activeProjectMenu === project.id && (
+                        <div className="project-menu__project-dropdown" ref={projectMenuDropdownRef}>
+                          <button 
+                            className="project-menu__project-dropdown-option"
+                            onClick={() => handleProjectAction('edit', project.id)}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                              <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Edit
+                          </button>
+                          <button 
+                            className="project-menu__project-dropdown-option"
+                            onClick={() => handleProjectAction('share', project.id)}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                              <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Share
+                          </button>
+                          <button 
+                            className="project-menu__project-dropdown-option"
+                            onClick={() => handleProjectAction('archive', project.id)}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                              <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Archive
+                          </button>
+                          <button 
+                            className="project-menu__project-dropdown-option"
+                            onClick={() => handleProjectAction('move', project.id)}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                              <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Move
+                          </button>
+                          <hr className="project-menu__project-dropdown-divider" />
+                          <button 
+                            className="project-menu__project-dropdown-option project-menu__project-dropdown-option--danger"
+                            onClick={() => handleProjectAction('delete', project.id)}
+                          >
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                              <path d="M1.75 3.5L12.25 3.5M5.25 6.5L5.25 10.5M8.75 6.5L8.75 10.5M2.625 3.5L2.625 11.375C2.625 11.9273 3.07272 12.375 3.625 12.375L10.375 12.375C10.9273 12.375 11.375 11.9273 11.375 11.375L11.375 3.5M5.25 3.5L5.25 2.625C5.25 2.07272 5.69772 1.625 6.25 1.625L7.75 1.625C8.30228 1.625 8.75 2.07272 8.75 2.625L8.75 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <p className="project-menu__project-description">
+                  {project.description}
+                </p>
+                <div className="project-menu__project-meta">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <defs>
+                      <clipPath id={`clipPath-${project.id}`}>
+                        <path d="M0 0L12 0L12 12L0 12L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                      </clipPath>
+                    </defs>
+                    <g clipPath={`url(#clipPath-${project.id})`}>
+                      <path d="M0 -0.5625C-0.310658 -0.5625 -0.5625 -0.310658 -0.5625 0L-0.5625 2.5Q-0.5625 2.61189 -0.519682 2.71526Q-0.476864 2.81864 -0.397747 2.89775L1.10225 4.39775C1.32192 4.61741 1.67808 4.61741 1.89775 4.39774C2.11742 4.17808 2.11742 3.82192 1.89775 3.60225L0.5625 2.26701L0.5625 0C0.5625 -0.310658 0.310658 -0.5625 0 -0.5625Z" fillRule="evenodd" transform="matrix(1 0 0 1 6 3.5)" fill="rgb(107, 114, 128)"/>
+                      <path d="M4.5 8.4375Q5.30147 8.4375 6.03251 8.1283Q6.73903 7.82947 7.28427 7.28423Q7.82951 6.73899 8.12835 6.03248Q8.43754 5.30146 8.43754 4.50001Q8.43754 3.69855 8.12835 2.96752Q7.82951 2.26101 7.28427 1.71577Q6.73903 1.17053 6.03251 0.871698Q5.30147 0.5625 4.5 0.5625Q3.69854 0.5625 2.96752 0.871697Q2.26101 1.17053 1.71577 1.71577Q1.17053 2.26101 0.871698 2.96752Q0.5625 3.69855 0.5625 4.50001Q0.5625 5.30146 0.871697 6.03248Q1.17053 6.73899 1.71577 7.28423Q2.261 7.82947 2.96752 8.1283Q3.69854 8.4375 4.5 8.4375ZM4.5 9.5625Q3.47041 9.5625 2.52927 9.16443Q1.62066 8.78012 0.920271 8.07973Q0.219875 7.37933 -0.164433 6.47073Q-0.5625 5.52959 -0.5625 4.50001Q-0.5625 3.47041 -0.164433 2.52928Q0.219875 1.62067 0.920271 0.920273Q1.62067 0.219875 2.52927 -0.164433Q3.47041 -0.5625 4.5 -0.5625Q5.5296 -0.5625 6.47075 -0.164434Q7.37936 0.219872 8.07976 0.920271Q8.78016 1.62067 9.16448 2.52928Q9.56254 3.47041 9.56254 4.50001Q9.56255 5.5296 9.16448 6.47073Q8.78016 7.37933 8.07976 8.07973Q7.37936 8.78013 6.47075 9.16443Q5.5296 9.5625 4.5 9.5625Z" fillRule="nonzero" transform="matrix(1 0 0 1 1.50003 1.5)" fill="rgb(107, 114, 128)"/>
+                    </g>
+                  </svg>
+                  <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+            ))}
             <div 
               className="project-menu__project-card"
               onClick={() => handleProjectSelect({
@@ -1783,6 +1921,17 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             >
               Manage Templates
             </button>
+            <button 
+              className="workspace-menu__action-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowManageTagsDrawer(true);
+                setIsWorkspaceMenuOpen(false);
+              }}
+            >
+              Manage Tags
+            </button>
           </div>
 
           <div className="workspace-menu__options">
@@ -1897,8 +2046,23 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       document={tagModalDocument}
       predefinedTags={predefinedTags}
     />
-    </>
-  );
+
+          {/* Project Create Modal */}
+      <ProjectCreateModal
+        isOpen={isProjectCreateModalOpen}
+        onClose={handleProjectCreateClose}
+        onSubmit={handleProjectCreateSubmit}
+        existingProjects={projects}
+      />
+
+      {/* Manage Tags Drawer */}
+      <ManageTagsDrawer
+        isOpen={showManageTagsDrawer}
+        onClose={() => setShowManageTagsDrawer(false)}
+        currentUserRole="Admin" // This would come from auth context
+      />
+      </>
+    );
 };
 
 export default Sidebar; 

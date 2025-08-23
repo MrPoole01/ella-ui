@@ -1624,4 +1624,91 @@
       font-size: $font-size-lg; // Slightly larger text for high DPI
     }
   }
+}
+
+// Chat Response Actions
+.chat-interface {
+  &__response-actions {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--theme-border-secondary);
+  }
+
+  &__response-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    background: var(--theme-bg-primary);
+    color: var(--theme-text-tertiary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      color: var(--theme-text-secondary);
+      border-color: var(--theme-border-primary);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    // Thumbs up specific styling
+    &.chat-interface__thumbs-up:hover {
+      color: var(--theme-success);
+      border-color: var(--theme-success);
+    }
+
+    // Thumbs down specific styling
+    &.chat-interface__thumbs-down:hover {
+      color: var(--theme-error);
+      border-color: var(--theme-error);
+    }
+
+    // Copy specific styling
+    &.chat-interface__copy:hover {
+      color: var(--theme-interactive-primary);
+      border-color: var(--theme-interactive-primary);
+    }
+
+    // Theme-specific adjustments
+    .theme-neumorphism & {
+      border: none;
+      box-shadow: 
+        4px 4px 8px rgba(163, 177, 198, 0.2),
+        -4px -4px 8px rgba(255, 255, 255, 0.5);
+
+      &:hover {
+        box-shadow: 
+          inset 2px 2px 4px rgba(163, 177, 198, 0.2),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .theme-neumorphism-dark & {
+      border: none;
+      box-shadow: 
+        4px 4px 8px rgba(0, 0, 0, 0.3),
+        -4px -4px 8px rgba(255, 255, 255, 0.05);
+
+      &:hover {
+        box-shadow: 
+          inset 2px 2px 4px rgba(0, 0, 0, 0.3),
+          inset -2px -2px 4px rgba(255, 255, 255, 0.05);
+      }
+    }
+  }
 } 

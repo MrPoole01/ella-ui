@@ -1,0 +1,299 @@
+@import '../../../styles/themes/variables';
+
+// Backdrop
+.project-create__backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+// Modal Container
+.project-create {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-secondary);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 90%;
+  max-width: 480px;
+  max-height: 90vh;
+  z-index: 9999;
+  animation: slideIn 0.3s ease-out;
+  
+  // Theme-specific adjustments
+  .theme-electric-dark & {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-secondary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 0 30px var(--theme-glow-cyan);
+  }
+
+  .theme-modern-dark & {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-secondary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 0 25px var(--theme-data-glow);
+  }
+
+  .theme-neumorphism &,
+  .theme-neumorphism-dark & {
+    background: var(--theme-bg-primary);
+    border: none;
+    box-shadow: var(--theme-neomorphic-raised);
+  }
+}
+
+// Header
+.project-create__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 24px 0 24px;
+  margin-bottom: 24px;
+}
+
+.project-create__title {
+  color: var(--theme-text-primary);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.project-create__close {
+  background: none;
+  border: none;
+  color: var(--theme-text-secondary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: var(--theme-bg-secondary);
+    color: var(--theme-text-primary);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Content
+.project-create__content {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.project-create__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    color: var(--theme-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+
+    .required {
+      color: var(--theme-error, #EF4444);
+      margin-left: 4px;
+    }
+
+    .optional {
+      color: var(--theme-text-secondary);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+  }
+}
+
+.project-create__input,
+.project-create__textarea {
+  background: var(--theme-bg-secondary);
+  border: 1px solid var(--theme-border-secondary);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--theme-text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+
+  &::placeholder {
+    color: var(--theme-text-muted);
+  }
+
+  &:hover:not(:disabled) {
+    border-color: var(--theme-border-primary);
+  }
+
+  &:focus {
+    border-color: var(--theme-interactive-primary);
+    box-shadow: 0 0 0 3px rgba(var(--theme-interactive-primary-rgb, 101, 157, 94), 0.1);
+  }
+
+  &.has-error {
+    border-color: var(--theme-error, #EF4444);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+
+    &:focus {
+      border-color: var(--theme-error, #EF4444);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+}
+
+.project-create__textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.project-create__error {
+  color: var(--theme-error, #EF4444);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: -4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &::before {
+    content: '⚠';
+    font-size: 14px;
+  }
+}
+
+// Footer
+.project-create__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid var(--theme-border-light);
+  margin-top: 24px;
+}
+
+.project-create__cancel,
+.project-create__submit {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.project-create__cancel {
+  background: var(--theme-bg-secondary);
+  color: var(--theme-text-secondary);
+  border: 1px solid var(--theme-border-secondary);
+
+  &:hover {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-primary);
+    border-color: var(--theme-border-primary);
+  }
+}
+
+.project-create__submit {
+  background: var(--theme-interactive-primary);
+  color: white;
+  border: 1px solid var(--theme-interactive-primary);
+  min-width: 120px;
+
+  &:hover:not(:disabled) {
+    background: var(--theme-interactive-accent);
+    border-color: var(--theme-interactive-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+  }
+
+  &--disabled,
+  &:disabled {
+    background: var(--theme-bg-tertiary);
+    color: var(--theme-text-muted);
+    border-color: var(--theme-border-secondary);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+
+    &:hover {
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-text-muted);
+      border-color: var(--theme-border-secondary);
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .project-create {
+    width: 95%;
+    max-width: none;
+    margin: 0 auto;
+  }
+
+  .project-create__header,
+  .project-create__content,
+  .project-create__footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .project-create__footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

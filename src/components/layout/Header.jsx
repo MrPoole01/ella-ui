@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { InviteUsersModal } from '../ui/Modal';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronRightIcon,
@@ -24,11 +25,129 @@ const Header = () => {
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
   const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [orgBrandBots, setOrgBrandBots] = useState([]);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [activeSettingsTab, setActiveSettingsTab] = useState('appearance');
+  const [appearanceMode, setAppearanceMode] = useState('auto'); // 'light', 'dark', 'auto'
+  const [startWeekOn, setStartWeekOn] = useState('Monday');
+  const [autoTimezone, setAutoTimezone] = useState(true);
+  const [timezone, setTimezone] = useState('');
+  
+  // Notification Settings State
+  const [notificationSettings, setNotificationSettings] = useState({
+    // In-App Notifications
+    workspacesSharedByOthers: true,
+    userAccessRequests: true,
+    ellaAppUpdates: true,
+    // Email Notifications
+    activityInWorkspace: true,
+    alwaysSendEmail: false,
+    workspaceDigest: true,
+    announcementsAndUpdates: true
+  });
+
+  // People Management State
+  const [peopleSearchQuery, setPeopleSearchQuery] = useState('');
+  const [activePeopleTab, setActivePeopleTab] = useState('users');
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  
+  // Sample workspaces and projects for the invite modal
+  const [availableWorkspaces] = useState([
+    { id: 1, name: 'Marketing', description: 'Marketing campaigns and content' },
+    { id: 2, name: 'Design', description: 'Design assets and brand guidelines' },
+    { id: 3, name: 'Development', description: 'Software development projects' },
+    { id: 4, name: 'QA', description: 'Quality assurance and testing' },
+    { id: 5, name: 'Client Projects', description: 'External client work' }
+  ]);
+
+  const [availableProjects] = useState([
+    { id: 1, name: 'Q4 Campaign', workspaces: [1], workspace: 1 },
+    { id: 2, name: 'Website Redesign', workspaces: [1, 2], workspace: 2 },
+    { id: 3, name: 'Brand Guidelines', workspaces: [2], workspace: 2 },
+    { id: 4, name: 'API Refactor', workspaces: [3], workspace: 3 },
+    { id: 5, name: 'Mobile App', workspaces: [3], workspace: 3 },
+    { id: 6, name: 'Testing Suite', workspaces: [3, 4], workspace: 4 },
+    { id: 7, name: 'Social Media', workspaces: [1], workspace: 1 },
+    { id: 8, name: 'Content Strategy', workspaces: [1], workspace: 1 },
+    { id: 9, name: 'Logo Design', workspaces: [2], workspace: 2 },
+    { id: 10, name: 'Brand Review', workspaces: [5], workspace: 5 },
+    { id: 11, name: 'Website Updates', workspaces: [3], workspace: 3 }
+  ]);
+  const [sampleUsers, setSampleUsers] = useState([
+    {
+      id: 1,
+      name: 'Sarah Johnson',
+      email: 'sarah.johnson@company.com',
+      avatar: 'SJ',
+      role: 'Admin',
+      workspaces: ['Marketing', 'Design'],
+      projects: ['Q4 Campaign', 'Website Redesign', 'Brand Guidelines'],
+      lastActive: '2024-01-15T10:30:00Z',
+      status: 'active'
+    },
+    {
+      id: 2,
+      name: 'Michael Chen',
+      email: 'michael.chen@company.com',
+      avatar: 'MC',
+      role: 'Workspace Owner',
+      workspaces: ['Development', 'QA'],
+      projects: ['API Refactor', 'Mobile App', 'Testing Suite'],
+      lastActive: '2024-01-15T09:15:00Z',
+      status: 'active'
+    },
+    {
+      id: 3,
+      name: 'Emily Rodriguez',
+      email: 'emily.rodriguez@company.com',
+      avatar: 'ER',
+      role: 'User',
+      workspaces: ['Marketing'],
+      projects: ['Social Media', 'Content Strategy'],
+      lastActive: '2024-01-14T16:45:00Z',
+      status: 'active'
+    },
+    {
+      id: 4,
+      name: 'David Kim',
+      email: 'david.kim@external.com',
+      avatar: 'DK',
+      role: 'User',
+      workspaces: ['Design'],
+      projects: ['Logo Design'],
+      lastActive: '2024-01-13T14:20:00Z',
+      status: 'active'
+    }
+  ]);
+  const [sampleGuests, setSampleGuests] = useState([
+    {
+      id: 5,
+      name: 'Jessica Taylor',
+      email: 'jessica.taylor@client.com',
+      avatar: 'JT',
+      role: 'Guest',
+      workspaces: ['Client Projects'],
+      projects: ['Brand Review'],
+      lastActive: '2024-01-12T11:30:00Z',
+      status: 'pending'
+    },
+    {
+      id: 6,
+      name: 'Robert Wilson',
+      email: 'robert.wilson@contractor.com',
+      avatar: 'RW',
+      role: 'Guest',
+      workspaces: ['Development'],
+      projects: ['Website Updates'],
+      lastActive: '2024-01-10T08:45:00Z',
+      status: 'active'
+    }
+  ]);
   const themeDropdownRef = useRef(null);
   const workspaceDropdownRef = useRef(null);
   const notificationMenuRef = useRef(null);
   const searchInputRef = useRef(null);
   const profileDropdownRef = useRef(null);
+  const settingsMenuRef = useRef(null);
 
   // Sample notification data based on the Motiff design
   const notifications = [
@@ -83,6 +202,220 @@ const Header = () => {
     // Navigate to login page
     navigate('/login', { replace: true });
   };
+
+  // Settings menu handlers
+  const handleSettingsClick = (e) => {
+    e.stopPropagation();
+    setShowSettingsMenu(true);
+    setShowProfileDropdown(false);
+  };
+
+  const handleSettingsClose = () => {
+    setShowSettingsMenu(false);
+  };
+
+  const handleAppearanceModeChange = (mode) => {
+    setAppearanceMode(mode);
+    
+    // Apply theme immediately based on mode
+    if (mode === 'light') {
+      setTheme('Ella Web Light');
+    } else if (mode === 'dark') {
+      setTheme('Ella EV2 Dark');
+    } else if (mode === 'auto') {
+      // Auto mode - switch based on system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'Ella EV2 Dark' : 'Ella Web Light');
+    }
+  };
+
+  const handleStartWeekOnChange = (day) => {
+    setStartWeekOn(day);
+    // Here you would typically save to user preferences
+    console.log('Start week on:', day);
+  };
+
+  const handleAutoTimezoneToggle = () => {
+    const newAutoTimezone = !autoTimezone;
+    setAutoTimezone(newAutoTimezone);
+    
+    if (newAutoTimezone) {
+      // Detect and set timezone automatically
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setTimezone(detectedTimezone);
+    }
+  };
+
+  const handleTimezoneChange = (e) => {
+    if (!autoTimezone) {
+      setTimezone(e.target.value);
+    }
+  };
+
+  // Notification Settings Handlers
+  const handleNotificationToggle = (settingKey) => {
+    setNotificationSettings(prev => {
+      const updated = {
+        ...prev,
+        [settingKey]: !prev[settingKey]
+      };
+      
+      // Persist to localStorage
+      localStorage.setItem('ellaNotificationSettings', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  // Load notification settings from localStorage on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('ellaNotificationSettings');
+    if (savedSettings) {
+      try {
+        const parsed = JSON.parse(savedSettings);
+        setNotificationSettings(parsed);
+      } catch (error) {
+        console.error('Error loading notification settings:', error);
+      }
+    }
+  }, []);
+
+  // People Management Handlers
+  const handlePeopleSearchChange = (e) => {
+    setPeopleSearchQuery(e.target.value);
+  };
+
+  const handleUserRoleChange = (userId, newRole) => {
+    setSampleUsers(prev => 
+      prev.map(user => 
+        user.id === userId ? { ...user, role: newRole } : user
+      )
+    );
+  };
+
+  const handleGuestRoleChange = (guestId, newRole) => {
+    setSampleGuests(prev => 
+      prev.map(guest => 
+        guest.id === guestId ? { ...guest, role: newRole } : guest
+      )
+    );
+  };
+
+  const handleAddUserClick = () => {
+    setIsAddUserModalOpen(true);
+  };
+
+  const handleAddUserClose = () => {
+    setIsAddUserModalOpen(false);
+  };
+
+  const handleSendInvites = async (inviteData) => {
+    try {
+      // Simulate API call with some validation
+      console.log('Sending invites:', inviteData);
+      
+      // Simulate some email-specific errors for demo
+      const emailErrors = [];
+      const successfulEmails = [];
+      
+      inviteData.emails.forEach(email => {
+        // Simulate some validation errors
+        if (email.includes('blocked')) {
+          emailErrors.push({ email, message: 'Domain is blocked' });
+        } else if (email.includes('exists')) {
+          emailErrors.push({ email, message: 'User already exists' });
+        } else {
+          successfulEmails.push(email);
+          
+          // Add new pending users to the appropriate list
+          const newUser = {
+            id: Date.now() + Math.random(),
+            name: email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            email: email,
+            avatar: email.charAt(0).toUpperCase() + email.charAt(1).toUpperCase(),
+            role: inviteData.role,
+            workspaces: inviteData.workspaces.map(w => w.name),
+            projects: inviteData.projects.map(p => p.name),
+            lastActive: new Date().toISOString(),
+            status: 'pending'
+          };
+          
+          if (inviteData.role === 'Guest') {
+            setSampleGuests(prev => [newUser, ...prev]);
+          } else {
+            setSampleUsers(prev => [newUser, ...prev]);
+          }
+        }
+      });
+      
+      // Show success toast (you could implement a toast system here)
+      if (successfulEmails.length > 0) {
+        console.log(`Successfully sent ${successfulEmails.length} invite${successfulEmails.length !== 1 ? 's' : ''}`);
+      }
+      
+      return {
+        success: emailErrors.length === 0,
+        emailErrors: emailErrors.length > 0 ? emailErrors : undefined,
+        successCount: successfulEmails.length
+      };
+      
+    } catch (error) {
+      console.error('Error sending invites:', error);
+      return {
+        success: false,
+        error: 'Failed to send invites. Please try again.'
+      };
+    }
+  };
+
+  const handleRemoveUser = (userId, isGuest = false) => {
+    if (isGuest) {
+      setSampleGuests(prev => prev.filter(guest => guest.id !== userId));
+    } else {
+      setSampleUsers(prev => prev.filter(user => user.id !== userId));
+    }
+  };
+
+  // Filter users and guests based on search query
+  const filteredUsers = sampleUsers.filter(user =>
+    user.name.toLowerCase().includes(peopleSearchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(peopleSearchQuery.toLowerCase())
+  );
+
+  const filteredGuests = sampleGuests.filter(guest =>
+    guest.name.toLowerCase().includes(peopleSearchQuery.toLowerCase()) ||
+    guest.email.toLowerCase().includes(peopleSearchQuery.toLowerCase())
+  );
+
+  // Initialize timezone on component mount
+  useEffect(() => {
+    if (autoTimezone) {
+      const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setTimezone(detectedTimezone);
+    }
+  }, [autoTimezone]);
+
+  // Auto theme switching based on system preference
+  useEffect(() => {
+    if (appearanceMode === 'auto') {
+      const updateThemeBasedOnSystemPreference = () => {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'Ella EV2 Dark' : 'Ella Web Light');
+      };
+
+      // Set initial theme based on system preference
+      updateThemeBasedOnSystemPreference();
+      
+      // Listen for system preference changes
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => updateThemeBasedOnSystemPreference();
+      
+      mediaQuery.addEventListener('change', handleChange);
+      
+      return () => {
+        mediaQuery.removeEventListener('change', handleChange);
+      };
+    }
+  }, [appearanceMode, setTheme]);
 
   const handleThemeSelect = (theme) => {
     setTheme(theme);
@@ -163,6 +496,9 @@ const Header = () => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setShowProfileDropdown(false);
       }
+      if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
+        setShowSettingsMenu(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -223,48 +559,7 @@ const Header = () => {
       </div>
       
       <div className="header__center">
-        <div className="theme-dropdown" ref={themeDropdownRef}>
-          <button 
-            className="theme-dropdown__trigger"
-            onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-          >
-            <span className="theme-dropdown__text">{currentTheme}</span>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="20.3672" 
-              height="20.3647" 
-              viewBox="0 0 20.3672 20.3647" 
-              className="chevron-down-icon"
-              style={{
-                transform: isThemeDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease'
-              }}
-            >
-              <defs>
-                <clipPath id="clipPath7611540475-theme">
-                  <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 0.368187 -2.47955e-05)"/>
-                </clipPath>
-              </defs>
-              <g clipPath="url(#clipPath7611540475-theme)">
-                <path d="M-0.662913 -0.662913C-1.02903 -0.296799 -1.02903 0.296799 -0.662913 0.662913L4.96209 6.28791Q5.09395 6.41977 5.26623 6.49114Q5.43852 6.5625 5.625 6.5625Q5.81148 6.5625 5.98377 6.49114Q6.15605 6.41977 6.28791 6.28791L11.9129 0.662913C12.279 0.296799 12.279 -0.296799 11.9129 -0.662913C11.5468 -1.02903 10.9532 -1.02903 10.5871 -0.662912L5.625 4.29918L0.662913 -0.662913C0.296799 -1.02903 -0.296799 -1.02903 -0.662913 -0.662913Z" fillRule="evenodd" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 4.61013 7.2668)" fill="rgb(156, 163, 175)"/>
-              </g>
-            </svg>
-          </button>
-          
-          {isThemeDropdownOpen && (
-            <div className="theme-dropdown__menu">
-              {themes.map((theme) => (
-                <div
-                  key={theme}
-                  className={`theme-dropdown__item ${currentTheme === theme ? 'theme-dropdown__item--selected' : ''}`}
-                  onClick={() => handleThemeSelect(theme)}
-                >
-                  {theme}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Theme dropdown moved to profile menu */}
       </div>
       
       <div className="header__right">
@@ -439,13 +734,54 @@ const Header = () => {
                       </svg>
                       <span>Profile</span>
                     </button>
-                    <button className="profile-menu-item">
+                    <button className="profile-menu-item" onClick={handleSettingsClick}>
                       <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
                         <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" fill="currentColor"/>
                         <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" fill="currentColor"/>
                       </svg>
                       <span>Settings</span>
                     </button>
+                    
+                    {/* Theme Selection in Profile Menu */}
+                    <div className="profile-menu-theme-section">
+                      <div className="profile-menu-theme-label">Theme</div>
+                      <div className="profile-menu-theme-dropdown" ref={themeDropdownRef}>
+                        <button 
+                          className="profile-menu-theme-trigger"
+                          onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+                        >
+                          <span className="profile-menu-theme-text">{currentTheme}</span>
+                          <svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 20 20" 
+                            className="profile-menu-theme-chevron"
+                            style={{
+                              transform: isThemeDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.2s ease'
+                            }}
+                          >
+                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" fill="currentColor"/>
+                          </svg>
+                        </button>
+                        
+                        {isThemeDropdownOpen && (
+                          <div className="profile-menu-theme-options">
+                            {themes.map((theme) => (
+                              <div
+                                key={theme}
+                                className={`profile-menu-theme-option ${currentTheme === theme ? 'profile-menu-theme-option--selected' : ''}`}
+                                onClick={() => handleThemeSelect(theme)}
+                              >
+                                {theme}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
                     <button className="profile-menu-item" onClick={handleLogout}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path 
@@ -480,6 +816,468 @@ const Header = () => {
               </div>
             )}
           </div>
+
+          {/* Settings Menu */}
+          {showSettingsMenu && (
+            <div className="settings-menu" ref={settingsMenuRef}>
+              <div className="settings-menu-content">
+                <div className="settings-menu-header">
+                  <h3>Settings</h3>
+                  <button className="settings-menu-close" onClick={handleSettingsClose}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+
+                                 {/* Settings Tabs */}
+                 <div className="settings-tabs">
+                   <button 
+                     className={`settings-tab ${activeSettingsTab === 'appearance' ? 'settings-tab--active' : ''}`}
+                     onClick={() => setActiveSettingsTab('appearance')}
+                   >
+                     Appearance
+                   </button>
+                   <button 
+                     className={`settings-tab ${activeSettingsTab === 'notifications' ? 'settings-tab--active' : ''}`}
+                     onClick={() => setActiveSettingsTab('notifications')}
+                   >
+                     Notifications
+                   </button>
+                   <button 
+                     className={`settings-tab ${activeSettingsTab === 'people' ? 'settings-tab--active' : ''}`}
+                     onClick={() => setActiveSettingsTab('people')}
+                   >
+                     People
+                   </button>
+                   <button 
+                     className={`settings-tab ${activeSettingsTab === 'navigation' ? 'settings-tab--active' : ''}`}
+                     onClick={() => setActiveSettingsTab('navigation')}
+                   >
+                     Navigation
+                   </button>
+                 </div>
+
+                {/* Appearance Tab Content */}
+                {activeSettingsTab === 'appearance' && (
+                  <div className="settings-tab-content">
+                    {/* Appearance Section */}
+                    <div className="settings-section">
+                      <div className="settings-section-header">Appearance</div>
+                      <div className="settings-item">
+                        <div className="settings-item-label">Theme</div>
+                        <div className="settings-toggle-group">
+                          <button 
+                            className={`settings-toggle-option ${appearanceMode === 'light' ? 'settings-toggle-option--active' : ''}`}
+                            onClick={() => handleAppearanceModeChange('light')}
+                          >
+                            Light
+                          </button>
+                          <button 
+                            className={`settings-toggle-option ${appearanceMode === 'dark' ? 'settings-toggle-option--active' : ''}`}
+                            onClick={() => handleAppearanceModeChange('dark')}
+                          >
+                            Dark
+                          </button>
+                          <button 
+                            className={`settings-toggle-option ${appearanceMode === 'auto' ? 'settings-toggle-option--active' : ''}`}
+                            onClick={() => handleAppearanceModeChange('auto')}
+                          >
+                            Auto
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Time Section */}
+                    <div className="settings-section">
+                      <div className="settings-section-header">Time</div>
+                      
+                      <div className="settings-item">
+                        <div className="settings-item-label">Start Week On</div>
+                        <div className="settings-dropdown">
+                          <select 
+                            value={startWeekOn} 
+                            onChange={(e) => handleStartWeekOnChange(e.target.value)}
+                            className="settings-select"
+                          >
+                            <option value="Monday">Monday</option>
+                            <option value="Sunday">Sunday</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="settings-item">
+                        <div className="settings-item-label">Set Timezone Automatically</div>
+                        <div className="settings-toggle">
+                          <button 
+                            className={`settings-toggle-switch ${autoTimezone ? 'settings-toggle-switch--on' : ''}`}
+                            onClick={handleAutoTimezoneToggle}
+                          >
+                            <div className="settings-toggle-switch-handle"></div>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="settings-item">
+                        <div className="settings-item-label">Timezone</div>
+                        <div className="settings-input">
+                          <input 
+                            type="text" 
+                            value={timezone}
+                            onChange={handleTimezoneChange}
+                            disabled={autoTimezone}
+                            className="settings-input-field"
+                            placeholder="Select timezone..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Notifications Tab Content */}
+                {activeSettingsTab === 'notifications' && (
+                  <div className="settings-tab-content">
+                    {/* Notifications Section */}
+                    <div className="settings-section">
+                      <div className="settings-section-header">Notifications</div>
+                      
+                      {/* In-App Notifications */}
+                      <div className="settings-subsection">
+                        <div className="settings-subsection-header">In-App Notifications</div>
+                        
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Workspaces or Projects Shared by Other Users</div>
+                            <div className="settings-item-description">Receive alerts when a workspace or project is shared with you</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="workspacesSharedByOthers"
+                              checked={notificationSettings.workspacesSharedByOthers}
+                              onChange={() => handleNotificationToggle('workspacesSharedByOthers')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="workspacesSharedByOthers" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">User Access Requests</div>
+                            <div className="settings-item-description">Receive alerts when someone requests access to your workspaces or projects</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="userAccessRequests"
+                              checked={notificationSettings.userAccessRequests}
+                              onChange={() => handleNotificationToggle('userAccessRequests')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="userAccessRequests" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Ella App Updates</div>
+                            <div className="settings-item-description">Receive notifications when new product features or major updates are released</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="ellaAppUpdates"
+                              checked={notificationSettings.ellaAppUpdates}
+                              onChange={() => handleNotificationToggle('ellaAppUpdates')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="ellaAppUpdates" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Email Notifications */}
+                      <div className="settings-subsection">
+                        <div className="settings-subsection-header">Email Notifications</div>
+                        
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Activity in Your Workspace</div>
+                            <div className="settings-item-description">Send emails for invites, reminders, and access requests</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="activityInWorkspace"
+                              checked={notificationSettings.activityInWorkspace}
+                              onChange={() => handleNotificationToggle('activityInWorkspace')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="activityInWorkspace" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Always Send Email Notifications</div>
+                            <div className="settings-item-description">Send email updates even when you are active in-app</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="alwaysSendEmail"
+                              checked={notificationSettings.alwaysSendEmail}
+                              onChange={() => handleNotificationToggle('alwaysSendEmail')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="alwaysSendEmail" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Workspace Digest</div>
+                            <div className="settings-item-description">Send digest emails summarizing workspace activity</div>
+                          </div>
+                          <div className="settings-toggle-switch">
+                            <input
+                              type="checkbox"
+                              id="workspaceDigest"
+                              checked={notificationSettings.workspaceDigest}
+                              onChange={() => handleNotificationToggle('workspaceDigest')}
+                              className="settings-toggle-input"
+                            />
+                            <label htmlFor="workspaceDigest" className="settings-toggle-label"></label>
+                          </div>
+                        </div>
+
+                        <div className="settings-item">
+                          <div className="settings-item-content">
+                            <div className="settings-item-label">Announcements & Update Emails</div>
+                            <div className="settings-item-description">Receive occasional product update emails from Ella AI</div>
+                          </div>
+                          <div className="settings-item-actions">
+                            <div className="settings-toggle-switch">
+                              <input
+                                type="checkbox"
+                                id="announcementsAndUpdates"
+                                checked={notificationSettings.announcementsAndUpdates}
+                                onChange={() => handleNotificationToggle('announcementsAndUpdates')}
+                                className="settings-toggle-input"
+                              />
+                              <label htmlFor="announcementsAndUpdates" className="settings-toggle-label"></label>
+                            </div>
+                            <button className="settings-manage-link">
+                              Manage settings
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* People Tab Content */}
+                {activeSettingsTab === 'people' && (
+                  <div className="settings-tab-content">
+                    {/* People Management Section */}
+                    <div className="settings-section">
+                      <div className="settings-section-header">People Management</div>
+                      
+                      {/* Search Bar */}
+                      <div className="people-search-container">
+                        <div className="people-search-input-wrapper">
+                          <svg className="people-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6.5 12C9.26142 12 11.5 9.76142 11.5 7C11.5 4.23858 9.26142 2 6.5 2C3.73858 2 1.5 4.23858 1.5 7C1.5 9.76142 3.73858 12 6.5 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M12.5 12.5L10.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <input
+                            type="text"
+                            placeholder="Filter members by name or email..."
+                            value={peopleSearchQuery}
+                            onChange={handlePeopleSearchChange}
+                            className="people-search-input"
+                          />
+                        </div>
+                        <button className="people-add-user-btn" onClick={handleAddUserClick}>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 1V15M1 8H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Add Users
+                        </button>
+                      </div>
+
+                      {/* People Tabs */}
+                      <div className="people-tabs">
+                        <button 
+                          className={`people-tab ${activePeopleTab === 'users' ? 'people-tab--active' : ''}`}
+                          onClick={() => setActivePeopleTab('users')}
+                        >
+                          Users ({filteredUsers.length})
+                        </button>
+                        <button 
+                          className={`people-tab ${activePeopleTab === 'guests' ? 'people-tab--active' : ''}`}
+                          onClick={() => setActivePeopleTab('guests')}
+                        >
+                          Guests ({filteredGuests.length})
+                        </button>
+                      </div>
+
+                      {/* People Table */}
+                      <div className="people-table-container">
+                        <div className="people-table">
+                          {/* Table Header */}
+                          <div className="people-table-header">
+                            <div className="people-table-header-cell people-table-user">User</div>
+                            <div className="people-table-header-cell people-table-workspaces">Workspaces</div>
+                            <div className="people-table-header-cell people-table-projects">Projects</div>
+                            <div className="people-table-header-cell people-table-role">Role</div>
+                            <div className="people-table-header-cell people-table-actions">Actions</div>
+                          </div>
+
+                          {/* Table Body */}
+                          <div className="people-table-body">
+                            {(activePeopleTab === 'users' ? filteredUsers : filteredGuests).map((person) => (
+                              <div key={person.id} className="people-table-row">
+                                {/* User Column */}
+                                <div className="people-table-cell people-table-user">
+                                  <div className="people-user-info">
+                                    <div className="people-user-avatar">
+                                      {person.avatar}
+                                    </div>
+                                    <div className="people-user-details">
+                                      <div className="people-user-name">{person.name}</div>
+                                      <div className="people-user-email" title={person.email}>
+                                        {person.email.length > 25 ? `${person.email.substring(0, 25)}...` : person.email}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Workspaces Column */}
+                                <div className="people-table-cell people-table-workspaces">
+                                  <div className="people-count-badge">
+                                    <span className="people-count">{person.workspaces.length}</span>
+                                    <div className="people-dropdown">
+                                      <button className="people-dropdown-trigger">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                      </button>
+                                      <div className="people-dropdown-content">
+                                        {person.workspaces.map((workspace, idx) => (
+                                          <div key={idx} className="people-dropdown-item">{workspace}</div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Projects Column */}
+                                <div className="people-table-cell people-table-projects">
+                                  <div className="people-count-badge">
+                                    <span className="people-count">{person.projects.length}</span>
+                                    <div className="people-dropdown">
+                                      <button className="people-dropdown-trigger">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                          <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                      </button>
+                                      <div className="people-dropdown-content">
+                                        {person.projects.map((project, idx) => (
+                                          <div key={idx} className="people-dropdown-item">{project}</div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Role Column */}
+                                <div className="people-table-cell people-table-role">
+                                  <select 
+                                    value={person.role}
+                                    onChange={(e) => activePeopleTab === 'users' 
+                                      ? handleUserRoleChange(person.id, e.target.value)
+                                      : handleGuestRoleChange(person.id, e.target.value)
+                                    }
+                                    className="people-role-select"
+                                  >
+                                    <option value="Admin">Admin</option>
+                                    <option value="Workspace Owner">Workspace Owner</option>
+                                    <option value="User">User</option>
+                                    <option value="Guest">Guest</option>
+                                  </select>
+                                </div>
+
+                                {/* Actions Column */}
+                                <div className="people-table-cell people-table-actions">
+                                  <div className="people-actions-dropdown">
+                                    <button className="people-actions-trigger">
+                                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path d="M8 4C8.55228 4 9 3.55228 9 3C9 2.44772 8.55228 2 8 2C7.44772 2 7 2.44772 7 3C7 3.55228 7.44772 4 8 4Z" fill="currentColor"/>
+                                        <path d="M8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9Z" fill="currentColor"/>
+                                        <path d="M8 14C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12C7.44772 12 7 12.4477 7 13C7 13.5523 7.44772 14 8 14Z" fill="currentColor"/>
+                                      </svg>
+                                    </button>
+                                    <div className="people-actions-content">
+                                      <button className="people-action-item">Edit Permissions</button>
+                                      <button className="people-action-item">View Projects</button>
+                                      <button className="people-action-item people-action-item--danger" 
+                                        onClick={() => handleRemoveUser(person.id, activePeopleTab === 'guests')}>
+                                        Remove User
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Empty State */}
+                        {(activePeopleTab === 'users' ? filteredUsers : filteredGuests).length === 0 && (
+                          <div className="people-empty-state">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                              <path d="M24 26C29.5228 26 34 21.5228 34 16C34 10.4772 29.5228 6 24 6C18.4772 6 14 10.4772 14 16C14 21.5228 18.4772 26 24 26Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              <path d="M42 42C42 34.268 33.732 28 24 28C14.268 28 6 34.268 6 42" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <h3>No {activePeopleTab} found</h3>
+                            <p>
+                              {peopleSearchQuery 
+                                ? `No ${activePeopleTab} match your search criteria.`
+                                : `No ${activePeopleTab} have been added yet.`
+                              }
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Navigation Tab Content */}
+                {activeSettingsTab === 'navigation' && (
+                  <div className="settings-tab-content">
+                    {/* Navigation Section */}
+                    <div className="settings-section">
+                      <div className="settings-section-header">Navigation</div>
+                      <div className="settings-item">
+                        <button className="settings-nav-button">
+                          <span>Preferences</span>
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <WorkspaceCreateModal
@@ -499,6 +1297,16 @@ const Header = () => {
       <EllamentDrawer
         isOpen={isEllamentDrawerOpen}
         onClose={() => setIsEllamentDrawerOpen(false)}
+      />
+
+      {/* Invite Users Modal */}
+      <InviteUsersModal
+        isOpen={isAddUserModalOpen}
+        onClose={handleAddUserClose}
+        onSendInvites={handleSendInvites}
+        currentUserRole="Admin" // This would come from auth context
+        availableWorkspaces={availableWorkspaces}
+        availableProjects={availableProjects}
       />
     </div>
   );
