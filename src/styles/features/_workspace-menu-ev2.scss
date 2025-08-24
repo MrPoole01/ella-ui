@@ -93,22 +93,16 @@
     &:hover {
       background: var(--theme-workspace-item-hover);
     }
-    
-    // Active/selected state
-    &--active {
-      background: var(--theme-workspace-item-active);
-    }
-    
-    // Pinned workspace item
-    // &--pinned {
-    //   background: var(--theme-orange-subtle);
-    // }
   }
   
   // Workspace item content
   .workspace-dropdown__item-name {
     color: var(--theme-text-primary);
     font-weight: 500;
+
+    &--selected {
+      color: var(--theme-gradient-orange);
+    }
   }
   
   .workspace-dropdown__item-meta {
@@ -280,7 +274,7 @@
     &--active {
       background: var(--theme-primary);
       border-color: var(--theme-primary);
-      color: white;
+      color: var(--theme-dropdown-bg);
     }
   }
 

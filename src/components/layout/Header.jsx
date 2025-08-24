@@ -17,6 +17,7 @@ const Header = () => {
   const { currentTheme, themes, setTheme } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState({ id: 1, name: 'Creative Studio' }); // Default workspace
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(true); // Show notifications by default
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -430,6 +431,10 @@ const Header = () => {
     setIsWorkspaceDropdownOpen(false);
   };
 
+  const handleWorkspaceSelect = (workspace) => {
+    setSelectedWorkspace(workspace);
+  };
+
   const handleSearchClick = () => {
     setIsSearchOpen(!isSearchOpen);
     if (!isSearchOpen) {
@@ -521,7 +526,7 @@ const Header = () => {
             ref={workspaceDropdownRef}
             onClick={handleWorkspaceClick}
           >
-          <div className="header__workspace-text">Workspace</div>
+          <div className="header__workspace-text">{selectedWorkspace.name}</div>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="20.3672" 
@@ -545,6 +550,8 @@ const Header = () => {
             <WorkspaceDropdown 
               isOpen={isWorkspaceDropdownOpen} 
               onClose={handleWorkspaceDropdownClose}
+              selectedWorkspace={selectedWorkspace}
+              onWorkspaceSelect={handleWorkspaceSelect}
               onWorkspaceCreated={(ws) => {
                 // TODO: propagate to global state; for now, log
                 console.log('Workspace created:', ws);

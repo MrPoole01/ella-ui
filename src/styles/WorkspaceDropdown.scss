@@ -1301,11 +1301,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  
-  .workspace-dropdown__item:hover & {
-    opacity: 1;
-  }
+  opacity: 1;
 
   &:hover {
     background: var(--theme-bg-secondary);
@@ -1372,6 +1368,36 @@
       color: var(--theme-interactive-primary);
     }
   }
+}
+
+// Selected workspace item styling
+.workspace-dropdown__item--selected {
+  background: var(--theme-orange-glow, rgba(230, 164, 41, 0.1)) !important;
+  border: 1px solid var(--theme-gradient-orange, #E6A429);
+  box-shadow: 0 0 8px rgba(230, 164, 41, 0.3);
+  
+  .workspace-dropdown__item-name {
+    color: var(--theme-bg-primary) !important;
+    font-weight: 600 !important;
+  }
+  
+  .workspace-dropdown__item-meta {
+    color: var(--theme-bg-primary) !important;
+  }
+  
+  .workspace-dropdown__item-icon svg path {
+    fill: var(--theme-gradient-orange, #E6A429);
+  }
+}
+
+// Additional specificity for selected items
+.workspace-dropdown .workspace-dropdown__item--selected .workspace-dropdown__item-name {
+  color: var(--theme-bg-primary) !important;
+  font-weight: 600 !important;
+}
+
+.workspace-dropdown .workspace-dropdown__item--selected .workspace-dropdown__item-meta {
+  color: var(--theme-bg-primary) !important;
 }
 
 // Theme-specific ellipsis menu styling

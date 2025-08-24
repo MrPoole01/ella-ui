@@ -1467,27 +1467,17 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
             </button>
           </div>
 
-          {/* Filter Options */}
-          <div className="section-menu__filters">
-            <div className="section-menu__filter-option section-menu__filter-option--active">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M2 3h16v2H2V3zm1 4h12v2H3V7zm2 4h8v2H5v-2z" fill="#6B7280"/>
-              </svg>
+          {/* Chat Tabs */}
+          <div className="section-menu__tabs">
+            <div className="section-menu__tab section-menu__tab--active">
               <span>All Chats</span>
             </div>
-            <div className="section-menu__filter-option">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
-              </svg>
-              <span>Favorites</span>
-            </div>
-            <div className="section-menu__filter-option">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" stroke="#4B5563" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>Starred</span>
+            <div className="section-menu__tab">
+              <span>My Chats</span>
             </div>
           </div>
+
+
 
           {/* Tasks List */}
           <div className="section-menu__tasks">

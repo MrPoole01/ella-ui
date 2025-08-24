@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ProjectIcon } from '../icons';
 import '../../styles/WorkspaceDropdown.scss';
 
-const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace }) => {
+const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace, selectedWorkspace, onWorkspaceSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
@@ -15,8 +15,8 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
 
   // Mock data - replace with actual data from your state management
   const [pinnedWorkspaces, setPinnedWorkspaces] = useState([
-    { id: 1, name: 'Marketing Hub', lastUpdated: '2 days ago', icon: 'folder', isPinned: true },
-    { id: 2, name: 'Product Design', lastUpdated: '8 days ago', icon: 'folder', isPinned: true }
+    { id: 101, name: 'Marketing Hub', lastUpdated: '2 days ago', icon: 'folder', isPinned: true },
+    { id: 102, name: 'Product Design', lastUpdated: '8 days ago', icon: 'folder', isPinned: true }
   ]);
 
   const [allWorkspaces, setAllWorkspaces] = useState([
@@ -55,7 +55,10 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
   };
 
   const handleWorkspaceSelect = (workspace) => {
-    // Add your workspace selection logic here
+    // Update selected workspace via callback
+    if (onWorkspaceSelect) {
+      onWorkspaceSelect(workspace);
+    }
     console.log('Selected workspace:', workspace);
     onClose();
   };
@@ -213,11 +216,13 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
               {pinnedWorkspaces.map((workspace) => (
                 <div
                   key={workspace.id}
-                  className="workspace-dropdown__item workspace-dropdown__item--pinned"
+                  className={`workspace-dropdown__item workspace-dropdown__item--pinned ${selectedWorkspace?.id === workspace.id ? 'workspace-dropdown__item--selected' : ''}`}
                   onClick={() => handleWorkspaceSelect(workspace)}
                 >
                   <div className="workspace-dropdown__item-icon">
-                    <ProjectIcon />
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
+                    </svg>
                   </div>
                   <div className="workspace-dropdown__item-content">
                     <div className="workspace-dropdown__item-name">{workspace.name}</div>
@@ -308,7 +313,7 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
               {currentWorkspaces.map((workspace) => (
                 <div
                   key={workspace.id}
-                  className={`workspace-dropdown__item ${workspace.isActive ? 'workspace-dropdown__item--active' : ''}`}
+                  className={`workspace-dropdown__item ${workspace.isActive ? 'workspace-dropdown__item--active' : ''} ${selectedWorkspace?.id === workspace.id ? 'workspace-dropdown__item--selected' : ''}`}
                   onClick={() => handleWorkspaceSelect(workspace)}
                 >
                   <div className="workspace-dropdown__item-content">
