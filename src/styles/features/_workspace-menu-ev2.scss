@@ -237,9 +237,12 @@
   // CREATE NEW WORKSPACE BUTTON 🆕
   .workspace-dropdown__create-btn {
     background: var(--theme-primary);
+    display: flex;
+    justify-content: center;
     border: none;
     color: var(--theme-bg-primary);
     font-weight: 500;
+    width: 100%;
     cursor: pointer;
     
     &:hover {

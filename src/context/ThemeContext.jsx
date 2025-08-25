@@ -2,6 +2,21 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+const themes = [
+  'UI Theme',
+  'Ella Current Light',
+  'Ella Current Dark',
+  'Ella Web Light',
+  'Ella Web Dark',
+  'Ella Electric Dark',
+  'Ella Modern Dark',
+  'Ella Modern Light',
+  'Ella Citrus Grove',
+  'Ella Neumorphism',
+  'Ella Neumorphism Dark',
+  'Ella EV2 Dark'
+];
+
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -13,22 +28,9 @@ export const useTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState('UI Theme');
 
-  const themes = [
-    'UI Theme',
-    'Ella Current Light',
-    'Ella Current Dark',
-    'Ella Web Light',
-    'Ella Web Dark',
-    'Ella Electric Dark',
-    'Ella Modern Dark',
-    'Ella Modern Light',
-    'Ella Citrus Grove',
-    'Ella Neumorphism',
-    'Ella Neumorphism Dark',
-    'Ella EV2 Dark'
-  ];
-
   const applyTheme = (themeName) => {
+    console.log('Applying theme:', themeName);
+    console.log('Body classes before:', document.body.className);
     // Remove existing theme classes
     document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark', 'theme-ev2-dark');
     
@@ -73,13 +75,17 @@ export const ThemeProvider = ({ children }) => {
       default:
         document.body.classList.add('theme-ui');
     }
+    console.log('Body classes after:', document.body.className);
   };
 
   const setTheme = (themeName) => {
+    console.log('ThemeContext: Setting theme to:', themeName);
+    console.log('ThemeContext: Current theme before:', currentTheme);
     setCurrentTheme(themeName);
     applyTheme(themeName);
     // Persist theme to localStorage
     localStorage.setItem('ella-ui-theme', themeName);
+    console.log('ThemeContext: Theme set and applied');
   };
 
   // Load saved theme on mount
@@ -90,6 +96,7 @@ export const ThemeProvider = ({ children }) => {
       applyTheme(savedTheme);
     } else {
       // Default to UI Theme
+      setCurrentTheme('UI Theme');
       applyTheme('UI Theme');
     }
   }, []);

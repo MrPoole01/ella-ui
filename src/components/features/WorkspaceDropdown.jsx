@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ProjectIcon } from '../icons';
+import WorkspaceFilter from './WorkspaceFilter';
 import '../../styles/WorkspaceDropdown.scss';
 
 const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace, selectedWorkspace, onWorkspaceSelect }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState('default');
   const itemsPerPage = 6;
   // Mock: organization-level brand bots available
   const orgBrandBots = [
@@ -30,9 +33,25 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
     { id: 8, name: 'Content Factory', lastUpdated: '4 months ago', isActive: false, isPinned: false }
   ]);
 
-  const totalPages = Math.ceil(allWorkspaces.length / itemsPerPage);
+  // Sort workspaces based on selected sort order
+  const sortWorkspaces = (workspaces, sortOrder) => {
+    switch (sortOrder) {
+      case 'a-z':
+        return [...workspaces].sort((a, b) => a.name.localeCompare(b.name));
+      case 'z-a':
+        return [...workspaces].sort((a, b) => b.name.localeCompare(a.name));
+      case 'default':
+      default:
+        return workspaces;
+    }
+  };
+
+  const sortedWorkspaces = sortWorkspaces(allWorkspaces, sortOrder);
+  const sortedPinnedWorkspaces = sortWorkspaces(pinnedWorkspaces, sortOrder);
+
+  const totalPages = Math.ceil(sortedWorkspaces.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentWorkspaces = allWorkspaces.slice(startIndex, startIndex + itemsPerPage);
+  const currentWorkspaces = sortedWorkspaces.slice(startIndex, startIndex + itemsPerPage);
 
   const handleCreateWorkspace = () => {
     if (onOpenCreateWorkspace) onOpenCreateWorkspace({ orgBrandBots });
@@ -66,6 +85,19 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     // Add search functionality here
+  };
+
+  const handleFilterToggle = () => {
+    setFilterOpen(!filterOpen);
+  };
+
+  const handleSortChange = (newSortOrder) => {
+    setSortOrder(newSortOrder);
+    setCurrentPage(1); // Reset to first page when sorting changes
+  };
+
+  const handleFilterClose = () => {
+    setFilterOpen(false);
   };
 
   // Handle ellipsis menu toggle
@@ -127,19 +159,22 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
     }
   };
 
-  // Close ellipsis menu when clicking outside
+  // Close ellipsis menu and filter when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      if (activeEllipsisMenu) {
+    const handleClickOutside = (event) => {
+      if (activeEllipsisMenu && !event.target.closest('.workspace-dropdown__ellipsis-menu')) {
         setActiveEllipsisMenu(null);
+      }
+      if (filterOpen && !event.target.closest('.workspace-filter') && !event.target.closest('.workspace-dropdown__search-btn')) {
+        setFilterOpen(false);
       }
     };
 
-    if (activeEllipsisMenu) {
+    if (activeEllipsisMenu || filterOpen) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [activeEllipsisMenu]);
+  }, [activeEllipsisMenu, filterOpen]);
 
   if (!isOpen) return null;
 
@@ -193,18 +228,31 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
                 className="workspace-dropdown__search-input"
               />
             </div>
-            <button className="workspace-dropdown__search-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
-                <defs>
-                  <clipPath id="clipPathFilterIcon">
-                    <path d="M0 0L16 0L16 16L0 16L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
-                  </clipPath>
-                </defs>
-                <g clipPath="url(#clipPathFilterIcon)">
-                  <path d="M-0.6 0C-0.6 0.331368 -0.331368 0.6 0 0.6L12 0.6C12.3314 0.6 12.6 0.331368 12.6 0C12.6 -0.331368 12.3314 -0.6 12 -0.6L0 -0.6C-0.331368 -0.6 -0.6 -0.331368 -0.6 0ZM1.4 4C1.4 4.33137 1.66863 4.6 2 4.6L10 4.6C10.3314 4.6 10.6 4.33137 10.6 4C10.6 3.66863 10.3314 3.4 10 3.4L2 3.4C1.66863 3.4 1.4 3.66863 1.4 4ZM3.4 8C3.4 8.33137 3.66863 8.6 4 8.6L8 8.6C8.33137 8.6 8.6 8.33137 8.6 8C8.6 7.66863 8.33137 7.4 8 7.4L4 7.4C3.66863 7.4 3.4 7.66863 3.4 8Z" fillRule="evenodd" transform="matrix(1 0 0 1 2 4)" fill="rgb(17, 24, 39)"/>
-                </g>
-              </svg>
-            </button>
+            <div className="workspace-dropdown__search-btn-container">
+              <button 
+                className={`workspace-dropdown__search-btn ${filterOpen ? 'workspace-dropdown__search-btn--active' : ''}`}
+                onClick={handleFilterToggle}
+                aria-label="Filter workspaces"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                  <defs>
+                    <clipPath id="clipPathFilterIcon">
+                      <path d="M0 0L16 0L16 16L0 16L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                    </clipPath>
+                  </defs>
+                  <g clipPath="url(#clipPathFilterIcon)">
+                    <path d="M-0.6 0C-0.6 0.331368 -0.331368 0.6 0 0.6L12 0.6C12.3314 0.6 12.6 0.331368 12.6 0C12.6 -0.331368 12.3314 -0.6 12 -0.6L0 -0.6C-0.331368 -0.6 -0.6 -0.331368 -0.6 0ZM1.4 4C1.4 4.33137 1.66863 4.6 2 4.6L10 4.6C10.3314 4.6 10.6 4.33137 10.6 4C10.6 3.66863 10.3314 3.4 10 3.4L2 3.4C1.66863 3.4 1.4 3.66863 1.4 4ZM3.4 8C3.4 8.33137 3.66863 8.6 4 8.6L8 8.6C8.33137 8.6 8.6 8.33137 8.6 8C8.6 7.66863 8.33137 7.4 8 7.4L4 7.4C3.66863 7.4 3.4 7.66863 3.4 8Z" fillRule="evenodd" transform="matrix(1 0 0 1 2 4)" fill="rgb(17, 24, 39)"/>
+                  </g>
+                </svg>
+              </button>
+              
+              <WorkspaceFilter
+                isOpen={filterOpen}
+                onClose={handleFilterClose}
+                onSortChange={handleSortChange}
+                currentSort={sortOrder}
+              />
+            </div>
           </div>
 
           {/* Pinned Workspaces */}
@@ -213,7 +261,7 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
               PINNED WORKSPACES
             </div>
             <div className="workspace-dropdown__items">
-              {pinnedWorkspaces.map((workspace) => (
+              {sortedPinnedWorkspaces.map((workspace) => (
                 <div
                   key={workspace.id}
                   className={`workspace-dropdown__item workspace-dropdown__item--pinned ${selectedWorkspace?.id === workspace.id ? 'workspace-dropdown__item--selected' : ''}`}
@@ -399,7 +447,7 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
           {/* Pagination */}
           <div className="workspace-dropdown__pagination">
             <div className="workspace-dropdown__pagination-info">
-              Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, allWorkspaces.length)} of {allWorkspaces.length} workspaces
+              Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, sortedWorkspaces.length)} of {sortedWorkspaces.length} workspaces
             </div>
             <div className="workspace-dropdown__pagination-controls">
               {Array.from({ length: totalPages }, (_, i) => (

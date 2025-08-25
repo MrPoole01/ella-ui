@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BrandBotSelector from './BrandBotSelector';
 import '../../styles/EllamentDrawer.scss';
 
 // Mock data for ellaments
@@ -138,6 +139,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   const [activeEllamentMenu, setActiveEllamentMenu] = useState(null);
   const [personaDropdownOpen, setPersonaDropdownOpen] = useState(false);
   const [selectedPersonas, setSelectedPersonas] = useState(['all']);
+  const [selectedBrandBotId, setSelectedBrandBotId] = useState(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -221,6 +223,13 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
     }
   };
 
+  const handleBrandBotChange = (brandBotId, brandBot) => {
+    setSelectedBrandBotId(brandBotId);
+    console.log('Brand Bot changed to:', brandBot);
+    // Here you would typically update the context or make an API call
+    // to change the active brand bot for the session
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
@@ -272,12 +281,25 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
       <div className={`ellament-drawer ${isOpen ? 'ellament-drawer--open' : ''}`}>
         {/* Header */}
         <div className="ellament-drawer__header">
-          <div className="ellament-drawer__title">Ellaments</div>
-          <button className="ellament-drawer__close" onClick={onClose}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          <div className="ellament-drawer__header-left">
+            <div className="ellament-drawer__title">Ellaments</div>
+          </div>
+
+          <div className="ellament-drawer__header-right">
+            {/* Brand Bot Selector */}
+            <BrandBotSelector
+              selectedBrandBotId={selectedBrandBotId}
+              onBrandBotChange={handleBrandBotChange}
+              className="ellament-drawer__brandbot-selector"
+            />
+
+            {/* Close Button */}
+            <button className="ellament-drawer__close" onClick={onClose}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         <div className="ellament-drawer__subtitle">

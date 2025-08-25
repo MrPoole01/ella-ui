@@ -27,6 +27,7 @@ const Header = () => {
   const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [orgBrandBots, setOrgBrandBots] = useState([]);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState('appearance');
   const [appearanceMode, setAppearanceMode] = useState('auto'); // 'light', 'dark', 'auto'
   const [startWeekOn, setStartWeekOn] = useState('Monday');
@@ -149,6 +150,7 @@ const Header = () => {
   const searchInputRef = useRef(null);
   const profileDropdownRef = useRef(null);
   const settingsMenuRef = useRef(null);
+  const helpMenuRef = useRef(null);
 
   // Sample notification data based on the Motiff design
   const notifications = [
@@ -213,6 +215,45 @@ const Header = () => {
 
   const handleSettingsClose = () => {
     setShowSettingsMenu(false);
+  };
+
+  // Help menu handlers
+  const handleHelpClick = (e) => {
+    e.stopPropagation();
+    setShowHelpMenu(true);
+    setShowProfileDropdown(false);
+    setShowSettingsMenu(false);
+  };
+
+  const handleHelpClose = () => {
+    setShowHelpMenu(false);
+  };
+
+  const handleHelpMenuAction = (action) => {
+    console.log('Help action:', action);
+    setShowHelpMenu(false);
+    
+    // Here you would implement the actual actions
+    switch (action) {
+      case 'billing':
+        // Open billing page or modal
+        window.open('/billing', '_blank');
+        break;
+      case 'documentation':
+        // Open documentation
+        window.open('https://docs.ella.ai', '_blank');
+        break;
+      case 'submit-ticket':
+        // Open support ticket form
+        window.open('/support/new-ticket', '_blank');
+        break;
+      case 'contact-sales':
+        // Open contact sales form or link
+        window.open('/contact-sales', '_blank');
+        break;
+      default:
+        break;
+    }
   };
 
   const handleAppearanceModeChange = (mode) => {
@@ -419,8 +460,13 @@ const Header = () => {
   }, [appearanceMode, setTheme]);
 
   const handleThemeSelect = (theme) => {
+    console.log('Theme selected:', theme);
+    console.log('Current theme before:', currentTheme);
     setTheme(theme);
     setIsThemeDropdownOpen(false);
+    console.log('Theme selection completed');
+    // Keep profile dropdown open after theme selection
+    // setShowProfileDropdown(false); // Don't close profile dropdown immediately
   };
 
   const handleWorkspaceClick = () => {
@@ -503,6 +549,9 @@ const Header = () => {
       }
       if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
         setShowSettingsMenu(false);
+      }
+      if (helpMenuRef.current && !helpMenuRef.current.contains(event.target)) {
+        setShowHelpMenu(false);
       }
     };
 
@@ -595,18 +644,102 @@ const Header = () => {
           >
             <path d="M12.2802 16.0613C11.1516 16.6051 9.88398 16.9102 8.54432 16.9102C3.82543 16.9102 0 13.1248 0 8.45512C0 3.78548 3.82543 0 8.54432 0C13.2632 0 17.0886 3.78548 17.0886 8.45512C17.0886 10.6758 16.2235 12.6965 14.8086 14.2052L18.7011 19.5292C19.2107 20.2262 19.0528 21.1998 18.3485 21.704C17.6442 22.2082 16.6602 22.052 16.1507 21.355L12.2802 16.0613ZM14.7581 8.45504C14.7581 11.8511 11.976 14.6042 8.5441 14.6042C5.11218 14.6042 2.33005 11.8511 2.33005 8.45504C2.33005 5.05893 5.11218 2.30586 8.5441 2.30586C11.976 2.30586 14.7581 5.05893 14.7581 8.45504Z" fillRule="evenodd" transform="matrix(1 0 0 1 0 -0.000104904)" fill="rgb(196, 196, 196)"/>
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="settings-icon">
-            <defs>
-              <clipPath id="clipPath5917372953-settings">
-                <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
-              </clipPath>
-            </defs>
-            <g clipPath="url(#clipPath5917372953-settings)">
-              <path d="M3.59965 9.82892C3.23589 9.82892 2.94106 9.53386 2.94106 9.17032L2.94106 7.71878C2.94106 7.53767 3.0157 7.36446 3.14742 7.23976L5.2446 5.25981C5.65578 4.8326 5.8819 4.27148 5.8819 3.67787L5.8819 3.5995C5.8819 2.97888 5.63712 2.39844 5.19235 1.96509C4.7478 1.53173 4.16209 1.29969 3.53884 1.31813C2.31386 1.34974 1.31719 2.40283 1.31719 3.6658C1.31719 4.02956 1.02236 4.32439 0.658594 4.32439C0.29483 4.32439 0 4.02956 0 3.6658C0 1.69484 1.57228 0.051213 3.50482 0.00137955C4.48546 -0.0254032 5.41035 0.338579 6.11153 1.02176C6.81271 1.70516 7.19887 2.62061 7.19887 3.5995L7.19887 3.67787C7.19887 4.62076 6.83686 5.51227 6.17893 6.18799C6.17256 6.19457 6.16576 6.20116 6.15917 6.20753L4.25825 8.00263L4.25825 9.17032C4.25825 9.53409 3.96342 9.82892 3.59965 9.82892Z" fillRule="nonzero" transform="matrix(1 0 0 1 6.38889 3.86949)" fill="rgb(196, 196, 196)"/>
-              <path d="M0.878125 1.75488C0.821047 1.75488 0.763969 1.75027 0.706891 1.73951C0.649813 1.72634 0.59493 1.71097 0.542243 1.68902C0.489555 1.66706 0.439063 1.63874 0.390766 1.60801C0.342469 1.57508 0.298563 1.53974 0.256852 1.49824C0.0943984 1.33557 0 1.10945 0 0.876752C0 0.819454 0.00658528 0.762376 0.0175625 0.705519C0.0285389 0.650636 0.046102 0.593556 0.0680548 0.540869C0.0900076 0.488182 0.116352 0.437689 0.147086 0.389392C0.180016 0.341095 0.217336 0.29719 0.256852 0.255698C0.298563 0.215963 0.342469 0.178643 0.390766 0.148128C0.439063 0.115198 0.489556 0.0888559 0.542243 0.0669014C0.59493 0.0449486 0.649813 0.0273846 0.706891 0.0166285C0.818851 -0.00554369 0.937398 -0.00554369 1.04936 0.0166285C1.10644 0.0276057 1.16132 0.045168 1.21401 0.0669014C1.26648 0.0890736 1.31719 0.115198 1.36527 0.148128C1.41356 0.178862 1.45747 0.216182 1.49918 0.255698C1.53869 0.29719 1.57601 0.341315 1.60894 0.389392C1.63968 0.437909 1.66602 0.48818 1.68776 0.540869C1.70993 0.593556 1.72749 0.650636 1.73825 0.705519C1.74923 0.762597 1.75581 0.819673 1.75581 0.876752C1.75581 1.10945 1.66119 1.33557 1.49896 1.49803C1.33475 1.66267 1.10863 1.75488 0.878125 1.75488Z" fillRule="nonzero" transform="matrix(1 0 0 1 9.11241 14.5718)" fill="rgb(196, 196, 196)"/>
-              <path d="M9.87891 19.7578C4.43168 19.7578 0 15.3261 0 9.87891C0 4.43168 4.43168 0 9.87891 0C15.3261 0 19.7578 4.43168 19.7578 9.87891C19.7578 15.3261 15.3261 19.7578 9.87891 19.7578ZM9.87891 1.31719C5.15789 1.31719 1.31719 5.15789 1.31719 9.87891C1.31719 14.5999 5.15789 18.4406 9.87891 18.4406C14.5999 18.4406 18.4406 14.5999 18.4406 9.87891C18.4406 5.15789 14.5999 1.31719 9.87891 1.31719Z" fillRule="nonzero" transform="matrix(1 0 0 1 0.110677 0.109863)" fill="rgb(196, 196, 196)"/>
-            </g>
-          </svg>
+          {/* Help Icon with Menu */}
+          <div className="help-container" ref={helpMenuRef}>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 20 20" 
+              className="help-icon"
+              onClick={handleHelpClick}
+              style={{ cursor: 'pointer' }}
+            >
+              <defs>
+                <clipPath id="clipPath5917372953-help">
+                  <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#clipPath5917372953-help)">
+                <path d="M3.59965 9.82892C3.23589 9.82892 2.94106 9.53386 2.94106 9.17032L2.94106 7.71878C2.94106 7.53767 3.0157 7.36446 3.14742 7.23976L5.2446 5.25981C5.65578 4.8326 5.8819 4.27148 5.8819 3.67787L5.8819 3.5995C5.8819 2.97888 5.63712 2.39844 5.19235 1.96509C4.7478 1.53173 4.16209 1.29969 3.53884 1.31813C2.31386 1.34974 1.31719 2.40283 1.31719 3.6658C1.31719 4.02956 1.02236 4.32439 0.658594 4.32439C0.29483 4.32439 0 4.02956 0 3.6658C0 1.69484 1.57228 0.051213 3.50482 0.00137955C4.48546 -0.0254032 5.41035 0.338579 6.11153 1.02176C6.81271 1.70516 7.19887 2.62061 7.19887 3.5995L7.19887 3.67787C7.19887 4.62076 6.83686 5.51227 6.17893 6.18799C6.17256 6.19457 6.16576 6.20116 6.15917 6.20753L4.25825 8.00263L4.25825 9.17032C4.25825 9.53409 3.96342 9.82892 3.59965 9.82892Z" fillRule="nonzero" transform="matrix(1 0 0 1 6.38889 3.86949)" fill="rgb(196, 196, 196)"/>
+                <path d="M0.878125 1.75488C0.821047 1.75488 0.763969 1.75027 0.706891 1.73951C0.649813 1.72634 0.59493 1.71097 0.542243 1.68902C0.489555 1.66706 0.439063 1.63874 0.390766 1.60801C0.342469 1.57508 0.298563 1.53974 0.256852 1.49824C0.0943984 1.33557 0 1.10945 0 0.876752C0 0.819454 0.00658528 0.762376 0.0175625 0.705519C0.0285389 0.650636 0.046102 0.593556 0.0680548 0.540869C0.0900076 0.488182 0.116352 0.437689 0.147086 0.389392C0.180016 0.341095 0.217336 0.29719 0.256852 0.255698C0.298563 0.215963 0.342469 0.178643 0.390766 0.148128C0.439063 0.115198 0.489556 0.0888559 0.542243 0.0669014C0.59493 0.0449486 0.649813 0.0273846 0.706891 0.0166285C0.818851 -0.00554369 0.937398 -0.00554369 1.04936 0.0166285C1.10644 0.0276057 1.16132 0.045168 1.21401 0.0669014C1.26648 0.0890736 1.31719 0.115198 1.36527 0.148128C1.41356 0.178862 1.45747 0.216182 1.49918 0.255698C1.53869 0.29719 1.57601 0.341315 1.60894 0.389392C1.63968 0.437909 1.66602 0.48818 1.68776 0.540869C1.70993 0.593556 1.72749 0.650636 1.73825 0.705519C1.74923 0.762597 1.75581 0.819673 1.75581 0.876752C1.75581 1.10945 1.66119 1.33557 1.49896 1.49803C1.33475 1.66267 1.10863 1.75488 0.878125 1.75488Z" fillRule="nonzero" transform="matrix(1 0 0 1 9.11241 14.5718)" fill="rgb(196, 196, 196)"/>
+                <path d="M9.87891 19.7578C4.43168 19.7578 0 15.3261 0 9.87891C0 4.43168 4.43168 0 9.87891 0C15.3261 0 19.7578 4.43168 19.7578 9.87891C19.7578 15.3261 15.3261 19.7578 9.87891 19.7578ZM9.87891 1.31719C5.15789 1.31719 1.31719 5.15789 1.31719 9.87891C1.31719 14.5999 5.15789 18.4406 9.87891 18.4406C14.5999 18.4406 18.4406 14.5999 18.4406 9.87891C18.4406 5.15789 14.5999 1.31719 9.87891 1.31719Z" fillRule="nonzero" transform="matrix(1 0 0 1 0.110677 0.109863)" fill="rgb(196, 196, 196)"/>
+              </g>
+            </svg>
+
+            {/* Help Menu */}
+            {showHelpMenu && (
+              <div className="help-menu">
+                <div className="help-menu__header">
+                  <div className="help-menu__title">Help & Support</div>
+                  <button className="help-menu__close" onClick={handleHelpClose}>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="help-menu__content">
+                  <button 
+                    className="help-menu__item"
+                    onClick={() => handleHelpMenuAction('billing')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M4 4h12v12H4V4z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M4 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <div className="help-menu__item-content">
+                      <div className="help-menu__item-title">Billing</div>
+                      <div className="help-menu__item-description">Manage your subscription and billing</div>
+                    </div>
+                  </button>
+
+                  <button 
+                    className="help-menu__item"
+                    onClick={() => handleHelpMenuAction('documentation')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16l4-4h6a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 6h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M8 10h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <div className="help-menu__item-content">
+                      <div className="help-menu__item-title">Documentation</div>
+                      <div className="help-menu__item-description">Browse guides and tutorials</div>
+                    </div>
+                  </button>
+
+                  <button 
+                    className="help-menu__item"
+                    onClick={() => handleHelpMenuAction('submit-ticket')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <div className="help-menu__item-content">
+                      <div className="help-menu__item-title">Submit a Ticket</div>
+                      <div className="help-menu__item-description">Get help from our support team</div>
+                    </div>
+                  </button>
+
+                  <button 
+                    className="help-menu__item"
+                    onClick={() => handleHelpMenuAction('contact-sales')}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M20 14.42v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 2.11 0h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L6.09 7.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 20 14.42z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <div className="help-menu__item-content">
+                      <div className="help-menu__item-title">Contact Sales</div>
+                      <div className="help-menu__item-description">Speak with our sales team</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
           
           {/* Notification Bell with Menu */}
           <div className="notification-container" ref={notificationMenuRef}>
@@ -755,7 +888,10 @@ const Header = () => {
                       <div className="profile-menu-theme-dropdown" ref={themeDropdownRef}>
                         <button 
                           className="profile-menu-theme-trigger"
-                          onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsThemeDropdownOpen(!isThemeDropdownOpen);
+                          }}
                         >
                           <span className="profile-menu-theme-text">{currentTheme}</span>
                           <svg 
@@ -779,7 +915,10 @@ const Header = () => {
                               <div
                                 key={theme}
                                 className={`profile-menu-theme-option ${currentTheme === theme ? 'profile-menu-theme-option--selected' : ''}`}
-                                onClick={() => handleThemeSelect(theme)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleThemeSelect(theme);
+                                }}
                               >
                                 {theme}
                               </div>

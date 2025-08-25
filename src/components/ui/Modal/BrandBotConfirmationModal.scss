@@ -1,0 +1,194 @@
+@import '../../../styles/themes/variables';
+
+.brandbot-confirm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--theme-bg-primary);
+  border: 1px solid var(--theme-border-primary);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: 480px;
+  max-width: 90vw;
+  z-index: 10003;
+  font-family: 'Inter', sans-serif;
+
+  &__backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10002;
+    backdrop-filter: blur(4px);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--theme-border-light);
+  }
+
+  &__title {
+    color: var(--theme-text-primary);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 24px;
+    margin: 0;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+    }
+  }
+
+  &__content {
+    padding: 24px;
+  }
+
+  &__message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__content p {
+    color: var(--theme-text-primary);
+    font-size: 16px;
+    line-height: 24px;
+    margin: 0;
+
+    strong {
+      color: var(--theme-interactive-primary);
+      font-weight: 600;
+    }
+  }
+
+  &__description {
+    color: var(--theme-text-secondary) !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px 24px 24px;
+    border-top: 1px solid var(--theme-border-light);
+  }
+
+  &__cancel {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      border-color: var(--theme-border-secondary);
+      color: var(--theme-text-primary);
+      background: var(--theme-bg-secondary);
+    }
+  }
+
+  &__confirm {
+    background: var(--theme-interactive-primary);
+    border: none;
+    border-radius: 8px;
+    color: var(--theme-bg-primary);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: var(--theme-interactive-primary-hover, var(--theme-interactive-primary));
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Theme-specific overrides
+.theme-dark {
+  .brandbot-confirm {
+    &__backdrop {
+      background: rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+
+.theme-ev2-dark {
+  .brandbot-confirm {
+    background: var(--theme-workspace-menu-bg);
+    border: 2px solid var(--theme-border-secondary);
+    box-shadow: var(--theme-shadow-elevated);
+    
+    &__backdrop {
+      background: var(--theme-workspace-menu-overlay);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 520px) {
+  .brandbot-confirm {
+    width: 95vw;
+    margin: 0 2.5vw;
+
+    &__header {
+      padding: 20px 20px 16px 20px;
+    }
+
+    &__content {
+      padding: 20px;
+    }
+
+    &__footer {
+      padding: 16px 20px 20px 20px;
+      flex-direction: column-reverse;
+      gap: 8px;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

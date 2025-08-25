@@ -11,6 +11,7 @@ import EllamentDrawer from '../features/EllamentDrawer';
 import ManageTagsDrawer from '../features/ManageTagsDrawer';
 import TagManagementModal from '../ui/Modal/TagManagementModal';
 import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
+import ConvertToProjectModal from '../ui/Modal/ConvertToProjectModal';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -36,6 +37,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [tagModalDocument, setTagModalDocument] = useState(null);
   const [tagModalType, setTagModalType] = useState(''); // 'document', 'task', 'savedWork'
   const [isProjectCreateModalOpen, setIsProjectCreateModalOpen] = useState(false);
+  const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
+  const [convertSourceWorkspace, setConvertSourceWorkspace] = useState(null);
   const [projects, setProjects] = useState([
     {
       id: 1,
@@ -56,6 +59,19 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
       createdAt: '2024-11-05T09:15:00Z'
     }
   ]);
+
+  // Mock workspace data for conversion
+  const orgWorkspaces = [
+    { id: 1, name: 'Marketing Hub', hasChildProjects: false },
+    { id: 2, name: 'Product Design', hasChildProjects: true },
+    { id: 3, name: 'Engineering Team', hasChildProjects: false },
+    { id: 4, name: 'Sales Operations', hasChildProjects: false },
+    { id: 5, name: 'Creative Studio', hasChildProjects: false }
+  ];
+
+  // Current workspace (mock)
+  const currentWorkspace = { id: 6, name: 'Current Workspace', hasChildProjects: false };
+
   const workspaceMenuRef = useRef(null);
   const projectMenuRef = useRef(null);
   const sectionMenuRef = useRef(null);
@@ -443,6 +459,36 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     
     // Show success message (you could implement a toast notification here)
     console.log('Project created successfully:', projectData.name);
+  };
+
+  // Convert to Project Modal handlers
+  const handleConvertToProjectClick = () => {
+    setConvertSourceWorkspace(currentWorkspace);
+    setIsConvertModalOpen(true);
+    setIsWorkspaceMenuOpen(false); // Close the workspace menu
+  };
+
+  const handleConvertModalClose = () => {
+    setIsConvertModalOpen(false);
+    setConvertSourceWorkspace(null);
+  };
+
+  const handleConvertSubmit = async (conversionData) => {
+    console.log('Converting workspace to project:', conversionData);
+    
+    // Simulate conversion process
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Show success toast (in a real app, this would be handled by a toast system)
+    console.log('Conversion successful! New project created in workspace:', conversionData.destinationWorkspaceId);
+    
+    // In a real implementation, you would:
+    // 1. Make API call to convert workspace
+    // 2. Update UI to reflect changes
+    // 3. Show success toast with link to new project
+    // 4. Optionally archive source workspace
+    
+    return Promise.resolve();
   };
 
   const handleSaveTagChanges = (itemId, newTags) => {
@@ -1929,21 +1975,35 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M12.854 3.146a.5.5 0 0 1 0 .708L8.207 8.5l4.647 4.646a.5.5 0 0 1-.708.708L7.5 9.207l-4.646 4.647a.5.5 0 0 1-.708-.708L6.793 8.5 2.146 3.854a.5.5 0 1 1 .708-.708L7.5 7.793l4.646-4.647a.5.5 0 0 1 .708 0z" fill="#6B7280"/>
               </svg>
-              <span>Rename Workspace</span>
+              <span>Rename</span>
             </div>
 
             <div className="workspace-menu__option" onClick={() => console.log('Share Workspace')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
               </svg>
-              <span>Share Workspace</span>
+              <span>Share</span>
             </div>
 
             <div className="workspace-menu__option" onClick={() => console.log('Un-Share Workspace')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
               </svg>
-              <span>Un-Share Workspace</span>
+              <span>Un-Share</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={() => console.log('Transfer Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2l4 4h-3v6H7V6H4l4-4z" fill="#6B7280"/>
+              </svg>
+              <span>Transfer</span>
+            </div>
+
+            <div className="workspace-menu__option" onClick={handleConvertToProjectClick}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
+              </svg>
+              <span>Convert to Project</span>
             </div>
 
             <div className="workspace-menu__option" onClick={() => console.log('Download Documents')}>
@@ -1953,25 +2013,18 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <span>Download Documents</span>
             </div>
 
-            <div className="workspace-menu__option" onClick={() => console.log('Transfer Workspace')}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2l4 4h-3v6H7V6H4l4-4z" fill="#6B7280"/>
-              </svg>
-              <span>Transfer Workspace</span>
-            </div>
-
             <div className="workspace-menu__option" onClick={() => console.log('Archive Workspace')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M2 3h12v2H2V3zm1 3h10v8H3V6zm3 2v4h4V8H6z" fill="#6B7280"/>
               </svg>
-              <span>Archive Workspace</span>
+              <span>Archive</span>
             </div>
 
             <div className="workspace-menu__option" onClick={() => console.log('Delete Workspace')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M6 3V2h4v1h3v1H3V3h3zM4 5h8v9H4V5zm2 2v5h1V7H6zm3 0v5h1V7H9z" fill="#6B7280"/>
               </svg>
-              <span>Delete Workspace</span>
+              <span>Delete</span>
             </div>
           </div>
         </div>
@@ -2043,6 +2096,16 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         onClose={handleProjectCreateClose}
         onSubmit={handleProjectCreateSubmit}
         existingProjects={projects}
+      />
+
+      {/* Convert to Project Modal */}
+      <ConvertToProjectModal
+        isOpen={isConvertModalOpen}
+        onClose={handleConvertModalClose}
+        onConfirm={handleConvertSubmit}
+        sourceWorkspace={convertSourceWorkspace}
+        orgWorkspaces={orgWorkspaces}
+        hasChildProjects={convertSourceWorkspace?.hasChildProjects || false}
       />
 
       {/* Manage Tags Drawer */}

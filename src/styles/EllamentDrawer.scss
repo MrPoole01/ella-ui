@@ -42,6 +42,19 @@
     align-items: center;
     padding: 64px 39px 0 25px;
     border-bottom: none;
+    gap: 20px;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
   &__title {
@@ -49,6 +62,19 @@
     font-size: 20px;
     font-weight: 500;
     line-height: 28px;
+  }
+
+  // Brand Bot Selector in Header
+  &__brandbot-selector {
+    .brandbot-selector__button {
+      min-width: 200px;
+      background: var(--theme-bg-primary);
+      border: 1px solid var(--theme-border-primary);
+      
+      &:hover {
+        border-color: var(--theme-border-secondary);
+      }
+    }
   }
 
   &__close {
@@ -615,6 +641,18 @@
     &__document-dropdown-divider {
       border-color: var(--theme-border-secondary);
     }
+
+    // Brand Bot Selector EV2 Dark theme
+    &__brandbot-selector {
+      .brandbot-selector__button {
+        background: var(--theme-gradient-card);
+        border: 2px solid var(--theme-border-secondary);
+        
+        &:hover {
+          border-color: var(--theme-primary);
+        }
+      }
+    }
   }
 }
 
@@ -623,6 +661,28 @@
   .ellament-drawer {
     width: 100%;
     
+    &__header {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 40px 20px 0 20px;
+    }
+
+    &__header-right {
+      width: 100%;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    &__brandbot-selector {
+      flex: 1;
+      
+      .brandbot-selector__button {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+    
     &__grid {
       grid-template-columns: 1fr;
     }
@@ -630,11 +690,20 @@
     &__tabs {
       flex-wrap: wrap;
       gap: 8px;
+      padding: 0 20px;
     }
     
     &__tab {
       flex: 1;
       min-width: 120px;
+    }
+
+    &__content {
+      padding: 0 20px;
+    }
+
+    &__subtitle {
+      padding: 1px 20px 2px 20px;
     }
   }
 }
