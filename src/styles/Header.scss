@@ -1815,6 +1815,23 @@
   position: relative;
 }
 
+.profile-icon {
+  // EV2 Light theme specific styling to match other header icons
+  .theme-ev2-light & {
+    // Apply theme-text-secondary color using CSS filter
+    // This converts the image to match the text color
+    filter: brightness(0) saturate(100%) invert(42%) sepia(7%) saturate(1166%) hue-rotate(181deg) brightness(94%) contrast(86%);
+    transition: filter 0.2s ease;
+    opacity: 0.7; // Match the secondary text opacity
+
+    &:hover {
+      // Apply theme-text-primary color on hover
+      filter: brightness(0) saturate(100%) invert(13%) sepia(15%) saturate(1158%) hue-rotate(181deg) brightness(96%) contrast(95%);
+      opacity: 1;
+    }
+  }
+}
+
 .profile-button {
   background: none;
   border: none;
@@ -1998,10 +2015,11 @@
 
     &--selected {
       background: var(--theme-interactive-primary);
-      color: white;
-
+      color: var(--theme-bg-primary);
+      
       &:hover {
-        background: var(--theme-interactive-accent);
+        background: var(--theme-interactive-primary);
+        color: var(--theme-bg-primary);
       }
     }
 
@@ -2032,6 +2050,23 @@
 
   &:hover {
     color: var(--theme-text-primary);
+  }
+
+  // EV2 Light theme specific styling
+  .theme-ev2-light & {
+    fill: var(--theme-text-secondary);
+    
+    path {
+      fill: var(--theme-text-secondary) !important;
+    }
+
+    &:hover {
+      fill: var(--theme-text-primary);
+      
+      path {
+        fill: var(--theme-text-primary) !important;
+      }
+    }
   }
 }
 

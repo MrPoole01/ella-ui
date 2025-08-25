@@ -1,0 +1,185 @@
+// Ella EV2 Light Theme Implementation - BEAUTIFUL LIGHT VERSION ☀️
+// Based on Ella AI Color Palette: Brand Orange, Pure White, Light Grays, Soft Charcoal
+// Maintains the same visual hierarchy and flair as EV2 Dark but inverted for light mode
+
+.theme-ev2-light {
+  // CSS Custom Properties for Theme Variables
+  
+  // Primary Brand Colors - LIGHT VERSION
+  --theme-primary: #FDB62F;           // Brand Orange (same as dark)
+  --theme-primary-bright: #262626;    // Brighter orange for extra pop
+  --theme-primary-deep: #E6A429;      // Deeper orange for contrast
+  --theme-secondary: #FFFFFF;         // Pure White (inverted from dark)
+  --theme-tertiary: #F9FAFB;          // Very light gray (inverted charcoal)
+  --theme-accent-primary: #1F2937;    // Dark charcoal (inverted white)
+  --theme-accent-secondary: #6B7280;  // Medium Gray (same as dark)
+  
+  // FLAIR COLORS - Light version adaptations
+  --theme-orange-glow: rgba(253, 182, 47, 0.4);
+  --theme-orange-subtle: rgba(43, 43, 43, 0.089);
+  --theme-orange-medium: rgba(253, 182, 47, 0.12);
+  --theme-orange-strong: rgba(253, 182, 47, 0.18);
+
+  // Background Colors - Light Palette
+  --theme-bg-primary: var(--theme-secondary);     // Pure white main background
+  --theme-bg-secondary: var(--theme-tertiary);    // Very light gray sidebar/secondary
+  --theme-bg-tertiary: #F3F4F6;                   // Light gray cards and elevated surfaces
+  --theme-bg-elevated: #E5E7EB;                   // Medium light gray hover states
+  --theme-bg-modal: #e6e6e6;       // White modal backgrounds
+  --theme-bg-card: var(--theme-tertiary);         // Light gray card backgrounds
+  --theme-bg-surface: var(--theme-bg-tertiary);   // General surface backgrounds
+
+  // Text Colors - Inverted for Light
+  --theme-text-primary: var(--theme-accent-primary);    // Dark charcoal primary text
+  --theme-text-secondary: #374151;                      // Medium dark gray secondary text
+  --theme-text-muted: var(--theme-accent-secondary);    // Medium gray muted text
+  --theme-text-light: #9CA3AF;                          // Light gray disabled text
+  --theme-text-accent: var(--theme-primary);            // Brand orange accent text
+  --theme-text-inverse: var(--theme-secondary);         // White text on dark backgrounds
+
+  // Border Colors - Light Adaptations
+  --theme-border-primary: #E5E7EB;                      // Light primary borders
+  --theme-border-secondary: #D1D5DB;                    // Medium light borders
+  --theme-border-light: #F3F4F6;                        // Very light borders
+  --theme-border-accent: var(--theme-primary);          // Brand orange borders
+  --theme-border-focus: var(--theme-primary);           // Focus state borders
+
+  // Interactive Colors - Consistent Orange Brand
+  --theme-interactive-primary: var(--theme-primary);    // Brand orange buttons/links
+  --theme-interactive-secondary: #F59E0B;               // Hover state orange
+  --theme-interactive-tertiary: #D97706;                // Active state orange
+  --theme-interactive-hover: rgba(253, 182, 47, 0.08); // Light orange hover overlay
+  --theme-interactive-active: rgba(253, 182, 47, 0.15); // Light orange active overlay
+  --theme-interactive-disabled: #9CA3AF;                // Light disabled interactive elements
+  --theme-interactive-focus: rgba(253, 182, 47, 0.2);  // Light orange focus overlay
+
+  // Status Colors - Light Adapted
+  --theme-success: #059669;                // Darker green for light background
+  --theme-warning: var(--theme-primary);   // Orange warning (brand consistent)
+  --theme-error: #DC2626;                  // Darker red for light background
+  --theme-info: var(--theme-primary);      // Orange info (brand consistent)
+
+  // Shadow and Effects - Light Theme Shadows
+  --theme-shadow-light: rgba(0, 0, 0, 0.05);
+  --theme-shadow-medium: rgba(0, 0, 0, 0.1);
+  --theme-shadow-heavy: rgba(0, 0, 0, 0.15);
+  --theme-glow-primary: rgba(253, 182, 47, 0.2);  // Subtle orange glow
+  --theme-overlay: rgba(255, 255, 255, 0.9);      // Light modal overlay
+
+  // Component-Specific Variables - Light Theme
+  --theme-sidebar-bg: var(--theme-tertiary);      // Light gray sidebar
+  --theme-header-bg: var(--theme-secondary);      // White header
+  --theme-header-border: #E5E7EB;                 // Light header borders
+  --theme-header-accent: var(--theme-primary);    // Orange header accents
+  --theme-chat-bg: var(--theme-secondary);        // White chat area
+  --theme-chat-item-bg: var(--theme-bg-tertiary); // Light gray chat item backgrounds
+  --theme-chat-item-hover: #F3F4F6;               // Light hover states
+  --theme-chat-item-accent: var(--theme-primary); // Orange chat accents
+  --theme-input-bg: var(--theme-secondary);       // White input backgrounds
+  --theme-input-border: #D1D5DB;                  // Light input borders
+  --theme-input-focus: var(--theme-primary);      // Orange input focus
+  --theme-button-primary-bg: var(--theme-primary); // Orange primary buttons
+  --theme-button-secondary-bg: var(--theme-bg-tertiary); // Light secondary buttons
+  --theme-dropdown-bg: var(--theme-secondary);     // White dropdown backgrounds
+  --theme-dropdown-border: #D1D5DB;               // Light dropdown borders
+  --theme-dropdown-shadow: rgba(0, 0, 0, 0.1);    // Subtle dropdown shadows
+  --theme-dropdown-accent: var(--theme-primary);   // Orange dropdown accents
+  
+  // Project Tags - Light Version
+  --theme-tag-bg: rgba(253, 182, 47, 0.08);       // Light tag backgrounds with orange tint
+  --theme-tag-text: var(--theme-primary-deep);    // Deeper orange tag text for contrast
+  --theme-tag-border: rgba(253, 182, 47, 0.2);    // Light orange tag borders
+
+  // Logo and Branding - Light Adaptations
+  --theme-logo-primary: var(--theme-primary);     // Orange logo elements
+  --theme-logo-secondary: var(--theme-accent-primary); // Dark logo elements
+  --theme-brand-accent: var(--theme-primary);     // Brand accent color
+
+  // Special UI Elements - Light Theme
+  --theme-workspace-indicator: var(--theme-primary);  // Orange workspace indicators
+  --theme-progress-bar: var(--theme-primary);         // Orange progress bars
+  --theme-notification-dot: var(--theme-primary);     // Orange notification dots
+  --theme-send-button: var(--theme-primary);          // Orange send button
+  --theme-active-tab: var(--theme-primary);           // Orange active tab indicator
+  --theme-template-card-bg: var(--theme-secondary);   // White template card backgrounds
+  --theme-template-card-border: #E5E7EB;              // Light template card borders
+  --theme-template-card-hover: #F9FAFB;               // Very light template card hover
+
+  // Hover and Focus States - Light Theme Flair
+  --theme-hover-overlay: rgba(0, 0, 0, 0.02);         // Very subtle dark hover overlay
+  --theme-hover-orange: var(--theme-orange-subtle);   // Light orange hover tint
+  --theme-focus-ring: var(--theme-primary);           // Orange focus rings
+  --theme-selection-bg: rgba(253, 182, 47, 0.15);     // Light orange selection background
+  
+  // Breadcrumb and Navigation - Light Theme
+  --theme-breadcrumb-text: var(--theme-text-muted);   // Gray breadcrumb text
+  --theme-breadcrumb-separator: var(--theme-accent-secondary); // Gray breadcrumb separators
+  --theme-nav-active: var(--theme-primary);           // Orange active navigation items
+  
+  // VISUAL FLAIR EFFECTS - Light Theme ✨
+  --theme-gradient-orange: #d4d4d4;
+  --theme-gradient-subtle: linear-gradient(135deg, var(--theme-tertiary) 0%, #F3F4F6 100%);
+  --theme-gradient-card: linear-gradient(135deg, var(--theme-secondary) 0%, var(--theme-tertiary) 100%);
+  --theme-shadow-glow: 0 0 15px var(--theme-orange-glow);
+  --theme-shadow-orange: 0 2px 10px rgba(253, 182, 47, 0.15);
+  --theme-shadow-elevated: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --theme-animation-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --theme-animation-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  // WORKSPACE MENU STYLING - Light Version 🎯
+  --theme-workspace-menu-bg: var(--theme-secondary);
+  --theme-workspace-menu-overlay: rgba(0, 0, 0, 0.3);
+  --theme-workspace-item-bg: var(--theme-bg-tertiary);
+  --theme-workspace-item-hover: var(--theme-bg-elevated);
+  --theme-workspace-item-active: var(--theme-orange-medium);
+  --theme-workspace-search-bg: var(--theme-secondary);
+  --theme-workspace-search-border: #D1D5DB;
+  --theme-workspace-search-focus: var(--theme-primary);
+  --theme-workspace-divider: #E5E7EB;
+  --theme-workspace-header-bg: var(--theme-tertiary);
+  --theme-workspace-close-hover: rgba(239, 68, 68, 0.08);
+
+  // ADDITIONAL LIGHT THEME ENHANCEMENTS 🌟
+  
+  // Enhanced Card Styling
+  --theme-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --theme-card-hover-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --theme-card-border: rgba(0, 0, 0, 0.08);
+  
+  // Enhanced Input Styling
+  --theme-input-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  --theme-input-focus-shadow: 0 0 0 3px rgba(253, 182, 47, 0.1);
+  
+  // Enhanced Button Styling
+  --theme-button-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --theme-button-hover-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --theme-button-active-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  
+  // Enhanced Menu Styling
+  --theme-menu-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --theme-menu-hover-bg: rgba(253, 182, 47, 0.04);
+  
+  // Enhanced Workspace Menu for Light Theme
+  --theme-workspace-menu-hover-bg: rgba(253, 182, 47, 0.06);
+  --theme-workspace-menu-active-bg: rgba(253, 182, 47, 0.12);
+  --theme-workspace-menu-border: rgba(0, 0, 0, 0.06);
+  
+  // Light Theme Specific Data Visualization
+  --theme-data-primary: var(--theme-primary);
+  --theme-data-secondary: #8B5CF6;
+  --theme-data-tertiary: #06B6D4;
+  --theme-data-bg: rgba(253, 182, 47, 0.03);
+  --theme-data-border: rgba(253, 182, 47, 0.1);
+  --theme-data-glow: rgba(253, 182, 47, 0.08);
+  
+  // Enhanced Text Contrast for Accessibility
+  --theme-text-high-contrast: #111827;
+  --theme-text-medium-contrast: #374151;
+  --theme-text-low-contrast: #6B7280;
+  
+  // Light Theme Status Indicators
+  --theme-status-online: #10B981;
+  --theme-status-away: #F59E0B;
+  --theme-status-busy: #EF4444;
+  --theme-status-offline: #6B7280;
+}

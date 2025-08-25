@@ -261,13 +261,13 @@ const Header = () => {
     
     // Apply theme immediately based on mode
     if (mode === 'light') {
-      setTheme('Ella Web Light');
+      setTheme('Ella EV2 Light');
     } else if (mode === 'dark') {
       setTheme('Ella EV2 Dark');
     } else if (mode === 'auto') {
       // Auto mode - switch based on system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'Ella EV2 Dark' : 'Ella Web Light');
+      setTheme(prefersDark ? 'Ella EV2 Dark' : 'Ella EV2 Light');
     }
   };
 
@@ -460,13 +460,8 @@ const Header = () => {
   }, [appearanceMode, setTheme]);
 
   const handleThemeSelect = (theme) => {
-    console.log('Theme selected:', theme);
-    console.log('Current theme before:', currentTheme);
     setTheme(theme);
     setIsThemeDropdownOpen(false);
-    console.log('Theme selection completed');
-    // Keep profile dropdown open after theme selection
-    // setShowProfileDropdown(false); // Don't close profile dropdown immediately
   };
 
   const handleWorkspaceClick = () => {

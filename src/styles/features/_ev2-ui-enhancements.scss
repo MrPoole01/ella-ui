@@ -1,6 +1,7 @@
-// 🔥 ELLA EV2 DARK - UI COMPONENT ENHANCEMENTS WITH FLAIR
+// 🔥 ELLA EV2 - UI COMPONENT ENHANCEMENTS WITH FLAIR
 
-.theme-ev2-dark {
+.theme-ev2-dark,
+.theme-ev2-light {
   
   // ENHANCED BUTTONS ✨
   .button {
@@ -159,7 +160,7 @@
   .chat-interface {
     
     &__input {
-      background: var(--theme-gradient-card);
+      background: var(--theme-input-shadow);
       border: 2px solid var(--theme-border-secondary);
       transition: var(--theme-animation-smooth);
       
@@ -187,8 +188,8 @@
   
   // ENHANCED PROJECT TAGS 🏷️
   .chat-item__project-tag {
-    background: var(--theme-primary-bright);
-    border: 2px solid var(--theme-primary-bright);
+    background: var(--theme-primary-deep);
+    border: 2px solid var(--theme-primary-deep);
     color: var(--theme-secondary);
     // box-shadow: 
     //   0 2px 8px rgba(253, 182, 47, 0.2),
@@ -196,18 +197,18 @@
     transition: var(--theme-animation-fast);
     font-weight: 600;
     
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 
-        0 4px 12px rgba(253, 182, 47, 0.3),
-        0 0 15px var(--theme-orange-glow);
-    }
+    // &:hover {
+    //   transform: scale(1.05);
+    //   box-shadow: 
+    //     0 4px 12px rgba(253, 182, 47, 0.3),
+    //     0 0 15px var(--theme-orange-glow);
+    // }
     
     &--ellament {
       background: var(--theme-gradient-orange);
       border: 2px solid var(--theme-gradient-orange);
       padding: 2px 6px;
-      color: black;
+      color: rgb(7, 7, 7);
     }
   }
   

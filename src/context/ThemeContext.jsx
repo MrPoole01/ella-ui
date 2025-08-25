@@ -14,7 +14,8 @@ const themes = [
   'Ella Citrus Grove',
   'Ella Neumorphism',
   'Ella Neumorphism Dark',
-  'Ella EV2 Dark'
+  'Ella EV2 Dark',
+  'Ella EV2 Light'
 ];
 
 export const useTheme = () => {
@@ -29,10 +30,8 @@ export const ThemeProvider = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useState('UI Theme');
 
   const applyTheme = (themeName) => {
-    console.log('Applying theme:', themeName);
-    console.log('Body classes before:', document.body.className);
     // Remove existing theme classes
-    document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark', 'theme-ev2-dark');
+    document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark', 'theme-ev2-dark', 'theme-ev2-light');
     
     // Add the appropriate theme class
     switch (themeName) {
@@ -72,20 +71,19 @@ export const ThemeProvider = ({ children }) => {
       case 'Ella EV2 Dark':
         document.body.classList.add('theme-ev2-dark');
         break;
+      case 'Ella EV2 Light':
+        document.body.classList.add('theme-ev2-light');
+        break;
       default:
         document.body.classList.add('theme-ui');
     }
-    console.log('Body classes after:', document.body.className);
   };
 
   const setTheme = (themeName) => {
-    console.log('ThemeContext: Setting theme to:', themeName);
-    console.log('ThemeContext: Current theme before:', currentTheme);
     setCurrentTheme(themeName);
     applyTheme(themeName);
     // Persist theme to localStorage
     localStorage.setItem('ella-ui-theme', themeName);
-    console.log('ThemeContext: Theme set and applied');
   };
 
   // Load saved theme on mount
