@@ -9,6 +9,7 @@ const WorkspaceCreateModal = ({
   orgBrandBots = []
 }) => {
   const [workspaceName, setWorkspaceName] = useState('');
+  const [workspaceType, setWorkspaceType] = useState('organization'); // 'organization' | 'personal'
   const [setupPath, setSetupPath] = useState('fresh'); // 'fresh' | 'connect' | 'clone'
   const [selectedBrandBotId, setSelectedBrandBotId] = useState('');
   const [errors, setErrors] = useState({});
@@ -18,6 +19,7 @@ const WorkspaceCreateModal = ({
   useEffect(() => {
     if (isOpen) {
       setWorkspaceName('');
+      setWorkspaceType('organization');
       setSetupPath('fresh');
       setSelectedBrandBotId('');
       setErrors({});
@@ -38,6 +40,7 @@ const WorkspaceCreateModal = ({
     if (!validate()) return;
     onSubmit({
       name: workspaceName.trim(),
+      type: workspaceType,
       setupPath,
       brandBotId: selectedBrandBotId || null
     });
@@ -64,6 +67,32 @@ const WorkspaceCreateModal = ({
               placeholder="Name your workspace"
             />
             {errors.workspaceName && <div className="workspace-create__error">{errors.workspaceName}</div>}
+          </div>
+
+          <div className="workspace-create__field">
+            <label>Workspace Type</label>
+            <div className="workspace-create__toggle-group">
+              <label className={`workspace-create__toggle-option ${workspaceType === 'organization' ? 'workspace-create__toggle-option--selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="workspaceType"
+                  value="organization"
+                  checked={workspaceType === 'organization'}
+                  onChange={(e) => setWorkspaceType(e.target.value)}
+                />
+                <span>Workspace for my Organization</span>
+              </label>
+              <label className={`workspace-create__toggle-option ${workspaceType === 'personal' ? 'workspace-create__toggle-option--selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="workspaceType"
+                  value="personal"
+                  checked={workspaceType === 'personal'}
+                  onChange={(e) => setWorkspaceType(e.target.value)}
+                />
+                <span>Workspace just for me (personal)</span>
+              </label>
+            </div>
           </div>
 
           <div className="workspace-create__section">

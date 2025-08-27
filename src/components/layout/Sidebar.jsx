@@ -12,6 +12,7 @@ import ManageTagsDrawer from '../features/ManageTagsDrawer';
 import TagManagementModal from '../ui/Modal/TagManagementModal';
 import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
 import ConvertToProjectModal from '../ui/Modal/ConvertToProjectModal';
+import DocumentUploadModal from '../ui/Modal/DocumentUploadModal';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -39,6 +40,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [isProjectCreateModalOpen, setIsProjectCreateModalOpen] = useState(false);
   const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [convertSourceWorkspace, setConvertSourceWorkspace] = useState(null);
+  const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] = useState(false);
   const [projects, setProjects] = useState([
     {
       id: 1,
@@ -471,6 +473,18 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const handleConvertModalClose = () => {
     setIsConvertModalOpen(false);
     setConvertSourceWorkspace(null);
+  };
+
+  // Document Upload Modal handlers
+  const handleDocumentUploadClose = () => {
+    setIsDocumentUploadModalOpen(false);
+  };
+
+  const handleDocumentUpload = (uploadedFiles) => {
+    // Handle the uploaded files here
+    console.log('Files uploaded:', uploadedFiles);
+    // You can add logic to update the documents list or call an API
+    setIsDocumentUploadModalOpen(false);
   };
 
   const handleConvertSubmit = async (conversionData) => {
@@ -1180,7 +1194,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                       <path d="M4.5 8.4375Q5.30147 8.4375 6.03251 8.1283Q6.73903 7.82947 7.28427 7.28423Q7.82951 6.73899 8.12835 6.03248Q8.43754 5.30146 8.43754 4.50001Q8.43754 3.69855 8.12835 2.96752Q7.82951 2.26101 7.28427 1.71577Q6.73903 1.17053 6.03251 0.871698Q5.30147 0.5625 4.5 0.5625Q3.69854 0.5625 2.96752 0.871697Q2.26101 1.17053 1.71577 1.71577Q1.17053 2.26101 0.871698 2.96752Q0.5625 3.69855 0.5625 4.50001Q0.5625 5.30146 0.871697 6.03248Q1.17053 6.73899 1.71577 7.28423Q2.261 7.82947 2.96752 8.1283Q3.69854 8.4375 4.5 8.4375ZM4.5 9.5625Q3.47041 9.5625 2.52927 9.16443Q1.62066 8.78012 0.920271 8.07973Q0.219875 7.37933 -0.164433 6.47073Q-0.5625 5.52959 -0.5625 4.50001Q-0.5625 3.47041 -0.164433 2.52928Q0.219875 1.62067 0.920271 0.920273Q1.62067 0.219875 2.52927 -0.164433Q3.47041 -0.5625 4.5 -0.5625Q5.5296 -0.5625 6.47075 -0.164434Q7.37936 0.219872 8.07976 0.920271Q8.78016 1.62067 9.16448 2.52928Q9.56254 3.47041 9.56254 4.50001Q9.56255 5.5296 9.16448 6.47073Q8.78016 7.37933 8.07976 8.07973Q7.37936 8.78013 6.47075 9.16443Q5.5296 9.5625 4.5 9.5625Z" fillRule="nonzero" transform="matrix(1 0 0 1 1.50003 1.5)" fill="rgb(107, 114, 128)"/>
                     </g>
                   </svg>
-                  <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
+                  <span>Updated: {new Date(project.createdAt).toLocaleDateString()} @ {new Date(project.createdAt).toLocaleTimeString([], {hour: 'numeric', minute: '2-digit', hour12: true}).toLowerCase()}</span>
                 </div>
               </div>
             ))}
@@ -1602,7 +1616,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
           <div className="files-menu__create">
             <button 
               className="files-menu__create-btn"
-              onClick={() => console.log('Upload Document clicked')}
+              onClick={() => setIsDocumentUploadModalOpen(true)}
             >
               + Upload Files
             </button>
@@ -1999,12 +2013,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <span>Transfer</span>
             </div>
 
-            <div className="workspace-menu__option" onClick={handleConvertToProjectClick}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
-              </svg>
-              <span>Convert to Project</span>
-            </div>
+
 
             <div className="workspace-menu__option" onClick={() => console.log('Download Documents')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -2113,6 +2122,13 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         isOpen={showManageTagsDrawer}
         onClose={() => setShowManageTagsDrawer(false)}
         currentUserRole="Admin" // This would come from auth context
+      />
+
+      {/* Document Upload Modal */}
+      <DocumentUploadModal
+        isOpen={isDocumentUploadModalOpen}
+        onClose={handleDocumentUploadClose}
+        onUpload={handleDocumentUpload}
       />
       </>
     );

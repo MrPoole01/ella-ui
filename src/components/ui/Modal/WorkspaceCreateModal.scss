@@ -84,6 +84,68 @@
   color: var(--theme-text-secondary);
 }
 
+// Toggle Group Styles
+.workspace-create__toggle-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.workspace-create__toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--theme-bg-secondary);
+  border: 1px solid var(--theme-border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 0;
+
+  input[type="radio"] {
+    margin: 0;
+    accent-color: var(--theme-primary);
+  }
+
+  span {
+    color: var(--theme-text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:hover {
+    background: var(--theme-bg-elevated);
+    border-color: var(--theme-border-secondary);
+  }
+
+  &--selected {
+    background: var(--theme-interactive-hover);
+    border-color: var(--theme-primary);
+    
+    span {
+      color: var(--theme-primary);
+    }
+  }
+}
+
+// Responsive adjustments for toggle options
+@media (max-width: 768px) {
+  .workspace-create__toggle-group {
+    flex-direction: column;
+  }
+  
+  .workspace-create__toggle-option {
+    span {
+      white-space: normal;
+    }
+  }
+}
+
 .workspace-create__input,
 .workspace-create__select {
   background: var(--theme-bg-secondary);

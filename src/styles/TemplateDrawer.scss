@@ -150,28 +150,71 @@
   }
 
   &__filter-btn {
-    background: var(--theme-bg-elevated);
-    border: 1px solid var(--theme-border-secondary);
-    color: var(--theme-text-primary);
-
-    &:hover {
-      background: var(--theme-bg-secondary);
-    }
-  }
-
-  &__filter-icon {
-    width: 20px;
-    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 42px;
+    height: 42px;
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
 
-    .template-icon {
-      width: 20px;
-      height: 20px;
-      color: currentColor;
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-border-secondary);
+    }
+
+    // Electric Dark theme
+    .theme-electric-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-secondary));
+      border-color: var(--theme-border-secondary);
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      }
+    }
+
+    // Modern Dark theme
+    .theme-modern-dark & {
+      background: linear-gradient(135deg, var(--theme-bg-tertiary), var(--theme-bg-secondary));
+      border-color: var(--theme-border-secondary);
+      
+      &:hover {
+        background: linear-gradient(135deg, var(--theme-interactive-primary), var(--theme-interactive-secondary));
+        box-shadow: 0 0 15px rgba(0, 162, 255, 0.3);
+      }
+    }
+
+    // Neumorphism themes
+    .theme-neumorphism &,
+    .theme-neumorphism-dark & {
+      background: var(--theme-gradient-elevated);
+      border: none;
+      box-shadow: var(--theme-neomorphic-button);
+      
+      &:hover {
+        background: var(--theme-gradient-pressed);
+        box-shadow: var(--theme-neomorphic-button-pressed);
+        transform: translateY(1px);
+      }
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      color: var(--theme-interactive-primary);
+    }
+
+    span {
+      display: none;
     }
   }
+
+
 
   &__new-btn {
     background: var(--theme-interactive-primary);

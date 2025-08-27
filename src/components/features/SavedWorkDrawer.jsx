@@ -472,7 +472,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
       case 'approved':
         return 'Approved';
       case 'draft':
-        return 'Draft';
+        return 'In Draft';
       case 'in_review':
         return 'In Review';
       default:
@@ -701,6 +701,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
                       >
                         {getStatusLabel(document.status)}
                       </span>
+                      <span className="saved-work-drawer__version">V1</span>
                     </div>
                     
                     <div className="saved-work-drawer__card-meta">

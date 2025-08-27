@@ -5,3 +5,4 @@ export { default as ProjectCreateModal } from './ProjectCreateModal';
 export { default as InviteUsersModal } from './InviteUsersModal';
 export { default as BrandBotConfirmationModal } from './BrandBotConfirmationModal';
 export { default as ConvertToProjectModal } from './ConvertToProjectModal';
+export { default as DocumentUploadModal } from './DocumentUploadModal';

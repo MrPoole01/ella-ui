@@ -991,12 +991,7 @@ const Header = () => {
                    >
                      People
                    </button>
-                   <button 
-                     className={`settings-tab ${activeSettingsTab === 'navigation' ? 'settings-tab--active' : ''}`}
-                     onClick={() => setActiveSettingsTab('navigation')}
-                   >
-                     Navigation
-                   </button>
+
                  </div>
 
                 {/* Appearance Tab Content */}
@@ -1399,23 +1394,7 @@ const Header = () => {
                   </div>
                 )}
 
-                {/* Navigation Tab Content */}
-                {activeSettingsTab === 'navigation' && (
-                  <div className="settings-tab-content">
-                    {/* Navigation Section */}
-                    <div className="settings-section">
-                      <div className="settings-section-header">Navigation</div>
-                      <div className="settings-item">
-                        <button className="settings-nav-button">
-                          <span>Preferences</span>
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+
               </div>
             </div>
           )}

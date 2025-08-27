@@ -327,6 +327,17 @@
     width: 65px;
   }
 
+  &__version {
+    color: var(--theme-text-muted);
+    font-size: 12px;
+    font-weight: 400;
+    padding: 2px 6px;
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-light);
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
   &__card-meta {
     display: flex;
     flex-direction: column;
