@@ -4,11 +4,11 @@ import '../../styles/DocumentDrawer.scss';
 
 // Mock document versions
 const mockVersions = [
-  { id: 1, version: 'Version 1', status: 'approved', updatedDate: '2024-12-10', isActive: true },
-  { id: 2, version: 'Version 2', status: 'approved', updatedDate: '2024-12-09' },
-  { id: 3, version: 'Version 3', status: 'draft', updatedDate: '2024-12-08' },
+  { id: 5, version: 'Version 5', status: 'not_started', updatedDate: '2024-12-06' },
   { id: 4, version: 'Version 4', status: 'draft', updatedDate: '2024-12-07' },
-  { id: 5, version: 'Version 5', status: 'not_started', updatedDate: '2024-12-06' }
+  { id: 3, version: 'Version 3', status: 'draft', updatedDate: '2024-12-08' },
+  { id: 2, version: 'Version 2', status: 'approved', updatedDate: '2024-12-09' },
+  { id: 1, version: 'Version 1', status: 'approved', updatedDate: '2024-12-10', isActive: true }
 ];
 
 // Predefined tags
@@ -85,6 +85,12 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
 
   const handleSave = () => {
     console.log('Save document:', document);
+    // Exit edit mode and set status to approved when finalizing
+    setIsEditMode(false);
+    // Update document status to approved (this would typically be done via API)
+    if (document) {
+      document.status = 'approved';
+    }
     // Implement save logic
   };
 
@@ -163,12 +169,14 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
             <div className="document-drawer__title">
               {isEditMode ? 'Edit Document' : 'Review Document'}
             </div>
-            <div 
-              className="document-drawer__status"
-              style={{ color: getStatusColor(document.status) }}
-            >
-              {getStatusLabel(document.status)}
-            </div>
+            {(!isEditMode || document?.status !== 'approved') && document && (
+              <div 
+                className="document-drawer__status"
+                style={{ color: getStatusColor(document.status) }}
+              >
+                {getStatusLabel(document.status)}
+              </div>
+            )}
           </div>
 
           <div className="document-drawer__header-right">
@@ -226,7 +234,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
         <div className="document-drawer__subtitle">
           {isEditMode 
             ? 'Make changes to your document. Ella is here to help.'
-            : `Review and approve your ${document.title}. Let us know if you'd like refinements or have additional input.`
+            : `Review and approve your ${document?.title || 'document'}. Let us know if you'd like refinements or have additional input.`
           }
         </div>
 
@@ -419,7 +427,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                     <path d="M12 4L5 11L2 8" stroke="currentColor" strokeWidth="2"/>
                   </svg>
-                  Save
+                  Finalize
                 </button>
                 <button className="document-drawer__btn document-drawer__btn--secondary" onClick={handleSaveAsDraft}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">

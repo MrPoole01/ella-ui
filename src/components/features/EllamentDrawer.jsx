@@ -185,6 +185,14 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
     }
   };
 
+  const handleCreateICP = () => {
+    // Handle create ICP action
+    console.log('Creating new ICP...');
+    // Close the dropdown
+    setPersonaDropdownOpen(false);
+    // You can add your ICP creation logic here
+  };
+
   const handleEllamentMenuClick = (ellamentId, event) => {
     event.stopPropagation();
     setActiveEllamentMenu(activeEllamentMenu === ellamentId ? null : ellamentId);
@@ -282,7 +290,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
         {/* Header */}
         <div className="ellament-drawer__header">
           <div className="ellament-drawer__header-left">
-            <div className="ellament-drawer__title">Ellaments</div>
+            <div className="ellament-drawer__title">Ella-ments</div>
           </div>
 
           <div className="ellament-drawer__header-right">
@@ -303,7 +311,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
         </div>
 
         <div className="ellament-drawer__subtitle">
-          Select form the Ellaments below to ...
+          Select form the Ella-ments below to ...
         </div>
 
         {/* Tab Navigation */}
@@ -350,6 +358,12 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
                     {option.label}
                   </button>
                 ))}
+                <button className="ellament-drawer__create-icp-button" onClick={handleCreateICP}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 1V15M1 8H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Create an ICP
+                </button>
                 <div className="ellament-drawer__persona-dropdown-footer">
                   <button className="ellament-drawer__persona-exit">Exit</button>
                   <button className="ellament-drawer__persona-select">Select</button>
@@ -392,10 +406,10 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             <div className="ellament-drawer__empty">
               <div className="ellament-drawer__empty-icon">📄</div>
               <div className="ellament-drawer__empty-title">
-                No ellaments found
+                No ella-ments found
               </div>
               <div className="ellament-drawer__empty-text">
-                No ellaments available for this category
+                No ella-ments available for this category
               </div>
             </div>
           ) : (

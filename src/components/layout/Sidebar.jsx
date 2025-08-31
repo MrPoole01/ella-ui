@@ -9,6 +9,7 @@ import SavedWorkDrawer from '../features/SavedWorkDrawer';
 import DocumentDrawer from '../features/DocumentDrawer';
 import EllamentDrawer from '../features/EllamentDrawer';
 import ManageTagsDrawer from '../features/ManageTagsDrawer';
+import UploadedFilesDrawer from '../features/UploadedFilesDrawer';
 import TagManagementModal from '../ui/Modal/TagManagementModal';
 import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
 import ConvertToProjectModal from '../ui/Modal/ConvertToProjectModal';
@@ -30,6 +31,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [showDocumentDrawer, setShowDocumentDrawer] = useState(false);
   const [showEllamentDrawer, setShowEllamentDrawer] = useState(false);
   const [showManageTagsDrawer, setShowManageTagsDrawer] = useState(false);
+  const [showUploadedFilesDrawer, setShowUploadedFilesDrawer] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [selectedEllament, setSelectedEllament] = useState(null);
   const [activeDocumentMenu, setActiveDocumentMenu] = useState(null);
@@ -865,7 +867,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 />
               </g>
             </svg>
-            <span className="sidebar__tab-text">Brand Bot Ellaments</span>
+            <span className="sidebar__tab-text">Brand Bot Ella-ments</span>
           </div>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
             <CircularProgress 
@@ -1976,6 +1978,17 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                setShowUploadedFilesDrawer(true);
+                setIsWorkspaceMenuOpen(false);
+              }}
+            >
+              Manage Uploaded Files
+            </button>
+            <button 
+              className="workspace-menu__action-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setShowManageTagsDrawer(true);
                 setIsWorkspaceMenuOpen(false);
               }}
@@ -2122,6 +2135,12 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         isOpen={showManageTagsDrawer}
         onClose={() => setShowManageTagsDrawer(false)}
         currentUserRole="Admin" // This would come from auth context
+      />
+
+      {/* Uploaded Files Drawer */}
+      <UploadedFilesDrawer
+        isOpen={showUploadedFilesDrawer}
+        onClose={() => setShowUploadedFilesDrawer(false)}
       />
 
       {/* Document Upload Modal */}

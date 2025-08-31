@@ -272,6 +272,37 @@
     }
   }
 
+  &__create-icp-button {
+    width: 100%;
+    background: var(--theme-interactive-primary);
+    border: none;
+    border-radius: 6px;
+    color: var(--theme-bg-primary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    padding: 10px 20px 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+    margin: 12px 20px 0 20px;
+    width: calc(100% - 40px);
+
+    &:hover {
+      background: var(--theme-primary-deep);
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+    }
+  }
+
   &__persona-dropdown-footer {
     display: flex;
     justify-content: space-between;
@@ -651,6 +682,17 @@
         &:hover {
           border-color: var(--theme-primary);
         }
+      }
+    }
+
+    // Create ICP Button EV2 Dark theme
+    &__create-icp-button {
+      background: var(--theme-interactive-primary);
+      color: var(--theme-bg-primary);
+      
+      &:hover {
+        background: var(--theme-primary-deep);
+        box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
       }
     }
   }

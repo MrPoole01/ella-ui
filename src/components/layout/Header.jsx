@@ -20,7 +20,6 @@ const Header = () => {
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: 1, name: 'Creative Studio' }); // Default workspace
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(true); // Show notifications by default
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
@@ -476,18 +475,7 @@ const Header = () => {
     setSelectedWorkspace(workspace);
   };
 
-  const handleSearchClick = () => {
-    setIsSearchOpen(!isSearchOpen);
-    if (!isSearchOpen) {
-      // Focus the search input when opening
-      setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-    } else {
-      // Clear search when closing
-      setSearchQuery('');
-    }
-  };
+
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -500,8 +488,7 @@ const Header = () => {
       // You can add your search logic here
     }
     if (e.key === 'Escape') {
-      // Close search on escape
-      setIsSearchOpen(false);
+      // Clear search on escape
       setSearchQuery('');
     }
   };
@@ -535,10 +522,7 @@ const Header = () => {
       if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target)) {
         setIsNotificationMenuOpen(false);
       }
-      if (searchInputRef.current && !searchInputRef.current.contains(event.target) && !event.target.classList.contains('share-icon')) {
-        setIsSearchOpen(false);
-        setSearchQuery('');
-      }
+
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setShowProfileDropdown(false);
       }
@@ -615,7 +599,16 @@ const Header = () => {
       
       <div className="header__right">
         {/* Search Input Field */}
-        <div className={`header__search-container ${isSearchOpen ? 'header__search-container--open' : ''}`}>
+        <div className="header__search-container header__search-container--always-open">
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="16" 
+            height="16" 
+            viewBox="0 0 19 21.9998" 
+            className="header__search-icon"
+          >
+            <path d="M12.2802 16.0613C11.1516 16.6051 9.88398 16.9102 8.54432 16.9102C3.82543 16.9102 0 13.1248 0 8.45512C0 3.78548 3.82543 0 8.54432 0C13.2632 0 17.0886 3.78548 17.0886 8.45512C17.0886 10.6758 16.2235 12.6965 14.8086 14.2052L18.7011 19.5292C19.2107 20.2262 19.0528 21.1998 18.3485 21.704C17.6442 22.2082 16.6602 22.052 16.1507 21.355L12.2802 16.0613ZM14.7581 8.45504C14.7581 11.8511 11.976 14.6042 8.5441 14.6042C5.11218 14.6042 2.33005 11.8511 2.33005 8.45504C2.33005 5.05893 5.11218 2.30586 8.5441 2.30586C11.976 2.30586 14.7581 5.05893 14.7581 8.45504Z" fillRule="evenodd" transform="matrix(1 0 0 1 0 -0.000104904)" fill="rgb(196, 196, 196)"/>
+          </svg>
           <input
             ref={searchInputRef}
             type="text"
@@ -628,17 +621,6 @@ const Header = () => {
         </div>
         
         <div className="header__actions">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="19" 
-            height="21.9998" 
-            viewBox="0 0 19 21.9998" 
-            className="share-icon"
-            onClick={handleSearchClick}
-            style={{ cursor: 'pointer' }}
-          >
-            <path d="M12.2802 16.0613C11.1516 16.6051 9.88398 16.9102 8.54432 16.9102C3.82543 16.9102 0 13.1248 0 8.45512C0 3.78548 3.82543 0 8.54432 0C13.2632 0 17.0886 3.78548 17.0886 8.45512C17.0886 10.6758 16.2235 12.6965 14.8086 14.2052L18.7011 19.5292C19.2107 20.2262 19.0528 21.1998 18.3485 21.704C17.6442 22.2082 16.6602 22.052 16.1507 21.355L12.2802 16.0613ZM14.7581 8.45504C14.7581 11.8511 11.976 14.6042 8.5441 14.6042C5.11218 14.6042 2.33005 11.8511 2.33005 8.45504C2.33005 5.05893 5.11218 2.30586 8.5441 2.30586C11.976 2.30586 14.7581 5.05893 14.7581 8.45504Z" fillRule="evenodd" transform="matrix(1 0 0 1 0 -0.000104904)" fill="rgb(196, 196, 196)"/>
-          </svg>
           {/* Help Icon with Menu */}
           <div className="help-container" ref={helpMenuRef}>
             <svg 
