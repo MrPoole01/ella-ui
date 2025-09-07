@@ -27,6 +27,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [isFilesMenuOpen, setIsFilesMenuOpen] = useState(false);
   const [isSavedWorkMenuOpen, setIsSavedWorkMenuOpen] = useState(false);
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
+  const [activeTaskMenu, setActiveTaskMenu] = useState(null);
   const [showSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
   const [showDocumentDrawer, setShowDocumentDrawer] = useState(false);
   const [showEllamentDrawer, setShowEllamentDrawer] = useState(false);
@@ -612,10 +613,25 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     console.log(`Action: ${action}, Item ID: ${itemId}`);
     setActiveEllipsisMenu(null);
     
-    // TODO: Implement actual functionality for each action
     switch(action) {
       case 'edit':
-        // Open edit modal
+        // Find the saved work item and open DocumentDrawer
+        const savedWorkItem = sampleSavedWork.find(item => item.id === itemId);
+        if (savedWorkItem) {
+          // Map saved work item to document shape for DocumentDrawer
+          const documentForDrawer = {
+            id: savedWorkItem.id,
+            title: savedWorkItem.title,
+            type: 'saved_work',
+            project: 'Saved Work',
+            tags: savedWorkItem.tags || [],
+            status: 'approved',
+            lastUpdated: savedWorkItem.saved || new Date().toISOString(),
+            author: 'Brand Bot'
+          };
+          setSelectedDocument(documentForDrawer);
+          setShowDocumentDrawer(true);
+        }
         break;
       case 'share':
         // Launch share modal
@@ -673,6 +689,58 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         break;
       case 'move':
         // Open move to workspace modal
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Task menu handlers
+  const handleTaskMenuClick = (taskId, e) => {
+    e.stopPropagation();
+    setActiveTaskMenu(activeTaskMenu === taskId ? null : taskId);
+  };
+
+  const handleTaskMenuClose = () => {
+    setActiveTaskMenu(null);
+  };
+
+  const handleTaskAction = (action, taskId) => {
+    // Handle the different task menu actions
+    console.log(`Action: ${action}, Task ID: ${taskId}`);
+    setActiveTaskMenu(null);
+    
+    switch(action) {
+      case 'edit':
+        // Find the task and open DocumentDrawer
+        const task = sampleTasks.find(t => t.id === taskId);
+        if (task) {
+          // Map task to document shape for DocumentDrawer
+          const documentForDrawer = {
+            id: task.id,
+            title: task.title,
+            type: 'task',
+            project: 'Tasks',
+            tags: task.tags || [],
+            status: task.completed ? 'approved' : 'draft',
+            lastUpdated: task.updated || new Date().toISOString(),
+            author: 'Brand Bot'
+          };
+          setSelectedDocument(documentForDrawer);
+          setShowDocumentDrawer(true);
+        }
+        break;
+      case 'share':
+        // Launch share modal
+        break;
+      case 'archive':
+        // Move to archive
+        break;
+      case 'delete':
+        // Show confirmation modal then delete
+        break;
+      case 'move':
+        // Open move to project modal
         break;
       default:
         break;
@@ -1557,9 +1625,65 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                     <div className="section-menu__task-title">{task.title}</div>
                   </div>
                   <div className="section-menu__task-actions">
-                    <svg width="4" height="17" viewBox="0 0 4 17" fill="none">
-                      <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fill="#5D5D5D"/>
-                    </svg>
+                    <button 
+                      className="section-menu__task-menu"
+                      onClick={(e) => handleTaskMenuClick(task.id, e)}
+                    >
+                      <svg width="4" height="17" viewBox="0 0 4 17" fill="none">
+                        <path d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z" fill="#5D5D5D"/>
+                      </svg>
+                    </button>
+                    
+                    {activeTaskMenu === task.id && (
+                      <div className="section-menu__task-dropdown">
+                        <button 
+                          className="section-menu__task-dropdown-option"
+                          onClick={() => handleTaskAction('edit', task.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Edit
+                        </button>
+                        <button 
+                          className="section-menu__task-dropdown-option"
+                          onClick={() => handleTaskAction('share', task.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Share
+                        </button>
+                        <button 
+                          className="section-menu__task-dropdown-option"
+                          onClick={() => handleTaskAction('archive', task.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Archive
+                        </button>
+                        <button 
+                          className="section-menu__task-dropdown-option"
+                          onClick={() => handleTaskAction('move', task.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Move
+                        </button>
+                        <hr className="section-menu__task-dropdown-divider" />
+                        <button 
+                          className="section-menu__task-dropdown-option section-menu__task-dropdown-option--danger"
+                          onClick={() => handleTaskAction('delete', task.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="section-menu__task-details">
@@ -1958,7 +2082,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 setIsWorkspaceMenuOpen(false);
               }}
             >
-              Manage Saved Work
+              All Saved Work
             </button>
             <button 
               className="workspace-menu__action-btn"
@@ -1971,7 +2095,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 }, 10);
               }}
             >
-              Manage Templates
+              Template Library
             </button>
             <button 
               className="workspace-menu__action-btn"
@@ -1982,7 +2106,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 setIsWorkspaceMenuOpen(false);
               }}
             >
-              Manage Uploaded Files
+              Workspace Uploads
             </button>
             <button 
               className="workspace-menu__action-btn"
@@ -1993,11 +2117,18 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 setIsWorkspaceMenuOpen(false);
               }}
             >
-              Manage Tags
+              Tag Manager
             </button>
           </div>
 
           <div className="workspace-menu__options">
+            <div className="workspace-menu__option" onClick={() => console.log('Manage Workspace')}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM8 5.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM8 11a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z" fill="#6B7280"/>
+              </svg>
+              <span>Manage Workspace</span>
+            </div>
+
             <div className="workspace-menu__option" onClick={() => console.log('Rename Workspace')}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M12.854 3.146a.5.5 0 0 1 0 .708L8.207 8.5l4.647 4.646a.5.5 0 0 1-.708.708L7.5 9.207l-4.646 4.647a.5.5 0 0 1-.708-.708L6.793 8.5 2.146 3.854a.5.5 0 1 1 .708-.708L7.5 7.793l4.646-4.647a.5.5 0 0 1 .708 0z" fill="#6B7280"/>

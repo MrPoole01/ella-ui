@@ -39,7 +39,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 24px 32px;
+    padding: 15px 32px;
     border-bottom: 1px solid var(--theme-border-primary);
     background: var(--theme-bg-primary);
     flex-shrink: 0;
@@ -88,17 +88,59 @@
     }
   }
 
-  // Controls
+  // Controls - Matching saved-work-drawer__filters structure
   &__controls {
-    padding: 20px 32px;
-    border-bottom: 1px solid var(--theme-border-primary);
-    background: var(--theme-bg-primary);
-    flex-shrink: 0;
+    padding: 0 32px;
+    margin-bottom: 30px;
+    margin-top: 15px;
+  }
+
+  &__clear-filters-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__clear-filters {
+    background: var(--theme-primary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    
+    &:hover {
+      background: var(--theme-bg-tertiary);
+      color: var(--theme-text-primary);
+    }
+  }
+
+  &__filter-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
+  }
+
+  &__filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  &__filter-label {
+    color: var(--theme-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
   }
 
   &__search {
     position: relative;
-    margin-bottom: 16px;
+    width: 100%;
   }
 
   &__search-icon {
@@ -115,7 +157,7 @@
     height: 40px;
     padding: 0 16px 0 40px;
     border: 1px solid var(--theme-border-primary);
-    border-radius: 6px;
+    border-radius: 8px;
     background: var(--theme-bg-secondary);
     color: var(--theme-text-primary);
     font-size: 14px;
@@ -132,14 +174,10 @@
     }
   }
 
-  &__filters {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-
   &__filter-select,
   &__sort-select {
+    width: 90%;
+    min-width: 150px;
     height: 36px;
     padding: 0 12px;
     border: 1px solid var(--theme-border-primary);
@@ -320,7 +358,7 @@
     background: var(--theme-interactive-secondary);
     color: var(--theme-bg-primary);
     padding: 2px 6px;
-    border-radius: 12px;
+    border-radius: 2px;
     font-size: 11px;
     font-weight: 500;
     white-space: nowrap;

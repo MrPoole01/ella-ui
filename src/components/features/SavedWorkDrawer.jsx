@@ -482,11 +482,20 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
     });
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }).toLowerCase();
   };
 
   if (!isOpen) return null;
@@ -706,7 +715,7 @@ const SavedWorkDrawer = ({ isOpen, onClose, onDocumentSelect }) => {
                     
                     <div className="saved-work-drawer__card-meta">
                       <div className="saved-work-drawer__card-date">
-                        Last task review: {formatDate(document.lastUpdated)}
+                        Updated {formatDate(document.lastUpdated)} @ {formatTime(document.lastUpdated)}
                       </div>
                       {/* <div className="saved-work-drawer__card-author">
                         by {document.author}

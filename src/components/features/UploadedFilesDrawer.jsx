@@ -4,6 +4,7 @@ import '../../styles/UploadedFilesDrawer.scss';
 const UploadedFilesDrawer = ({ isOpen, onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedTags, setSelectedTags] = useState([]);
   const [sortBy, setSortBy] = useState('uploadDate');
   const [sortOrder, setSortOrder] = useState('desc');
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -70,6 +71,15 @@ const UploadedFilesDrawer = ({ isOpen, onClose }) => {
 
   const fileTypes = ['all', 'PDF', 'DOCX', 'XLSX', 'ZIP', 'AI', 'JPG', 'PNG'];
 
+  // Get unique tags from all files
+  const getUniqueTags = () => {
+    const allTags = uploadedFiles.flatMap(file => file.tags || []);
+    const uniqueTags = [...new Set(allTags)].sort();
+    return uniqueTags.map(tag => ({ value: tag, label: tag }));
+  };
+
+  const tagOptions = getUniqueTags();
+
   // Filter and sort files
   const filteredFiles = uploadedFiles
     .filter(file => {
@@ -77,7 +87,9 @@ const UploadedFilesDrawer = ({ isOpen, onClose }) => {
                           file.uploadedBy.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           file.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
       const matchesFilter = activeFilter === 'all' || file.type === activeFilter;
-      return matchesSearch && matchesFilter;
+      const matchesTags = selectedTags.length === 0 || 
+                         (file.tags && file.tags.some(tag => selectedTags.includes(tag)));
+      return matchesSearch && matchesFilter && matchesTags;
     })
     .sort((a, b) => {
       let aValue, bValue;
@@ -198,54 +210,103 @@ const UploadedFilesDrawer = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Controls */}
+        {/* Controls - Matching saved-work-drawer__filters structure */}
         <div className="uploaded-files-drawer__controls">
-          {/* Search */}
-          <div className="uploaded-files-drawer__search">
-            <svg className="uploaded-files-drawer__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M7.25 12.25C10.1495 12.25 12.5 9.8995 12.5 7C12.5 4.1005 10.1495 1.75 7.25 1.75C4.3505 1.75 2 4.1005 2 7C2 9.8995 4.3505 12.25 7.25 12.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M13.25 13.25L11.25 11.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Search files..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="uploaded-files-drawer__search-input"
-            />
-          </div>
+          {/* Filter Row */}
+          <div className="uploaded-files-drawer__filter-row">
+            {/* Search Field */}
+            <div className="uploaded-files-drawer__filter-group uploaded-files-drawer__filter-group--search">
+              <div className="uploaded-files-drawer__search">
+                <svg className="uploaded-files-drawer__search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M7.25 12.25C10.1495 12.25 12.5 9.8995 12.5 7C12.5 4.1005 10.1495 1.75 7.25 1.75C4.3505 1.75 2 4.1005 2 7C2 9.8995 4.3505 12.25 7.25 12.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M13.25 13.25L11.25 11.25" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search files..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="uploaded-files-drawer__search-input"
+                />
+              </div>
+            </div>
 
-          {/* Filters */}
-          <div className="uploaded-files-drawer__filters">
-            <select 
-              value={activeFilter} 
-              onChange={(e) => setActiveFilter(e.target.value)}
-              className="uploaded-files-drawer__filter-select"
-            >
-              {fileTypes.map(type => (
-                <option key={type} value={type}>
-                  {type === 'all' ? 'All Types' : type}
-                </option>
-              ))}
-            </select>
+            {/* Clear Filters Button */}
+            {(activeFilter !== 'all' || searchQuery.length >= 3 || selectedTags.length > 0) && (
+              <div className="uploaded-files-drawer__clear-filters-container">
+                <button 
+                  className="uploaded-files-drawer__clear-filters"
+                  onClick={() => {
+                    setActiveFilter('all');
+                    setSearchQuery('');
+                    setSelectedTags([]);
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
 
-            <select 
-              value={`${sortBy}-${sortOrder}`} 
-              onChange={(e) => {
-                const [newSortBy, newSortOrder] = e.target.value.split('-');
-                setSortBy(newSortBy);
-                setSortOrder(newSortOrder);
-              }}
-              className="uploaded-files-drawer__sort-select"
-            >
-              <option value="uploadDate-desc">Newest First</option>
-              <option value="uploadDate-asc">Oldest First</option>
-              <option value="name-asc">Name A-Z</option>
-              <option value="name-desc">Name Z-A</option>
-              <option value="size-desc">Largest First</option>
-              <option value="size-asc">Smallest First</option>
-              <option value="type-asc">Type A-Z</option>
-            </select>
+            {/* Tags Filter */}
+            <div className="uploaded-files-drawer__filter-group">
+              <label className="uploaded-files-drawer__filter-label">Tags:</label>
+              <select 
+                value={selectedTags.length > 0 ? selectedTags[0] : ''} 
+                onChange={(e) => {
+                  if (e.target.value === '') {
+                    setSelectedTags([]);
+                  } else {
+                    setSelectedTags([e.target.value]);
+                  }
+                }}
+                className="uploaded-files-drawer__filter-select"
+              >
+                <option value="">All Tags</option>
+                {tagOptions.map(tag => (
+                  <option key={tag.value} value={tag.value}>
+                    {tag.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* File Type Filter */}
+            <div className="uploaded-files-drawer__filter-group">
+              <label className="uploaded-files-drawer__filter-label">Type:</label>
+              <select 
+                value={activeFilter} 
+                onChange={(e) => setActiveFilter(e.target.value)}
+                className="uploaded-files-drawer__filter-select"
+              >
+                {fileTypes.map(type => (
+                  <option key={type} value={type}>
+                    {type === 'all' ? 'All Types' : type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="uploaded-files-drawer__filter-group uploaded-files-drawer__filter-group--right">
+              <label className="uploaded-files-drawer__filter-label">Sort by:</label>
+              <select 
+                value={`${sortBy}-${sortOrder}`} 
+                onChange={(e) => {
+                  const [newSortBy, newSortOrder] = e.target.value.split('-');
+                  setSortBy(newSortBy);
+                  setSortOrder(newSortOrder);
+                }}
+                className="uploaded-files-drawer__sort-select"
+              >
+                <option value="uploadDate-desc">Newest First</option>
+                <option value="uploadDate-asc">Oldest First</option>
+                <option value="name-asc">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+                <option value="size-desc">Largest First</option>
+                <option value="size-asc">Smallest First</option>
+                <option value="type-asc">Type A-Z</option>
+              </select>
+            </div>
           </div>
 
           {/* Bulk Actions */}

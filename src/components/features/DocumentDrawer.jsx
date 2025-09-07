@@ -180,49 +180,51 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
           </div>
 
           <div className="document-drawer__header-right">
-            {/* Version Dropdown */}
-            <div className="document-drawer__version-selector">
-              <button 
-                className="document-drawer__version-button"
-                onClick={() => setShowVersionDropdown(!showVersionDropdown)}
-              >
-                <span>{selectedVersion}</span>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5"/>
-                </svg>
-              </button>
+            {/* Version Dropdown - Only show when NOT in edit mode */}
+            {!isEditMode && (
+              <div className="document-drawer__version-selector">
+                <button
+                  className="document-drawer__version-button"
+                  onClick={() => setShowVersionDropdown(!showVersionDropdown)}
+                >
+                  <span>{selectedVersion}</span>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5"/>
+                  </svg>
+                </button>
 
-              {/* Version Dropdown Panel */}
-              {showVersionDropdown && (
-                <div className="document-drawer__version-dropdown">
-                  {mockVersions.map((version) => (
-                    <div 
-                      key={version.id}
-                      className={`document-drawer__version-item ${version.isActive ? 'document-drawer__version-item--active' : ''}`}
-                      onClick={() => {
-                        setSelectedVersion(version.version);
-                        setShowVersionDropdown(false);
-                      }}
-                    >
-                      <div className="document-drawer__version-info">
-                        <div className="document-drawer__version-name">
-                          {version.version}
-                        </div>
-                        <div className="document-drawer__version-date">
-                          Updated: {formatDate(version.updatedDate)}
-                        </div>
-                      </div>
-                      <div 
-                        className="document-drawer__version-status"
-                        style={{ color: getStatusColor(version.status) }}
+                {/* Version Dropdown Panel */}
+                {showVersionDropdown && (
+                  <div className="document-drawer__version-dropdown">
+                    {mockVersions.map((version) => (
+                      <div
+                        key={version.id}
+                        className={`document-drawer__version-item ${version.isActive ? 'document-drawer__version-item--active' : ''}`}
+                        onClick={() => {
+                          setSelectedVersion(version.version);
+                          setShowVersionDropdown(false);
+                        }}
                       >
-                        {getStatusLabel(version.status)}
+                        <div className="document-drawer__version-info">
+                          <div className="document-drawer__version-name">
+                            {version.version}
+                          </div>
+                          <div className="document-drawer__version-date">
+                            Updated: {formatDate(version.updatedDate)}
+                          </div>
+                        </div>
+                        <div
+                          className="document-drawer__version-status"
+                          style={{ color: getStatusColor(version.status) }}
+                        >
+                          {getStatusLabel(version.status)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Close Button */}
             <button className="document-drawer__close" onClick={onClose}>
@@ -330,8 +332,15 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                     className="document-drawer__chat-input-field"
                   />
                   <button className="document-drawer__chat-send">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M14.5 1.5L7 9L14.5 1.5ZM7 9L1.5 14.5L7 9ZM7 9L14.5 14.5L7 9Z" stroke="currentColor" strokeWidth="1.5"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18">
+                      <defs>
+                        <clipPath id="clipPathSend">
+                          <path d="M0 0L18 0L18 18L0 18L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                        </clipPath>
+                      </defs>
+                      <g clipPath="url(#clipPathSend)">
+                        <path d="M17.7818 0.607503C17.782 0.596637 17.782 0.586165 17.7818 0.575298C17.7811 0.548823 17.7785 0.522742 17.7743 0.496662C17.773 0.488561 17.7726 0.480658 17.7708 0.472558C17.7641 0.439957 17.7546 0.407949 17.7423 0.37693C17.7388 0.367841 17.7342 0.359345 17.7303 0.350454C17.7198 0.326942 17.708 0.304221 17.6943 0.282092C17.6888 0.273004 17.6833 0.263915 17.6771 0.254826C17.657 0.225782 17.6352 0.197924 17.6098 0.172436C17.5841 0.146751 17.5558 0.12482 17.5266 0.104469C17.5183 0.0987397 17.5098 0.093405 17.5011 0.088268C17.4778 0.0738448 17.4539 0.0613974 17.4292 0.0505306C17.4215 0.0471718 17.4142 0.0432202 17.4062 0.040059C17.3744 0.0276115 17.3416 0.0177326 17.3081 0.011015C17.3019 0.0098295 17.2956 0.00943434 17.2895 0.00824887C17.2614 0.003507 17.2332 0.000740905 17.2047 0.00014817C17.1952 -4.93926e-05 17.1859 -4.93926e-05 17.1767 0.000148186C17.1488 0.00074092 17.1209 0.00350701 17.0931 0.00824889C17.0862 0.00943436 17.0795 0.00982952 17.0725 0.0112126C17.0421 0.0173375 17.0121 0.0256358 16.9824 0.0367001L0.384498 6.26496C0.16242 6.34833 0.0114701 6.55599 0.00060336 6.79308C-0.0100659 7.02998 0.121521 7.25067 0.335103 7.35381L7.14266 10.6391L10.4278 17.4467C10.5272 17.6524 10.7352 17.782 10.9618 17.782C10.9709 17.782 10.9798 17.7818 10.9889 17.7814C11.2258 17.7705 11.4337 17.6196 11.517 17.3975L17.7455 0.799747C17.7566 0.770308 17.7647 0.740473 17.7708 0.710244C17.7724 0.702143 17.773 0.69424 17.7741 0.686139C17.7785 0.660059 17.7811 0.633781 17.7818 0.607503ZM14.8354 2.1085L7.4655 9.47837L2.09809 6.88831L14.8354 2.1085ZM10.8937 15.6839L8.30363 10.3167L15.6737 2.94663L10.8937 15.6839Z" fillRule="nonzero" transform="matrix(1 0 0 1 0.098877 0.0989456)" fill="currentColor"/>
+                      </g>
                     </svg>
                   </button>
                 </div>

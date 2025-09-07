@@ -125,21 +125,23 @@ const mockEllaments = [
   }
 ];
 
-// Persona dropdown options
-const personaOptions = [
-  { value: 'all', label: 'Select All' },
-  { value: 'icp1', label: 'ICP 1' },
-  { value: 'icp2', label: 'ICP 2' },
-  { value: 'icp3', label: 'ICP 3' },
-  { value: 'icp4', label: 'ICP 4' }
-];
-
 const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
+  // Persona dropdown options as state to support dynamic creation
+  const [personaOptions, setPersonaOptions] = useState([
+    { value: 'all', label: 'Select All' },
+    { value: 'icp1', label: 'ICP 1' },
+    { value: 'icp2', label: 'ICP 2' },
+    { value: 'icp3', label: 'ICP 3' },
+    { value: 'icp4', label: 'ICP 4' }
+  ]);
   const [activeTab, setActiveTab] = useState('product');
   const [activeEllamentMenu, setActiveEllamentMenu] = useState(null);
   const [personaDropdownOpen, setPersonaDropdownOpen] = useState(false);
   const [selectedPersonas, setSelectedPersonas] = useState(['all']);
   const [selectedBrandBotId, setSelectedBrandBotId] = useState(null);
+  const [activePersonaMenu, setActivePersonaMenu] = useState(null);
+  const [editingPersona, setEditingPersona] = useState(null);
+  const [editingPersonaName, setEditingPersonaName] = useState('');
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -150,13 +152,16 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
       if (personaDropdownOpen && !event.target.closest('.ellament-drawer__tab--persona')) {
         setPersonaDropdownOpen(false);
       }
+      if (activePersonaMenu && !event.target.closest('.ellament-drawer__persona-menu-container')) {
+        setActivePersonaMenu(null);
+      }
     };
 
-    if (activeEllamentMenu || personaDropdownOpen) {
+    if (activeEllamentMenu || personaDropdownOpen || activePersonaMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [activeEllamentMenu, personaDropdownOpen]);
+  }, [activeEllamentMenu, personaDropdownOpen, activePersonaMenu]);
 
   const handleTabClick = (tab) => {
     if (tab === 'persona') {
@@ -186,11 +191,26 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   };
 
   const handleCreateICP = () => {
-    // Handle create ICP action
-    console.log('Creating new ICP...');
-    // Close the dropdown
-    setPersonaDropdownOpen(false);
-    // You can add your ICP creation logic here
+    // Generate a unique ID for the new ICP
+    const newIcpId = `icp${Date.now()}`;
+    
+    // Create new persona option with placeholder name
+    const newPersona = {
+      value: newIcpId,
+      label: 'Untitled ICP'
+    };
+    
+    // Add the new persona to the options
+    setPersonaOptions(prev => [...prev, newPersona]);
+    
+    // Set the new persona to editing mode immediately
+    setEditingPersona(newIcpId);
+    setEditingPersonaName('Untitled ICP');
+    
+    // Keep dropdown open so user can see and edit the new option
+    // setPersonaDropdownOpen(false); // Keep dropdown open
+    
+    console.log('Created new ICP:', newIcpId);
   };
 
   const handleEllamentMenuClick = (ellamentId, event) => {
@@ -223,6 +243,65 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
       default:
         break;
     }
+  };
+
+  // Persona menu handlers
+  const handlePersonaMenuClick = (personaValue, event) => {
+    event.stopPropagation();
+    setActivePersonaMenu(activePersonaMenu === personaValue ? null : personaValue);
+  };
+
+  const handlePersonaRename = (personaValue) => {
+    const persona = personaOptions.find(p => p.value === personaValue);
+    if (persona) {
+      setEditingPersona(personaValue);
+      setEditingPersonaName(persona.label);
+      setActivePersonaMenu(null);
+    }
+  };
+
+  const handlePersonaRenameSubmit = (personaValue) => {
+    if (editingPersonaName.trim()) {
+      // Update the persona name in personaOptions state
+      setPersonaOptions(prev => prev.map(option =>
+        option.value === personaValue
+          ? { ...option, label: editingPersonaName.trim() }
+          : option
+      ));
+      console.log('Rename persona:', personaValue, 'to:', editingPersonaName.trim());
+    }
+    setEditingPersona(null);
+    setEditingPersonaName('');
+  };
+
+  const handlePersonaRenameCancel = () => {
+    // If canceling a newly created ICP that still has the default name, remove it
+    if (editingPersona && editingPersonaName === 'Untitled ICP') {
+      setPersonaOptions(prev => prev.filter(option => option.value !== editingPersona));
+      setSelectedPersonas(prev => prev.filter(p => p !== editingPersona));
+    }
+    setEditingPersona(null);
+    setEditingPersonaName('');
+  };
+
+  const handlePersonaArchive = (personaValue) => {
+    console.log('Archive persona:', personaValue);
+    setActivePersonaMenu(null);
+  };
+
+  const handlePersonaDelete = (personaValue) => {
+    console.log('Delete persona:', personaValue);
+    // Remove from personaOptions
+    setPersonaOptions(prev => prev.filter(option => option.value !== personaValue));
+    // Remove from selectedPersonas if selected
+    setSelectedPersonas(prev => prev.filter(p => p !== personaValue));
+    setActivePersonaMenu(null);
+  };
+
+  // Mock function to check if persona has associated files
+  const personaHasFiles = (personaValue) => {
+    // In real implementation, this would check if there are files associated with this ICP
+    return personaValue === 'icp1' || personaValue === 'icp2'; // Mock: icp1 and icp2 have files
   };
 
   const handleEllamentClick = (ellament) => {
@@ -266,11 +345,20 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: '2-digit', 
-      day: '2-digit', 
-      year: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric'
     });
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }).toLowerCase();
   };
 
   const filteredEllaments = mockEllaments.filter(ellament => {
@@ -320,14 +408,14 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             className={`ellament-drawer__tab ${activeTab === 'product' ? 'ellament-drawer__tab--active' : ''}`}
             onClick={() => handleTabClick('product')}
           >
-            Product
+            Company
           </button>
           <div className="ellament-drawer__tab ellament-drawer__tab--persona">
             <button 
               className={`ellament-drawer__tab-button ${activeTab === 'persona' ? 'ellament-drawer__tab-button--active' : ''}`}
               onClick={() => handleTabClick('persona')}
             >
-              Persona
+              Customer
             </button>
             <button 
               className="ellament-drawer__dropdown-arrow"
@@ -341,22 +429,95 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             {personaDropdownOpen && (
               <div className="ellament-drawer__persona-dropdown">
                 {personaOptions.map((option) => (
-                  <button
+                  <div
                     key={option.value}
                     className={`ellament-drawer__persona-option ${
                       selectedPersonas.includes(option.value) ? 'ellament-drawer__persona-option--selected' : ''
                     }`}
-                    onClick={() => handlePersonaSelect(option.value)}
                   >
-                    <div className="ellament-drawer__persona-checkbox">
-                      {selectedPersonas.includes(option.value) && (
-                        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                          <path d="M8.5 2.5L3.5 7.5L1.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                    <div className="ellament-drawer__persona-option-left" onClick={() => handlePersonaSelect(option.value)}>
+                      <div className="ellament-drawer__persona-checkbox">
+                        {selectedPersonas.includes(option.value) && (
+                          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                            <path d="M8.5 2.5L3.5 7.5L1.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                      {editingPersona === option.value ? (
+                        <input
+                          type="text"
+                          value={editingPersonaName}
+                          onChange={(e) => setEditingPersonaName(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              handlePersonaRenameSubmit(option.value);
+                            }
+                            if (e.key === 'Escape') {
+                              handlePersonaRenameCancel();
+                            }
+                          }}
+                          onBlur={() => handlePersonaRenameCancel()}
+                          className="ellament-drawer__persona-rename-input"
+                          autoFocus
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : (
+                        <span className="ellament-drawer__persona-name">{option.label}</span>
                       )}
                     </div>
-                    {option.label}
-                  </button>
+                    
+                    {/* Skip ellipsis menu for 'all' option */}
+                    {option.value !== 'all' && (
+                      <div className="ellament-drawer__persona-menu-container">
+                        <button
+                          className="ellament-drawer__persona-menu-button"
+                          onClick={(e) => handlePersonaMenuClick(option.value, e)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="2.5" r="1.5" fill="currentColor"/>
+                            <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+                            <circle cx="8" cy="13.5" r="1.5" fill="currentColor"/>
+                          </svg>
+                        </button>
+                        
+                        {activePersonaMenu === option.value && (
+                          <div className="ellament-drawer__persona-menu">
+                            <button
+                              className="ellament-drawer__persona-menu-option"
+                              onClick={() => handlePersonaRename(option.value)}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M10.5 1.5L12.5 3.5L4.5 11.5L1.5 12.5L2.5 9.5L10.5 1.5Z" stroke="currentColor" strokeWidth="1.5"/>
+                              </svg>
+                              Rename
+                            </button>
+                            
+                            {personaHasFiles(option.value) ? (
+                              <button
+                                className="ellament-drawer__persona-menu-option"
+                                onClick={() => handlePersonaArchive(option.value)}
+                              >
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                  <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2"/>
+                                </svg>
+                                Archive
+                              </button>
+                            ) : (
+                              <button
+                                className="ellament-drawer__persona-menu-option ellament-drawer__persona-menu-option--danger"
+                                onClick={() => handlePersonaDelete(option.value)}
+                              >
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                  <path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2"/>
+                                </svg>
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ))}
                 <button className="ellament-drawer__create-icp-button" onClick={handleCreateICP}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -375,7 +536,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
             className={`ellament-drawer__tab ${activeTab === 'character' ? 'ellament-drawer__tab--active' : ''}`}
             onClick={() => handleTabClick('character')}
           >
-            Character
+            Brand
           </button>
           <button 
             className={`ellament-drawer__tab ${activeTab === 'special_edition' ? 'ellament-drawer__tab--active' : ''}`}
@@ -519,7 +680,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
                     
                     <div className="ellament-drawer__card-meta">
                       <div className="ellament-drawer__card-date">
-                        Last task review: {formatDate(ellament.lastUpdated)}
+                        Updated {formatDate(ellament.lastUpdated)} @ {formatTime(ellament.lastUpdated)}
                       </div>
                     </div>
                   </div>

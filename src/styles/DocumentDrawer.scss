@@ -232,7 +232,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: var(--theme-secondary);
     font-weight: 600;
     font-size: 16px;
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.20));
@@ -410,8 +410,8 @@
     background: var(--theme-interactive-primary);
     border: none;
     border-radius: 6px;
-    padding: 8px 12px;
-    color: white;
+    padding: 7px 10px 3px 10px;
+    color: var(--theme-secondary);
     cursor: pointer;
     
     &:hover {
@@ -479,7 +479,7 @@
     transition: color 0.2s ease;
 
     &:hover {
-      color: var(--theme-interactive-accent);
+      color: var(--theme-primary-deep);
     }
   }
 
@@ -540,7 +540,7 @@
 
   &__tag {
     background: var(--theme-interactive-primary);
-    color: white;
+    color: var(--theme-secondary);
     border-radius: 4px;
     padding: 4px 12px;
     font-size: 12px;
