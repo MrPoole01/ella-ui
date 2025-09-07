@@ -678,8 +678,12 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="15" height="15" viewBox="0 0 15 15">
-                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        <svg className="template-drawer__card-info-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 90 90" style={{fill: 'var(--theme-primary-deep, #E6A429)'}}>
+                          <g>
+                            <path d="M 37.267 41.251 c -0.249 1.047 0.268 2.116 1.233 2.594 c 1.543 0.765 2.511 2.474 2.213 4.305 l -2.516 15.471 c -0.306 1.88 0.97 3.652 2.85 3.958 h 0 c 2.783 0.453 5.627 0.25 8.308 -0.583 c 0.771 -0.24 1.354 -0.879 1.541 -1.664 l 0.427 -1.801 c 0.249 -1.047 -0.268 -2.116 -1.233 -2.594 c -1.543 -0.765 -2.511 -2.474 -2.213 -4.305 l 2.516 -15.471 c 0.306 -1.88 -0.97 -3.652 -2.85 -3.958 h 0 c -2.783 -0.453 -5.627 -0.25 -8.308 0.583 c -0.771 0.24 -1.354 0.879 -1.541 1.664 L 37.267 41.251 z"></path>
+                            <circle cx="47.093" cy="27.893" r="5.703"></circle>
+                            <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 7.098 C 24.101 7.098 7.098 24.101 7.098 45 S 24.101 82.902 45 82.902 S 82.902 65.899 82.902 45 S 65.899 7.098 45 7.098 z"></path>
+                          </g>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
                           <div className="chat-interface__mini-card-tooltip-content">
@@ -736,8 +740,12 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="15" height="15" viewBox="0 0 15 15">
-                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        <svg className="template-drawer__card-info-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 90 90" style={{fill: 'var(--theme-primary-deep, #E6A429)'}}>
+                          <g>
+                            <path d="M 37.267 41.251 c -0.249 1.047 0.268 2.116 1.233 2.594 c 1.543 0.765 2.511 2.474 2.213 4.305 l -2.516 15.471 c -0.306 1.88 0.97 3.652 2.85 3.958 h 0 c 2.783 0.453 5.627 0.25 8.308 -0.583 c 0.771 -0.24 1.354 -0.879 1.541 -1.664 l 0.427 -1.801 c 0.249 -1.047 -0.268 -2.116 -1.233 -2.594 c -1.543 -0.765 -2.511 -2.474 -2.213 -4.305 l 2.516 -15.471 c 0.306 -1.88 -0.97 -3.652 -2.85 -3.958 h 0 c -2.783 -0.453 -5.627 -0.25 -8.308 0.583 c -0.771 0.24 -1.354 0.879 -1.541 1.664 L 37.267 41.251 z"></path>
+                            <circle cx="47.093" cy="27.893" r="5.703"></circle>
+                            <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 7.098 C 24.101 7.098 7.098 24.101 7.098 45 S 24.101 82.902 45 82.902 S 82.902 65.899 82.902 45 S 65.899 7.098 45 7.098 z"></path>
+                          </g>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
                           <div className="chat-interface__mini-card-tooltip-content">
@@ -794,8 +802,12 @@ const ChatInterface = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }
                         <h4 className="chat-interface__mini-card-title" title={data.title}>{data.title}</h4>
                       </div>
                       <div className="chat-interface__mini-card-info" aria-hidden>
-                        <svg width="15" height="15" viewBox="0 0 15 15">
-                          <path d="M7.5 0C3.36 0 0 3.36 0 7.5S3.36 15 7.5 15 15 11.64 15 7.5 11.64 0 7.5 0Zm.75 11.25h-1.5v-4.5h1.5v4.5Zm0-6h-1.5v-1.5h1.5v1.5Z" fill="var(--theme-border-primary)"/>
+                        <svg className="template-drawer__card-info-icon" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 90 90" style={{fill: 'var(--theme-primary-deep, #E6A429)'}}>
+                          <g>
+                            <path d="M 37.267 41.251 c -0.249 1.047 0.268 2.116 1.233 2.594 c 1.543 0.765 2.511 2.474 2.213 4.305 l -2.516 15.471 c -0.306 1.88 0.97 3.652 2.85 3.958 h 0 c 2.783 0.453 5.627 0.25 8.308 -0.583 c 0.771 -0.24 1.354 -0.879 1.541 -1.664 l 0.427 -1.801 c 0.249 -1.047 -0.268 -2.116 -1.233 -2.594 c -1.543 -0.765 -2.511 -2.474 -2.213 -4.305 l 2.516 -15.471 c 0.306 -1.88 -0.97 -3.652 -2.85 -3.958 h 0 c -2.783 -0.453 -5.627 -0.25 -8.308 0.583 c -0.771 0.24 -1.354 0.879 -1.541 1.664 L 37.267 41.251 z"></path>
+                            <circle cx="47.093" cy="27.893" r="5.703"></circle>
+                            <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 7.098 C 24.101 7.098 7.098 24.101 7.098 45 S 24.101 82.902 45 82.902 S 82.902 65.899 82.902 45 S 65.899 7.098 45 7.098 z"></path>
+                          </g>
                         </svg>
                         <div className="chat-interface__mini-card-tooltip">
                           <div className="chat-interface__mini-card-tooltip-content">

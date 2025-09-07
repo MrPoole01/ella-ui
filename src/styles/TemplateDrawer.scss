@@ -511,19 +511,19 @@
     font-size: 10px;
     font-weight: 500;
     padding: 2px 8px;
-    border-radius: 6px;
+    border-radius: 3px;
     line-height: 1.4;
 
     &--marketing {
-      // background: var(--theme-tag-marketing-bg, rgba(236, 72, 153, 0.1));
-      color: var(--theme-tag-marketing-text, var(--theme-interactive-primary));
-      border: 1px solid var(--theme-tag-marketing-border, var(--theme-interactive-primary));
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      background: var(--theme-orange-subtle);
     }
 
     &--social {
-      // background: var(--theme-tag-social-bg, rgba(59, 130, 246, 0.1));
-      color: var(--theme-tag-social-text, var(--theme-interactive-secondary));
-      border: 1px solid var(--theme-tag-social-border, var(--theme-interactive-secondary));
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      background: var(--theme-orange-subtle);
     }
 
     // Default styling for other tags
