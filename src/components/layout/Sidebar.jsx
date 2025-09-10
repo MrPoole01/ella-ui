@@ -1687,7 +1687,6 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                   </div>
                 </div>
                 <div className="section-menu__task-details">
-                  <div className="section-menu__task-description">{task.description}</div>
                   <div className="files-menu__document-updated">
                     Updated: {task.updated}
                   </div>
@@ -1849,9 +1848,6 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                     )}
                   </div>
                 </div>
-                <div className="files-menu__document-description">
-                  {doc.description}
-                </div>
                 <div className="files-menu__document-footer">
                   <div className="files-menu__document-updated">
                     Updated: {doc.updated}
@@ -2005,9 +2001,6 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                       </div>
                     )}
                   </div>
-                </div>
-                <div className="saved-work-menu__item-description">
-                  {item.description}
                 </div>
                 <div className="saved-work-menu__item-tags">
                 <div className="saved-work-menu__item-saved">
