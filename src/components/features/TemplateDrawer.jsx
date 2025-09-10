@@ -707,7 +707,7 @@ const TemplateDrawer = ({
 
             {activeTab === 'special-additions' && (
               <div className="template-drawer__section">
-                <h2 className="template-drawer__section-title">Special Addition Templates</h2>
+                <h2 className="template-drawer__section-title">Special Edition Templates</h2>
                 <div className="template-drawer__grid">
                   {digitalAssets.slice(0, 6).map((template) => (
                     <div 

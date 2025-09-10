@@ -177,14 +177,14 @@ const OrganizationDropdown = ({ isOpen, onClose, onOrganizationCreated, onOpenCr
           </div>
 
           {/* Create New Organization Button */}
-          <div className="organization-dropdown__create">
+          {/* <div className="organization-dropdown__create">
             <button 
               className="organization-dropdown__create-btn"
               onClick={handleCreateOrganization}
             >
               Create New Organization
             </button>
-          </div>
+          </div> */}
 
           {/* Search Bar */}
           <div className="organization-dropdown__search-container">
