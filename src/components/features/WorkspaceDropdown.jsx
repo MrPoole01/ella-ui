@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { ProjectIcon } from '../icons';
 import WorkspaceFilter from './WorkspaceFilter';
+import { ShareModal } from '../ui/Modal';
 import '../../styles/WorkspaceDropdown.scss';
 
-const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace, selectedWorkspace, onWorkspaceSelect }) => {
+const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWorkspace, selectedWorkspace, onWorkspaceSelect, onShareModalStateChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [activeEllipsisMenu, setActiveEllipsisMenu] = useState(null);
   const [filterOpen, setFilterOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedWorkspaceForShare, setSelectedWorkspaceForShare] = useState(null);
   const [sortOrder, setSortOrder] = useState('default');
   const itemsPerPage = 6;
   // Mock: organization-level brand bots available
@@ -120,6 +123,45 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
     setActiveEllipsisMenu(null);
   };
 
+  // Mock organization members data
+  const organizationMembers = [
+    { id: 'user-1', name: 'John Doe', email: 'john@company.com', avatar: null },
+    { id: 'user-2', name: 'Jane Smith', email: 'jane@company.com', avatar: null },
+    { id: 'user-3', name: 'Mike Johnson', email: 'mike@company.com', avatar: null },
+    { id: 'user-4', name: 'Sarah Wilson', email: 'sarah@company.com', avatar: null },
+    { id: 'user-5', name: 'Tom Brown', email: 'tom@company.com', avatar: null }
+  ];
+
+  // Mock current permissions for workspace
+  const getCurrentPermissions = (workspace) => [
+    { userId: 'user-1', userName: 'John Doe', userEmail: 'john@company.com', userAvatar: null, role: 'domain', isInherited: false, inheritedFrom: null },
+    { userId: 'user-2', userName: 'Jane Smith', userEmail: 'jane@company.com', userAvatar: null, role: 'editor', isInherited: true, inheritedFrom: { type: 'organization', name: 'Acme Corp', id: 'org-1' } }
+  ];
+
+  // Handle share modal
+  const handleShareWorkspace = (workspace) => {
+    console.log('WorkspaceDropdown: Share modal triggered for workspace:', workspace.name);
+    setSelectedWorkspaceForShare(workspace);
+    setShareModalOpen(true);
+    if (onShareModalStateChange) {
+      onShareModalStateChange(true);
+    }
+  };
+
+  const handleShareModalClose = () => {
+    setShareModalOpen(false);
+    setSelectedWorkspaceForShare(null);
+    if (onShareModalStateChange) {
+      onShareModalStateChange(false);
+    }
+  };
+
+  const handleSavePermissions = async (data) => {
+    console.log('Saving permissions:', data);
+    // TODO: Implement actual permission saving
+    return { success: true };
+  };
+
   // Handle menu actions
   const handleMenuAction = (action, workspace) => {
     console.log(`${action} workspace:`, workspace.name);
@@ -134,7 +176,7 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
         // TODO: Open rename modal
         break;
       case 'share':
-        // TODO: Open share modal
+        handleShareWorkspace(workspace);
         break;
       case 'unshare':
         // TODO: Handle unshare
@@ -295,7 +337,10 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
                           </svg>
                           Rename
                         </button>
-                        <button onClick={() => handleMenuAction('share', workspace)}>
+                        <button onClick={(e) => {
+                          e.stopPropagation();
+                          handleMenuAction('share', workspace);
+                        }}>
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                             <path d="M10.5 5.25C11.4665 5.25 12.25 4.4665 12.25 3.5C12.25 2.5335 11.4665 1.75 10.5 1.75C9.5335 1.75 8.75 2.5335 8.75 3.5C8.75 3.71 8.785 3.913 8.848 4.102L5.152 6.125C4.816 5.7525 4.336 5.25 3.5 5.25C2.5335 5.25 1.75 6.0335 1.75 7C1.75 7.9665 2.5335 8.75 3.5 8.75C4.336 8.75 4.816 8.2475 5.152 7.875L8.848 9.898C8.785 10.087 8.75 10.29 8.75 10.5C8.75 11.4665 9.5335 12.25 10.5 12.25C11.4665 12.25 12.25 11.4665 12.25 10.5C12.25 9.5335 11.4665 8.75 10.5 8.75C9.664 8.75 9.184 9.2525 8.848 9.625L5.152 7.602C5.215 7.413 5.25 7.21 5.25 7C5.25 6.79 5.215 6.587 5.152 6.398L8.848 4.375C9.184 4.7475 9.664 5.25 10.5 5.25Z" fill="currentColor"/>
                           </svg>
@@ -387,7 +432,10 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
                           </svg>
                           Rename
                         </button>
-                        <button onClick={() => handleMenuAction('share', workspace)}>
+                        <button onClick={(e) => {
+                          e.stopPropagation();
+                          handleMenuAction('share', workspace);
+                        }}>
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                             <path d="M10.5 5.25C11.4665 5.25 12.25 4.4665 12.25 3.5C12.25 2.5335 11.4665 1.75 10.5 1.75C9.5335 1.75 8.75 2.5335 8.75 3.5C8.75 3.71 8.785 3.913 8.848 4.102L5.152 6.125C4.816 5.7525 4.336 5.25 3.5 5.25C2.5335 5.25 1.75 6.0335 1.75 7C1.75 7.9665 2.5335 8.75 3.5 8.75C4.336 8.75 4.816 8.2475 5.152 7.875L8.848 9.898C8.785 10.087 8.75 10.29 8.75 10.5C8.75 11.4665 9.5335 12.25 10.5 12.25C11.4665 12.25 12.25 11.4665 12.25 10.5C12.25 9.5335 11.4665 8.75 10.5 8.75C9.664 8.75 9.184 9.2525 8.848 9.625L5.152 7.602C5.215 7.413 5.25 7.21 5.25 7C5.25 6.79 5.215 6.587 5.152 6.398L8.848 4.375C9.184 4.7475 9.664 5.25 10.5 5.25Z" fill="currentColor"/>
                           </svg>
@@ -465,6 +513,19 @@ const WorkspaceDropdown = ({ isOpen, onClose, onWorkspaceCreated, onOpenCreateWo
       </div>
 
       {/* Modal is rendered at a higher level (Header) via onOpenCreateWorkspace */}
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={handleShareModalClose}
+        onSavePermissions={handleSavePermissions}
+        contextType="workspace"
+        contextName={selectedWorkspaceForShare?.name || ''}
+        contextId={selectedWorkspaceForShare?.id || ''}
+        currentPermissions={selectedWorkspaceForShare ? getCurrentPermissions(selectedWorkspaceForShare) : []}
+        organizationMembers={organizationMembers}
+        inheritedFrom={null}
+      />
     </>
   );
 };

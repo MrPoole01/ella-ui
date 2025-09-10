@@ -14,6 +14,7 @@ import TagManagementModal from '../ui/Modal/TagManagementModal';
 import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
 import ConvertToProjectModal from '../ui/Modal/ConvertToProjectModal';
 import DocumentUploadModal from '../ui/Modal/DocumentUploadModal';
+import { ShareModal } from '../ui/Modal';
 import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
@@ -44,6 +45,9 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
   const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [convertSourceWorkspace, setConvertSourceWorkspace] = useState(null);
   const [isDocumentUploadModalOpen, setIsDocumentUploadModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedItemForShare, setSelectedItemForShare] = useState(null);
+  const [shareContextType, setShareContextType] = useState('');
   const [projects, setProjects] = useState([
     {
       id: 1,
@@ -634,7 +638,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         }
         break;
       case 'share':
-        // Launch share modal
+        const savedWorkToShare = sampleSavedWork.find(item => item.id === itemId) || { id: itemId, title: `Saved Work ${itemId}` };
+        handleShareItem('document', savedWorkToShare);
         break;
       case 'archive':
         // Move to archive
@@ -668,18 +673,57 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     setActiveProjectMenu(null);
   };
 
+  // Mock organization members data
+  const organizationMembers = [
+    { id: 'user-1', name: 'John Doe', email: 'john@company.com', avatar: null },
+    { id: 'user-2', name: 'Jane Smith', email: 'jane@company.com', avatar: null },
+    { id: 'user-3', name: 'Mike Johnson', email: 'mike@company.com', avatar: null },
+    { id: 'user-4', name: 'Sarah Wilson', email: 'sarah@company.com', avatar: null },
+    { id: 'user-5', name: 'Tom Brown', email: 'tom@company.com', avatar: null }
+  ];
+
+  // Get mock permissions for different item types
+  const getCurrentPermissions = (contextType, itemId) => {
+    // Mock permissions - in real app this would come from API
+    return [
+      { userId: 'user-1', userName: 'John Doe', userEmail: 'john@company.com', userAvatar: null, role: 'domain', isInherited: false, inheritedFrom: null },
+      { userId: 'user-2', userName: 'Jane Smith', userEmail: 'jane@company.com', userAvatar: null, role: 'editor', isInherited: true, inheritedFrom: { type: 'workspace', name: 'Marketing Hub', id: 'workspace-1' } }
+    ];
+  };
+
+  // Handle share functionality
+  const handleShareItem = (contextType, item) => {
+    console.log('SIDEBAR: Share modal triggered!', { contextType, item });
+    console.trace('SIDEBAR: Call stack for share modal trigger');
+    setSelectedItemForShare(item);
+    setShareContextType(contextType);
+    setShareModalOpen(true);
+  };
+
+  const handleShareModalClose = () => {
+    setShareModalOpen(false);
+    setSelectedItemForShare(null);
+    setShareContextType('');
+  };
+
+  const handleSavePermissions = async (data) => {
+    console.log('Saving permissions:', data);
+    // TODO: Implement actual permission saving API call
+    return { success: true };
+  };
+
   const handleProjectAction = (action, projectId) => {
     // Handle the different project menu actions
     console.log(`Action: ${action}, Project ID: ${projectId}`);
     setActiveProjectMenu(null);
     
-    // TODO: Implement actual functionality for each action
     switch(action) {
       case 'edit':
         // Open edit modal
         break;
       case 'share':
-        // Launch share modal
+        const project = projects.find(p => p.id === projectId) || { id: projectId, name: `Project ${projectId}` };
+        handleShareItem('project', project);
         break;
       case 'archive':
         // Move to archive
@@ -731,7 +775,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         }
         break;
       case 'share':
-        // Launch share modal
+        const taskToShare = sampleTasks.find(t => t.id === taskId) || { id: taskId, title: `Task ${taskId}` };
+        handleShareItem('chat', taskToShare);
         break;
       case 'archive':
         // Move to archive
@@ -758,7 +803,8 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         // Open edit modal
         break;
       case 'share':
-        // Launch share modal
+        const docToShare = sampleDocuments.find(d => d.id === docId) || { id: docId, title: `Document ${docId}` };
+        handleShareItem('document', docToShare);
         break;
       case 'archive':
         // Move to archive
@@ -1800,39 +1846,21 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                       <div className="files-menu__document-dropdown" ref={documentMenuRef}>
                         <button 
                           className="files-menu__document-dropdown-option"
-                          onClick={() => handleDocumentAction('edit', doc.id)}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Edit
-                        </button>
-                        <button 
-                          className="files-menu__document-dropdown-option"
-                          onClick={() => handleDocumentAction('share', doc.id)}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Share
-                        </button>
-                        <button 
-                          className="files-menu__document-dropdown-option"
-                          onClick={() => handleDocumentAction('archive', doc.id)}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                          Archive
-                        </button>
-                        <button 
-                          className="files-menu__document-dropdown-option"
                           onClick={() => handleDocumentAction('move', doc.id)}
                         >
                           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                             <path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                           Move
+                        </button>
+                        <button 
+                          className="files-menu__document-dropdown-option"
+                          onClick={() => handleDocumentAction('download', doc.id)}
+                        >
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M7 1.75V9.5M7 9.5L4.5 7M7 9.5L9.5 7M2.25 12.25H11.75" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          Download
                         </button>
                         <hr className="files-menu__document-dropdown-divider" />
                         <button 
@@ -2129,7 +2157,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
               <span>Rename</span>
             </div>
 
-            <div className="workspace-menu__option" onClick={() => console.log('Share Workspace')}>
+            <div className="workspace-menu__option" onClick={() => handleShareItem('workspace', { id: 'current-workspace', name: 'Current Workspace' })}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path d="M12 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm0 6a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM4 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#6B7280"/>
               </svg>
@@ -2272,6 +2300,19 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
         isOpen={isDocumentUploadModalOpen}
         onClose={handleDocumentUploadClose}
         onUpload={handleDocumentUpload}
+      />
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={handleShareModalClose}
+        onSavePermissions={handleSavePermissions}
+        contextType={shareContextType}
+        contextName={selectedItemForShare?.name || ''}
+        contextId={selectedItemForShare?.id || ''}
+        currentPermissions={selectedItemForShare ? getCurrentPermissions(shareContextType, selectedItemForShare.id) : []}
+        organizationMembers={organizationMembers}
+        inheritedFrom={shareContextType === 'project' ? { type: 'workspace', name: 'Marketing Hub', id: 'workspace-1' } : null}
       />
       </>
     );

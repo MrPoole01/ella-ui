@@ -28,6 +28,7 @@ const Header = () => {
   const [isCreateWorkspaceOpen, setIsCreateWorkspaceOpen] = useState(false);
   const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [orgBrandBots, setOrgBrandBots] = useState([]);
+  const [isWorkspaceShareModalOpen, setIsWorkspaceShareModalOpen] = useState(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState('appearance');
@@ -467,7 +468,10 @@ const Header = () => {
     setIsThemeDropdownOpen(false);
   };
 
-  const handleWorkspaceClick = () => {
+  const handleWorkspaceClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Header workspace container clicked - opening workspace dropdown');
     setIsWorkspaceDropdownOpen(!isWorkspaceDropdownOpen);
   };
 
@@ -477,6 +481,10 @@ const Header = () => {
 
   const handleWorkspaceSelect = (workspace) => {
     setSelectedWorkspace(workspace);
+  };
+
+  const handleWorkspaceShareModalStateChange = (isOpen) => {
+    setIsWorkspaceShareModalOpen(isOpen);
   };
 
   const handleOrganizationClick = () => {
@@ -532,7 +540,7 @@ const Header = () => {
       if (themeDropdownRef.current && !themeDropdownRef.current.contains(event.target)) {
         setIsThemeDropdownOpen(false);
       }
-      if (workspaceDropdownRef.current && !workspaceDropdownRef.current.contains(event.target)) {
+      if (workspaceDropdownRef.current && !workspaceDropdownRef.current.contains(event.target) && !isWorkspaceShareModalOpen) {
         setIsWorkspaceDropdownOpen(false);
       }
       if (organizationDropdownRef.current && !organizationDropdownRef.current.contains(event.target)) {
@@ -557,7 +565,7 @@ const Header = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [isWorkspaceShareModalOpen]);
 
   return (
     <div className="header close-ella-search">
@@ -648,6 +656,7 @@ const Header = () => {
                 setOrgBrandBots(bots || []);
                 setIsCreateWorkspaceOpen(true);
               }}
+              onShareModalStateChange={handleWorkspaceShareModalStateChange}
             />
           </div>
         </div>

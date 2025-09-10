@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import BrandBotSelector from './BrandBotSelector';
+import { ShareModal } from '../ui/Modal';
 import '../../styles/EllamentDrawer.scss';
 
 // Mock data for ellaments
@@ -142,6 +143,8 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   const [activePersonaMenu, setActivePersonaMenu] = useState(null);
   const [editingPersona, setEditingPersona] = useState(null);
   const [editingPersonaName, setEditingPersonaName] = useState('');
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedEllamentForShare, setSelectedEllamentForShare] = useState(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -218,6 +221,38 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
     setActiveEllamentMenu(activeEllamentMenu === ellamentId ? null : ellamentId);
   };
 
+  // Mock organization members data
+  const organizationMembers = [
+    { id: 'user-1', name: 'John Doe', email: 'john@company.com', avatar: null },
+    { id: 'user-2', name: 'Jane Smith', email: 'jane@company.com', avatar: null },
+    { id: 'user-3', name: 'Mike Johnson', email: 'mike@company.com', avatar: null },
+    { id: 'user-4', name: 'Sarah Wilson', email: 'sarah@company.com', avatar: null },
+    { id: 'user-5', name: 'Tom Brown', email: 'tom@company.com', avatar: null }
+  ];
+
+  // Get mock permissions for ellaments
+  const getCurrentPermissions = (ellamentId) => [
+    { userId: 'user-1', userName: 'John Doe', userEmail: 'john@company.com', userAvatar: null, role: 'domain', isInherited: false, inheritedFrom: null },
+    { userId: 'user-2', userName: 'Jane Smith', userEmail: 'jane@company.com', userAvatar: null, role: 'editor', isInherited: true, inheritedFrom: { type: 'project', name: 'Marketing Campaign', id: 'project-1' } }
+  ];
+
+  // Handle share modal
+  const handleShareEllament = (ellament) => {
+    setSelectedEllamentForShare(ellament);
+    setShareModalOpen(true);
+  };
+
+  const handleShareModalClose = () => {
+    setShareModalOpen(false);
+    setSelectedEllamentForShare(null);
+  };
+
+  const handleSavePermissions = async (data) => {
+    console.log('Saving ellament permissions:', data);
+    // TODO: Implement actual permission saving API call
+    return { success: true };
+  };
+
   const handleEllamentAction = (action, ellament) => {
     setActiveEllamentMenu(null);
     console.log(`${action} ellament:`, ellament);
@@ -229,7 +264,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
         }
         break;
       case 'share':
-        console.log('Sharing ellament:', ellament);
+        handleShareEllament(ellament);
         break;
       case 'archive':
         console.log('Archiving ellament:', ellament);
@@ -700,6 +735,19 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
           </button>
         </div>
       </div>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={handleShareModalClose}
+        onSavePermissions={handleSavePermissions}
+        contextType="document"
+        contextName={selectedEllamentForShare?.title || ''}
+        contextId={selectedEllamentForShare?.id || ''}
+        currentPermissions={selectedEllamentForShare ? getCurrentPermissions(selectedEllamentForShare.id) : []}
+        organizationMembers={organizationMembers}
+        inheritedFrom={{ type: 'project', name: 'Marketing Campaign', id: 'project-1' }}
+      />
     </>
   );
 };

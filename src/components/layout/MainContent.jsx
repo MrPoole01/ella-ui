@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import ChatInterface from '../features/ChatInterface';
+import { ShareModal } from '../ui/Modal';
 import '../../styles/MainContent.scss';
 
 const MainContent = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [editedTitle, setEditedTitle] = useState('');
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedProjectForShare, setSelectedProjectForShare] = useState(null);
 
   const handleEditClick = () => {
     setIsEditingTitle(true);
@@ -22,6 +25,38 @@ const MainContent = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) 
   const handleTitleCancel = () => {
     setIsEditingTitle(false);
     setEditedTitle('');
+  };
+
+  // Mock organization members data
+  const organizationMembers = [
+    { id: 'user-1', name: 'John Doe', email: 'john@company.com', avatar: null },
+    { id: 'user-2', name: 'Jane Smith', email: 'jane@company.com', avatar: null },
+    { id: 'user-3', name: 'Mike Johnson', email: 'mike@company.com', avatar: null },
+    { id: 'user-4', name: 'Sarah Wilson', email: 'sarah@company.com', avatar: null },
+    { id: 'user-5', name: 'Tom Brown', email: 'tom@company.com', avatar: null }
+  ];
+
+  // Get mock permissions for project
+  const getCurrentPermissions = (project) => [
+    { userId: 'user-1', userName: 'John Doe', userEmail: 'john@company.com', userAvatar: null, role: 'domain', isInherited: false, inheritedFrom: null },
+    { userId: 'user-2', userName: 'Jane Smith', userEmail: 'jane@company.com', userAvatar: null, role: 'editor', isInherited: true, inheritedFrom: { type: 'workspace', name: 'Marketing Hub', id: 'workspace-1' } }
+  ];
+
+  // Handle share modal
+  const handleShareProject = () => {
+    setSelectedProjectForShare(selectedProject);
+    setShareModalOpen(true);
+  };
+
+  const handleShareModalClose = () => {
+    setShareModalOpen(false);
+    setSelectedProjectForShare(null);
+  };
+
+  const handleSavePermissions = async (data) => {
+    console.log('Saving project permissions:', data);
+    // TODO: Implement actual permission saving API call
+    return { success: true };
   };
 
   const handleKeyPress = (e) => {
@@ -88,7 +123,7 @@ const MainContent = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) 
           </div>
         )}
         </div>
-         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="menu-icon">
+         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="menu-icon" onClick={handleShareProject} style={{ cursor: 'pointer' }}>
           <defs>
             <clipPath id="clipPath5469496504-menu">
               <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
@@ -118,6 +153,19 @@ const MainContent = ({ selectedProject, onOpenTemplateDrawer, externalPrompt }) 
           externalPrompt={externalPrompt}
         />
       </div>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={handleShareModalClose}
+        onSavePermissions={handleSavePermissions}
+        contextType="project"
+        contextName={selectedProjectForShare?.name || ''}
+        contextId={selectedProjectForShare?.id || ''}
+        currentPermissions={selectedProjectForShare ? getCurrentPermissions(selectedProjectForShare) : []}
+        organizationMembers={organizationMembers}
+        inheritedFrom={{ type: 'workspace', name: 'Marketing Hub', id: 'workspace-1' }}
+      />
     </div>
   );
 };
