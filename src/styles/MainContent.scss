@@ -484,4 +484,19 @@
   border-radius: 16px;
   padding: 24px;
   box-shadow: var(--theme-neomorphic-flat);
+}
+
+// Menu icon hover styles
+.menu-icon {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    circle {
+      stroke: var(--theme-primary);
+    }
+    
+    path {
+      fill: var(--theme-primary);
+    }
+  }
 } 
