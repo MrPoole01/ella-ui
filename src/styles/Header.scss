@@ -728,12 +728,13 @@
     }
   }
 
-  &__workspace-container {
+  &__workspace-container,
+  &__organization-container {
     position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-left: 2rem;
+    margin-left: 1rem;
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
@@ -750,7 +751,12 @@
     }
   }
 
-  &__workspace-text {
+  &__organization-container {
+    margin-left: 1rem; // Less margin for organization since it's first
+  }
+
+  &__workspace-text,
+  &__organization-text {
     color: var(--theme-text-secondary);
     font-family: $font-secondary;
     font-weight: $font-semibold;

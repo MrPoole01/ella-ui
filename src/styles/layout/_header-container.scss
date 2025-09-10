@@ -110,7 +110,8 @@
     }
   }
 
-  &__workspace-text {
+  &__workspace-text,
+  &__organization-text {
     color: var(--theme-text-secondary);
     font-family: $font-secondary;
     font-weight: $font-semibold;

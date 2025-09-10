@@ -7,6 +7,7 @@ import {
 } from '../icons';
 import { useTheme } from '../../context';
 import WorkspaceDropdown from '../features/WorkspaceDropdown';
+import OrganizationDropdown from '../features/OrganizationDropdown';
 import EllamentDrawer from '../features/EllamentDrawer';
 import { WorkspaceCreateModal } from '../ui/Modal';
 import '../../styles/Header.scss';
@@ -17,7 +18,9 @@ const Header = () => {
   const { currentTheme, themes, setTheme } = useTheme();
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
+  const [isOrganizationDropdownOpen, setIsOrganizationDropdownOpen] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: 1, name: 'Creative Studio' }); // Default workspace
+  const [selectedOrganization, setSelectedOrganization] = useState({ id: 1, name: 'Acme Corp', workspaceCount: 8 }); // Default organization
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const [hasNotifications, setHasNotifications] = useState(true); // Show notifications by default
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,6 +148,7 @@ const Header = () => {
   ]);
   const themeDropdownRef = useRef(null);
   const workspaceDropdownRef = useRef(null);
+  const organizationDropdownRef = useRef(null);
   const notificationMenuRef = useRef(null);
   const searchInputRef = useRef(null);
   const profileDropdownRef = useRef(null);
@@ -475,6 +479,18 @@ const Header = () => {
     setSelectedWorkspace(workspace);
   };
 
+  const handleOrganizationClick = () => {
+    setIsOrganizationDropdownOpen(!isOrganizationDropdownOpen);
+  };
+
+  const handleOrganizationDropdownClose = () => {
+    setIsOrganizationDropdownOpen(false);
+  };
+
+  const handleOrganizationSelect = (organization) => {
+    setSelectedOrganization(organization);
+  };
+
 
 
   const handleSearchChange = (e) => {
@@ -519,6 +535,9 @@ const Header = () => {
       if (workspaceDropdownRef.current && !workspaceDropdownRef.current.contains(event.target)) {
         setIsWorkspaceDropdownOpen(false);
       }
+      if (organizationDropdownRef.current && !organizationDropdownRef.current.contains(event.target)) {
+        setIsOrganizationDropdownOpen(false);
+      }
       if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target)) {
         setIsNotificationMenuOpen(false);
       }
@@ -549,6 +568,47 @@ const Header = () => {
             <path d="M3.09328 6.25924L0 3.12985L3.09328 0L4.3749 1.29658L2.56278 3.12985L4.3749 4.96312L3.09328 6.25924Z" fillRule="evenodd" transform="matrix(1 0 0 1 2.34285 7.8455)" fill="rgb(0, 0, 0)"/>
           </svg>
           <EllaTextLogo width={50} height={19} style={{ marginLeft: 8, marginRight: 8 }} />
+          <div 
+            className="header__organization-container" 
+            ref={organizationDropdownRef}
+            onClick={handleOrganizationClick}
+          >
+            <div className="header__organization-text">{selectedOrganization.name}</div>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20.3672" 
+              height="20.3647" 
+              viewBox="0 0 20.3672 20.3647" 
+              className="chevron-down-icon"
+              style={{
+                transform: isOrganizationDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              <defs>
+                <clipPath id="clipPathOrgChevron">
+                  <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 0.368187 -2.47955e-05)"/>
+                </clipPath>
+              </defs>
+              <g clipPath="url(#clipPathOrgChevron)">
+                <path d="M-0.662913 -0.662913C-1.02903 -0.296799 -1.02903 0.296799 -0.662913 0.662913L4.96209 6.28791Q5.09395 6.41977 5.26623 6.49114Q5.43852 6.5625 5.625 6.5625Q5.81148 6.5625 5.98377 6.49114Q6.15605 6.41977 6.28791 6.28791L11.9129 0.662913C12.279 0.296799 12.279 -0.296799 11.9129 -0.662913C11.5468 -1.02903 10.9532 -1.02903 10.5871 -0.662912L5.625 4.29918L0.662913 -0.662913C0.296799 -1.02903 -0.296799 -1.02903 -0.662913 -0.662913Z" fillRule="evenodd" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 4.61013 7.2668)" fill="rgb(156, 163, 175)"/>
+              </g>
+            </svg>
+            <OrganizationDropdown 
+              isOpen={isOrganizationDropdownOpen} 
+              onClose={handleOrganizationDropdownClose}
+              selectedOrganization={selectedOrganization}
+              onOrganizationSelect={handleOrganizationSelect}
+              onOrganizationCreated={(org) => {
+                // TODO: propagate to global state; for now, log
+                console.log('Organization created:', org);
+              }}
+              onOpenCreateOrganization={() => {
+                // TODO: Open create organization modal
+                console.log('Open create organization modal');
+              }}
+            />
+          </div>
           <div 
             className="header__workspace-container" 
             ref={workspaceDropdownRef}
