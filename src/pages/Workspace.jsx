@@ -20,7 +20,6 @@ const Workspace = () => {
   const [isTemplateDrawerOpen, setIsTemplateDrawerOpen] = useState(false);
   const [externalPrompt, setExternalPrompt] = useState('');
   const [isRecentChatsExpanded, setIsRecentChatsExpanded] = useState(true);
-  const [activeBottomNav, setActiveBottomNav] = useState('home');
   
   // Placeholder permissions and brandbot scoping
   const canManageCustomTemplates = true;
@@ -257,50 +256,6 @@ const Workspace = () => {
         />
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <div className="workspace__mobile-nav">
-        <a 
-          href="#" 
-          className={`workspace__mobile-nav-item ${activeBottomNav === 'home' ? 'workspace__mobile-nav-item--active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveBottomNav('home'); }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>Home</span>
-        </a>
-        
-        <a 
-          href="#" 
-          className={`workspace__mobile-nav-item ${activeBottomNav === 'projects' ? 'workspace__mobile-nav-item--active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveBottomNav('projects'); }}
-        >
-          <ProjectIcon />
-          <span>Projects</span>
-        </a>
-        
-        <a 
-          href="#" 
-          className={`workspace__mobile-nav-item ${activeBottomNav === 'alerts' ? 'workspace__mobile-nav-item--active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveBottomNav('alerts'); }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span>Alerts</span>
-        </a>
-        
-        <a 
-          href="#" 
-          className={`workspace__mobile-nav-item ${activeBottomNav === 'profile' ? 'workspace__mobile-nav-item--active' : ''}`}
-          onClick={(e) => { e.preventDefault(); setActiveBottomNav('profile'); }}
-        >
-          <UserIcon />
-          <span>Profile</span>
-        </a>
-      </div>
       
       {/* Template Drawer */}
       <TemplateDrawer 

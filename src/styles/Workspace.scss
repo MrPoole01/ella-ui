@@ -61,7 +61,7 @@
       top: 60px; // Below mobile header
       left: 0;
       right: 0;
-      bottom: 80px; // Above bottom navigation
+      bottom: 0; // Full height (no bottom navigation)
       background: var(--theme-bg-primary);
       z-index: 100;
       transform: translateY(100%);
@@ -76,7 +76,7 @@
 
     &__main-content {
       flex: 1;
-      padding-bottom: 80px; // Space for bottom navigation
+      padding-bottom: 0; // No space needed for bottom navigation
     }
   }
 
@@ -149,7 +149,7 @@
   &__mobile-content {
     flex: 1;
     padding: 20px;
-    padding-bottom: 240px; // Extra space for fixed chat input + bottom nav
+    padding-bottom: 160px; // Extra space for fixed chat input (no bottom nav)
     overflow-y: auto;
     min-height: 0; // Allow flex item to shrink
     
@@ -489,7 +489,7 @@
   // Mobile chat input - matches ChatInterface styling
   &__mobile-chat-input {
     position: fixed;
-    bottom: 80px; // Above bottom nav
+    bottom: 0; // At bottom (no bottom nav)
     left: 0;
     right: 0;
     padding: 16px 20px;
@@ -613,24 +613,9 @@
     }
   }
 
-  // Mobile bottom navigation
+  // Mobile bottom navigation - HIDDEN (moved to header hamburger menu)
   &__mobile-nav {
-    display: none;
-
-    @include mobile-only {
-      display: flex;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background: var(--theme-bg-primary);
-      border-top: 1px solid var(--theme-border-primary);
-      padding: 10px 20px;
-      z-index: 1000;
-      justify-content: space-around;
-      align-items: center;
-    }
+    display: none !important;
 
     &-item {
       display: flex;

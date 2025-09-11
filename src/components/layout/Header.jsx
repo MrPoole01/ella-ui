@@ -3,7 +3,9 @@ import { InviteUsersModal } from '../ui/Modal';
 import { useNavigate } from 'react-router-dom';
 import {
   ChevronRightIcon,
-  ProfileIcon
+  ProfileIcon,
+  MenuIcon,
+  ProjectIcon
 } from '../icons';
 import { useTheme } from '../../context';
 import WorkspaceDropdown from '../features/WorkspaceDropdown';
@@ -32,6 +34,8 @@ const Header = () => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showHelpMenu, setShowHelpMenu] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState('appearance');
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [activeMobileNavItem, setActiveMobileNavItem] = useState('home');
   const [appearanceMode, setAppearanceMode] = useState('auto'); // 'light', 'dark', 'auto'
   const [startWeekOn, setStartWeekOn] = useState('Monday');
   const [autoTimezone, setAutoTimezone] = useState(true);
@@ -77,6 +81,40 @@ const Header = () => {
     { id: 10, name: 'Brand Review', workspaces: [5], workspace: 5 },
     { id: 11, name: 'Website Updates', workspaces: [3], workspace: 3 }
   ]);
+
+  // Mobile navigation items
+  const mobileNavItems = [
+    {
+      id: 'home',
+      label: 'Home',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M9 22V12H15V22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    },
+    {
+      id: 'projects',
+      label: 'Projects',
+      icon: <ProjectIcon />
+    },
+    {
+      id: 'alerts',
+      label: 'Alerts',
+      icon: (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21S18 15 18 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M13.73 21A2 2 0 0 1 10.27 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      )
+    },
+    {
+      id: 'profile',
+      label: 'Profile',
+      icon: <ProfileIcon />
+    }
+  ];
   const [sampleUsers, setSampleUsers] = useState([
     {
       id: 1,
@@ -155,6 +193,7 @@ const Header = () => {
   const profileDropdownRef = useRef(null);
   const settingsMenuRef = useRef(null);
   const helpMenuRef = useRef(null);
+  const mobileNavRef = useRef(null);
 
   // Sample notification data based on the Motiff design
   const notifications = [
@@ -499,6 +538,18 @@ const Header = () => {
     setSelectedOrganization(organization);
   };
 
+  // Mobile navigation handlers
+  const handleMobileNavToggle = () => {
+    setIsMobileNavOpen(!isMobileNavOpen);
+  };
+
+  const handleMobileNavItemClick = (itemId) => {
+    setActiveMobileNavItem(itemId);
+    setIsMobileNavOpen(false);
+    // Handle navigation logic here
+    console.log('Mobile nav item clicked:', itemId);
+  };
+
 
 
   const handleSearchChange = (e) => {
@@ -567,9 +618,34 @@ const Header = () => {
     };
   }, [isWorkspaceShareModalOpen]);
 
+  // Click outside handler for mobile nav
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (mobileNavRef.current && !mobileNavRef.current.contains(event.target) && isMobileNavOpen) {
+        setIsMobileNavOpen(false);
+      }
+    };
+
+    if (isMobileNavOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileNavOpen]);
+
   return (
     <div className="header close-ella-search">
       <div className="header__left">
+        {/* Mobile Hamburger Menu */}
+        <button 
+          className="header__mobile-hamburger"
+          onClick={handleMobileNavToggle}
+        >
+          <MenuIcon />
+        </button>
+        
         <div className="header__logo-section">
           <svg xmlns="http://www.w3.org/2000/svg" width="21.7344" height="20" viewBox="0 0 20 24" className="nav-toggle">
             <path d="M19.0199 21.9997L2.7159 21.9997C1.21683 21.9997 0 20.7687 0 19.2521L0 2.74761C0 1.2315 1.21683 0 2.7159 0L19.0199 0C20.519 0 21.7358 1.2315 21.7358 2.74761L21.7358 19.2521C21.7358 20.7687 20.519 21.9997 19.0199 21.9997ZM7.24845 20.166L7.24845 1.83373L3.16576 1.83373C2.41827 1.83373 1.81166 2.44742 1.81166 3.20364L1.81166 18.7961C1.81166 19.5523 2.41826 20.166 3.16576 20.166L7.24845 20.166ZM18.5701 1.83373L9.06057 1.83373L9.06057 20.166L18.5701 20.166C19.3176 20.166 19.9242 19.5523 19.9242 18.7961L19.9242 3.20364C19.9242 2.44742 19.3176 1.83373 18.5701 1.83373Z" fillRule="evenodd" transform="matrix(1 0 0 1 9.53674e-07 -9.53674e-05)" fill="rgb(0, 0, 0)"/>
@@ -916,14 +992,6 @@ const Header = () => {
             <div 
               className="profile-icon"
               onClick={toggleProfileDropdown}
-              style={{
-                backgroundImage: "url('https://static.motiffcontent.com/private/resource/image/197f74679c4b11d-5b3004e6-a320-424c-8459-52e22ff76e2e.svg')",
-                width: '25px',
-                height: '25px',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                cursor: 'pointer'
-              }}
             />
             
             {showProfileDropdown && (
@@ -1505,6 +1573,27 @@ const Header = () => {
         availableWorkspaces={availableWorkspaces}
         availableProjects={availableProjects}
       />
+
+      {/* Mobile Navigation Dropdown */}
+      {isMobileNavOpen && (
+        <div className="header__mobile-nav-dropdown" ref={mobileNavRef}>
+          <div className="header__mobile-nav-overlay" onClick={handleMobileNavToggle} />
+          <div className="header__mobile-nav-content">
+            {mobileNavItems.map((item) => (
+              <button
+                key={item.id}
+                className={`header__mobile-nav-item ${activeMobileNavItem === item.id ? 'header__mobile-nav-item--active' : ''}`}
+                onClick={() => handleMobileNavItemClick(item.id)}
+              >
+                <div className="header__mobile-nav-icon">
+                  {item.icon}
+                </div>
+                <span className="header__mobile-nav-label">{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
