@@ -149,7 +149,7 @@
   &__mobile-content {
     flex: 1;
     padding: 20px;
-    padding-bottom: 160px; // Extra space for fixed chat input (no bottom nav)
+    // padding-bottom: 160px; // Extra space for fixed chat input (no bottom nav)
     overflow-y: auto;
     min-height: 0; // Allow flex item to shrink
     
