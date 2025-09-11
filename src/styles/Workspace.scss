@@ -87,10 +87,9 @@
     @include mobile-only {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 60px); // Account for fixed header
+      min-height: calc(100vh - 60px); // Account for fixed header
       margin-top: 60px; // Space for fixed header
-      overflow-y: auto;
-      padding-bottom: 80px; // Space for bottom nav
+      overflow: visible; // Allow content to scroll naturally
     }
   }
 
@@ -150,7 +149,9 @@
   &__mobile-content {
     flex: 1;
     padding: 20px;
+    padding-bottom: 240px; // Extra space for fixed chat input + bottom nav
     overflow-y: auto;
+    min-height: 0; // Allow flex item to shrink
     
     // Hide scrollbar while keeping scroll functionality
     scrollbar-width: none; // Firefox
@@ -396,6 +397,11 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    
+    // Only show first 3 chat items
+    .workspace__mobile-chat-item:nth-child(n+4) {
+      display: none;
+    }
   }
 
   // Chat items
