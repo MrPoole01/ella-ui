@@ -69,7 +69,31 @@ $border-radius-base: 4px;
 $border-radius-md: 6px;
 $border-radius-lg: 8px;
 
+// Responsive Breakpoints (2025 Standards)
+// Mobile-first approach - use min-width for progressive enhancement
+$breakpoint-mobile-portrait: 320px;     // Mobile (Portrait): 320px – 480px
+$breakpoint-mobile-landscape: 481px;    // Mobile (Landscape): 481px – 600px
+$breakpoint-tablet-portrait: 601px;     // Tablet (Portrait): 601px – 768px
+$breakpoint-tablet-landscape: 769px;    // Tablet (Landscape): 769px – 1024px
+$breakpoint-small-desktop: 1025px;      // Small Desktop/Laptop: 1025px – 1280px
+$breakpoint-large-desktop: 1281px;      // Large Desktop: 1281px – 1440px
+$breakpoint-extra-large: 1441px;        // Extra-Large Screens: 1441px and above
+
+// CSS Custom Properties for runtime access
+:root {
+  --breakpoint-mobile-portrait: #{$breakpoint-mobile-portrait};
+  --breakpoint-mobile-landscape: #{$breakpoint-mobile-landscape};
+  --breakpoint-tablet-portrait: #{$breakpoint-tablet-portrait};
+  --breakpoint-tablet-landscape: #{$breakpoint-tablet-landscape};
+  --breakpoint-small-desktop: #{$breakpoint-small-desktop};
+  --breakpoint-large-desktop: #{$breakpoint-large-desktop};
+  --breakpoint-extra-large: #{$breakpoint-extra-large};
+}
+
 // Layout
 $sidebar-width: 354.99px;
 $header-height: 51px;
-$nav-height: 64px; 
+$nav-height: 64px;
+
+// Import responsive mixins
+@import '../utilities/mixins'; 
