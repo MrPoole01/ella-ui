@@ -207,6 +207,56 @@
     font-weight: 600;
   }
 
+  // MUI Circular Progress Styles
+  .MuiBox-root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .MuiCircularProgress-root {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--theme-warning);
+  }
+  
+  .MuiCircularProgress-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  
+  .MuiCircularProgress-track {
+    fill: none;
+    stroke: var(--theme-bg-tertiary);
+    stroke-width: 4;
+    cx: 24;
+    cy: 24;
+    r: 20;
+  }
+  
+  .MuiCircularProgress-progress {
+    fill: none;
+    stroke: var(--theme-warning);
+    stroke-width: 4;
+    stroke-linecap: round;
+    cx: 24;
+    cy: 24;
+    r: 20;
+    stroke-dasharray: calc(2 * 3.14159 * 20);
+    stroke-dashoffset: calc(2 * 3.14159 * 20 * (1 - var(--CircularProgress-percent) / 100));
+    transition: stroke-dashoffset 0.3s ease;
+  }
+
   &__mobile-ellaments-progress {
     display: flex;
     align-items: center;
