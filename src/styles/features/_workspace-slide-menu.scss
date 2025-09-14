@@ -23,6 +23,11 @@
     transform: translateX(0);
   }
 
+  // Desktop positioning
+  @media (min-width: 768px) {
+    top: 0;
+  }
+
   // Electric Dark theme
   .theme-electric-dark & {
     background: var(--theme-bg-secondary);

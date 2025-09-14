@@ -1424,6 +1424,10 @@
     transform: translateX(0);
   }
 
+  @include mobile-only {
+    top: 0;
+  }
+
   // Electric Dark theme
   .theme-electric-dark & {
     background: var(--theme-bg-secondary);

@@ -21,6 +21,30 @@
     pointer-events: auto;
   }
 
+  // Mobile styles - slide out from right
+  @media (max-width: 768px) {
+    top: 0;
+    left: auto;
+    right: 0;
+    width: 100%;
+    max-width: 400px;
+    height: 100vh;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10001;
+
+    &--open {
+      transform: translateX(0);
+    }
+
+    // Hide ellipsis menu buttons in mobile
+    .project-menu__project-menu {
+      display: none;
+    }
+  }
+
   // Theme-specific menu styling
   .theme-light & {
     background: var(--theme-bg-primary);
@@ -76,6 +100,23 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--theme-text-primary);
+  }
+
+  &__projects {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: auto;
+  }
+
+  &__pagination {
+    margin-top: auto;
+    padding: 16px 0 8px 0;
+    border-top: 1px solid var(--theme-border-primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
   }
 
   &__header {
@@ -197,9 +238,26 @@
       &--active {
         background: var(--theme-gradient-elevated);
         box-shadow: var(--theme-neomorphic-button);
-      }
     }
   }
+}
+
+// Mobile backdrop
+.project-menu-backdrop {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+  }
+}
 
   &__project-icon {
     display: flex;

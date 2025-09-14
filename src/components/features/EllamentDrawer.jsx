@@ -145,6 +145,7 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   const [editingPersonaName, setEditingPersonaName] = useState('');
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedEllamentForShare, setSelectedEllamentForShare] = useState(null);
+  const [isMobileTabsDropdownOpen, setIsMobileTabsDropdownOpen] = useState(false);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -352,6 +353,15 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
     // to change the active brand bot for the session
   };
 
+  const handleMobileTabsDropdownToggle = () => {
+    setIsMobileTabsDropdownOpen(!isMobileTabsDropdownOpen);
+  };
+
+  const handleMobileTabSelect = (tab) => {
+    setActiveTab(tab);
+    setIsMobileTabsDropdownOpen(false);
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
@@ -437,8 +447,47 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
           Select form the Ella-ments below to ...
         </div>
 
-        {/* Tab Navigation */}
+        {/* Mobile Brand Bot Selector - Stacked above tabs */}
+        <div className="ellament-drawer__mobile-brandbot-container">
+          <BrandBotSelector
+            selectedBrandBotId={selectedBrandBotId}
+            onBrandBotChange={handleBrandBotChange}
+            className="ellament-drawer__brandbot-selector"
+          />
+        </div>
+
+        {/* Mobile Tab Navigation - Dropdown */}
         <div className="ellament-drawer__tabs">
+          {/* Mobile Tabs Dropdown */}
+          <div 
+            className={`ellament-drawer__mobile-tabs-dropdown ${isMobileTabsDropdownOpen ? 'ellament-drawer__mobile-tabs-dropdown--open' : ''}`}
+            onClick={handleMobileTabsDropdownToggle}
+          >
+            <span>{activeTab === 'product' ? 'Company' : 'Customer'}</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
+          {/* Mobile Tabs Options */}
+          {isMobileTabsDropdownOpen && (
+            <div className="ellament-drawer__mobile-tabs-options">
+              <button 
+                className={`ellament-drawer__mobile-tab-option ${activeTab === 'product' ? 'ellament-drawer__mobile-tab-option--active' : ''}`}
+                onClick={() => handleMobileTabSelect('product')}
+              >
+                Company
+              </button>
+              <button 
+                className={`ellament-drawer__mobile-tab-option ${activeTab === 'persona' ? 'ellament-drawer__mobile-tab-option--active' : ''}`}
+                onClick={() => handleMobileTabSelect('persona')}
+              >
+                Customer
+              </button>
+            </div>
+          )}
+
+          {/* Desktop Tab Navigation */}
           <button 
             className={`ellament-drawer__tab ${activeTab === 'product' ? 'ellament-drawer__tab--active' : ''}`}
             onClick={() => handleTabClick('product')}

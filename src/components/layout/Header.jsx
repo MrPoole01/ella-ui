@@ -11,6 +11,7 @@ import { useTheme } from '../../context';
 import WorkspaceDropdown from '../features/WorkspaceDropdown';
 import OrganizationDropdown from '../features/OrganizationDropdown';
 import EllamentDrawer from '../features/EllamentDrawer';
+import WorkspaceFilter from '../features/WorkspaceFilter';
 import { WorkspaceCreateModal } from '../ui/Modal';
 import '../../styles/Header.scss';
 import { ReactComponent as EllaTextLogo } from '../icons/ella_ai_text_logo.svg';
@@ -36,6 +37,11 @@ const Header = () => {
   const [activeSettingsTab, setActiveSettingsTab] = useState('appearance');
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [activeMobileNavItem, setActiveMobileNavItem] = useState('home');
+  const [isMobileWorkspaceDropdownOpen, setIsMobileWorkspaceDropdownOpen] = useState(false);
+  const [mobileWorkspaceSearchQuery, setMobileWorkspaceSearchQuery] = useState('');
+  const [mobileWorkspaceFilterOpen, setMobileWorkspaceFilterOpen] = useState(false);
+  const [mobileWorkspaceSortOrder, setMobileWorkspaceSortOrder] = useState('default');
+  const [activeMobileEllipsisMenu, setActiveMobileEllipsisMenu] = useState(null);
   const [appearanceMode, setAppearanceMode] = useState('auto'); // 'light', 'dark', 'auto'
   const [startWeekOn, setStartWeekOn] = useState('Monday');
   const [autoTimezone, setAutoTimezone] = useState(true);
@@ -58,6 +64,21 @@ const Header = () => {
   const [peopleSearchQuery, setPeopleSearchQuery] = useState('');
   const [activePeopleTab, setActivePeopleTab] = useState('users');
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+
+  // Mobile workspace data - should match the main workspace dropdown data
+  const [mobilePinnedWorkspaces, setMobilePinnedWorkspaces] = useState([
+    { id: 101, name: 'Marketing Hub', lastUpdated: '2 days ago', icon: 'folder', isPinned: true },
+    { id: 102, name: 'Product Design', lastUpdated: '8 days ago', icon: 'folder', isPinned: true }
+  ]);
+
+  const [mobileAllWorkspaces, setMobileAllWorkspaces] = useState([
+    { id: 1, name: 'Creative Studio', lastUpdated: '2 days ago', isActive: true, isPinned: false },
+    { id: 2, name: 'Engineering Team', lastUpdated: '1 week ago', isActive: false, isPinned: false },
+    { id: 3, name: 'Sales Operations', lastUpdated: '2 week ago', isActive: false, isPinned: false },
+    { id: 4, name: 'Client Projects', lastUpdated: '3 week ago', isActive: false, isPinned: false },
+    { id: 5, name: 'Research Lab', lastUpdated: '1 month ago', isActive: false, isPinned: false },
+    { id: 6, name: 'Brand Strategy', lastUpdated: '2 months ago', isActive: false, isPinned: false }
+  ]);
   
   // Sample workspaces and projects for the invite modal
   const [availableWorkspaces] = useState([
@@ -543,6 +564,73 @@ const Header = () => {
     setIsMobileNavOpen(!isMobileNavOpen);
   };
 
+  const handleMobileWorkspaceToggle = () => {
+    setIsMobileWorkspaceDropdownOpen(!isMobileWorkspaceDropdownOpen);
+    setActiveMobileEllipsisMenu(null); // Close any open ellipsis menus
+  };
+
+  const handleMobileEllipsisClick = (e, workspaceId) => {
+    e.stopPropagation();
+    setActiveMobileEllipsisMenu(activeMobileEllipsisMenu === workspaceId ? null : workspaceId);
+  };
+
+  const handleMobileWorkspaceSelect = (workspace) => {
+    setSelectedWorkspace(workspace);
+    setIsMobileWorkspaceDropdownOpen(false);
+    setActiveMobileEllipsisMenu(null);
+  };
+
+  const handleMobileWorkspaceSearch = (e) => {
+    setMobileWorkspaceSearchQuery(e.target.value);
+  };
+
+  const handleMobileWorkspaceFilterToggle = () => {
+    setMobileWorkspaceFilterOpen(!mobileWorkspaceFilterOpen);
+  };
+
+  const handleMobileWorkspaceFilterClose = () => {
+    setMobileWorkspaceFilterOpen(false);
+  };
+
+  const handleMobileWorkspaceSortChange = (newSortOrder) => {
+    setMobileWorkspaceSortOrder(newSortOrder);
+  };
+
+  const handleMobilePinToggle = (workspace) => {
+    if (workspace.isPinned) {
+      // Unpin: Remove from pinned and add back to all workspaces
+      setMobilePinnedWorkspaces(prev => prev.filter(w => w.id !== workspace.id));
+      setMobileAllWorkspaces(prev => [...prev, { ...workspace, isPinned: false }].sort((a, b) => a.id - b.id));
+    } else {
+      // Pin: Remove from all workspaces and add to pinned
+      setMobileAllWorkspaces(prev => prev.filter(w => w.id !== workspace.id));
+      setMobilePinnedWorkspaces(prev => [...prev, { ...workspace, isPinned: true }]);
+    }
+    setActiveMobileEllipsisMenu(null);
+  };
+
+  const handleMobileMenuAction = (action, workspace) => {
+    console.log(`Mobile ${action} action for workspace:`, workspace.name);
+    setActiveMobileEllipsisMenu(null);
+    // Add specific action handlers as needed
+  };
+
+  // Sort workspaces based on selected sort order
+  const sortMobileWorkspaces = (workspaces, sortOrder) => {
+    switch (sortOrder) {
+      case 'a-z':
+        return [...workspaces].sort((a, b) => a.name.localeCompare(b.name));
+      case 'z-a':
+        return [...workspaces].sort((a, b) => b.name.localeCompare(a.name));
+      case 'default':
+      default:
+        return workspaces;
+    }
+  };
+
+  const sortedMobileWorkspaces = sortMobileWorkspaces(mobileAllWorkspaces, mobileWorkspaceSortOrder);
+  const sortedMobilePinnedWorkspaces = sortMobileWorkspaces(mobilePinnedWorkspaces, mobileWorkspaceSortOrder);
+
   const handleMobileNavItemClick = (itemId) => {
     setActiveMobileNavItem(itemId);
     setIsMobileNavOpen(false);
@@ -739,7 +827,187 @@ const Header = () => {
       </div>
       
       <div className="header__center">
-        {/* Theme dropdown moved to profile menu */}
+        {/* Mobile Workspace Text with Chevron */}
+        <div 
+          className="header__center-mobile-workspace"
+          onClick={handleMobileWorkspaceToggle}
+        >
+          <span>{selectedWorkspace?.name || 'Workspace'}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20.3672" height="20.3647" viewBox="0 0 20.3672 20.3647" className="chevron-down-icon" style={{transform: isMobileWorkspaceDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s'}}>
+            <defs>
+              <clipPath id="clipPathOrgChevron">
+                <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 0.368187 -2.47955e-05)"></path>
+              </clipPath>
+            </defs>
+            <g clipPath="url(#clipPathOrgChevron)">
+              <path d="M-0.662913 -0.662913C-1.02903 -0.296799 -1.02903 0.296799 -0.662913 0.662913L4.96209 6.28791Q5.09395 6.41977 5.26623 6.49114Q5.43852 6.5625 5.625 6.5625Q5.81148 6.5625 5.98377 6.49114Q6.15605 6.41977 6.28791 6.28791L11.9129 0.662913C12.279 0.296799 12.279 -0.296799 11.9129 -0.662913C11.5468 -1.02903 10.9532 -1.02903 10.5871 -0.662912L5.625 4.29918L0.662913 -0.662913C0.296799 -1.02903 -0.296799 -1.02903 -0.662913 -0.662913Z" fillRule="evenodd" transform="matrix(0.999831 0.0184092 -0.0184092 0.999831 4.61013 7.2668)" fill="rgb(156, 163, 175)"></path>
+            </g>
+          </svg>
+        </div>
+
+        {/* Mobile Workspace Dropdown */}
+        {isMobileWorkspaceDropdownOpen && (
+          <div className="header__mobile-workspace-dropdown">
+            <div className="header__mobile-workspace-overlay" onClick={handleMobileWorkspaceToggle}></div>
+            <div className="header__mobile-workspace-content">
+              <div className="header__mobile-workspace-header">
+                <span>+ Create New Workspace</span>
+              </div>
+              <div className="header__mobile-workspace-search">
+                <div className="header__mobile-workspace-search-container">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" className="header__mobile-workspace-search-icon">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
+                    <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search workspaces..."
+                    value={mobileWorkspaceSearchQuery}
+                    onChange={handleMobileWorkspaceSearch}
+                    className="header__mobile-workspace-search-input"
+                  />
+                </div>
+                <div className="header__mobile-workspace-filter-container">
+                  <button 
+                    className={`header__mobile-workspace-filter-btn ${mobileWorkspaceFilterOpen ? 'header__mobile-workspace-filter-btn--active' : ''}`}
+                    onClick={handleMobileWorkspaceFilterToggle}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16">
+                      <defs>
+                        <clipPath id="clipPathMobileFilterIcon">
+                          <path d="M0 0L16 0L16 16L0 16L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                        </clipPath>
+                      </defs>
+                      <g clipPath="url(#clipPathMobileFilterIcon)">
+                        <path d="M-0.6 0C-0.6 0.331368 -0.331368 0.6 0 0.6L12 0.6C12.3314 0.6 12.6 0.331368 12.6 0C12.6 -0.331368 12.3314 -0.6 12 -0.6L0 -0.6C-0.331368 -0.6 -0.6 -0.331368 -0.6 0ZM1.4 4C1.4 4.33137 1.66863 4.6 2 4.6L10 4.6C10.3314 4.6 10.6 4.33137 10.6 4C10.6 3.66863 10.3314 3.4 10 3.4L2 3.4C1.66863 3.4 1.4 3.66863 1.4 4ZM3.4 8C3.4 8.33137 3.66863 8.6 4 8.6L8 8.6C8.33137 8.6 8.6 8.33137 8.6 8C8.6 7.66863 8.33137 7.4 8 7.4L4 7.4C3.66863 7.4 3.4 7.66863 3.4 8Z" fillRule="evenodd" transform="matrix(1 0 0 1 2 4)" fill="currentColor"/>
+                      </g>
+                    </svg>
+                  </button>
+                  
+                  <WorkspaceFilter
+                    isOpen={mobileWorkspaceFilterOpen}
+                    onClose={handleMobileWorkspaceFilterClose}
+                    onSortChange={handleMobileWorkspaceSortChange}
+                    currentSort={mobileWorkspaceSortOrder}
+                  />
+                </div>
+              </div>
+              
+              {/* Pinned Workspaces */}
+              <div className="header__mobile-workspace-section">
+                <div className="header__mobile-workspace-section-header">PINNED WORKSPACES</div>
+                <div className="header__mobile-workspace-items">
+                  {sortedMobilePinnedWorkspaces.map((workspace) => (
+                    <div
+                      key={workspace.id}
+                      className={`header__mobile-workspace-item header__mobile-workspace-item--pinned ${selectedWorkspace?.id === workspace.id ? 'header__mobile-workspace-item--selected' : ''}`}
+                      onClick={() => handleMobileWorkspaceSelect(workspace)}
+                    >
+                      <div className="header__mobile-workspace-item-icon">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <path d="M9 1.5L11.5 6.5H16L12.5 10L14 15L9 12L4 15L5.5 10L2 6.5H6.5L9 1.5Z" fill="#6B7280"/>
+                        </svg>
+                      </div>
+                      <div className="header__mobile-workspace-item-content">
+                        <div className="header__mobile-workspace-item-name">{workspace.name}</div>
+                        <div className="header__mobile-workspace-item-meta">Last updated {workspace.lastUpdated}</div>
+                      </div>
+                      <div className="header__mobile-workspace-item-actions">
+                        <button
+                          className="header__mobile-workspace-ellipsis-btn"
+                          onClick={(e) => handleMobileEllipsisClick(e, workspace.id)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9Z" fill="currentColor"/>
+                            <path d="M8 4C8.55228 4 9 3.55228 9 3C9 2.44772 8.55228 2 8 2C7.44772 2 7 2.44772 7 3C7 3.55228 7.44772 4 8 4Z" fill="currentColor"/>
+                            <path d="M8 14C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12C7.44772 12 7 12.4477 7 13C7 13.5523 7.44772 14 8 14Z" fill="currentColor"/>
+                          </svg>
+                        </button>
+                        {activeMobileEllipsisMenu === workspace.id && (
+                          <div className="header__mobile-workspace-ellipsis-menu">
+                            <button onClick={() => handleMobileMenuAction('rename', workspace)}>
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M6.36 2.68L2.5 6.54V8.96H4.92L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Rename
+                            </button>
+                            <button onClick={() => handleMobileMenuAction('share', workspace)}>
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M10.5 5.25C11.4665 5.25 12.25 4.4665 12.25 3.5C12.25 2.5335 11.4665 1.75 10.5 1.75C9.5335 1.75 8.75 2.5335 8.75 3.5C8.75 3.71 8.785 3.913 8.848 4.102L5.152 6.125C4.816 5.7525 4.336 5.25 3.5 5.25C2.5335 5.25 1.75 6.0335 1.75 7C1.75 7.9665 2.5335 8.75 3.5 8.75C4.336 8.75 4.816 8.2475 5.152 7.875L8.848 9.898C8.785 10.087 8.75 10.29 8.75 10.5C8.75 11.4665 9.5335 12.25 10.5 12.25C11.4665 12.25 12.25 11.4665 12.25 10.5C12.25 9.5335 11.4665 8.75 10.5 8.75C9.664 8.75 9.184 9.2525 8.848 9.625L5.152 7.602C5.215 7.413 5.25 7.21 5.25 7C5.25 6.79 5.215 6.587 5.152 6.398L8.848 4.375C9.184 4.7475 9.664 5.25 10.5 5.25Z" fill="currentColor"/>
+                              </svg>
+                              Share
+                            </button>
+                            <div className="header__mobile-workspace-menu-divider"></div>
+                            <button onClick={() => handleMobilePinToggle(workspace)} className="header__mobile-workspace-menu-item--pin">
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M8.75 1.75L5.25 1.75C4.9668 1.75 4.7332 1.9668 4.7332 2.25L4.7332 7L3.5 8.75L10.5 8.75L9.2668 7L9.2668 2.25C9.2668 1.9668 9.0332 1.75 8.75 1.75ZM7 12.25L7 9.625L7 12.25Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Unpin
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* All Workspaces */}
+              <div className="header__mobile-workspace-section">
+                <div className="header__mobile-workspace-section-header">WORKSPACES</div>
+                <div className="header__mobile-workspace-items">
+                  {sortedMobileWorkspaces.map((workspace) => (
+                    <div
+                      key={workspace.id}
+                      className={`header__mobile-workspace-item ${workspace.isActive ? 'header__mobile-workspace-item--active' : ''} ${selectedWorkspace?.id === workspace.id ? 'header__mobile-workspace-item--selected' : ''}`}
+                      onClick={() => handleMobileWorkspaceSelect(workspace)}
+                    >
+                      <div className="header__mobile-workspace-item-content">
+                        <div className="header__mobile-workspace-item-name">{workspace.name}</div>
+                        <div className="header__mobile-workspace-item-meta">Last updated {workspace.lastUpdated}</div>
+                      </div>
+                      <div className="header__mobile-workspace-item-actions">
+                        <button
+                          className="header__mobile-workspace-ellipsis-btn"
+                          onClick={(e) => handleMobileEllipsisClick(e, workspace.id)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9Z" fill="currentColor"/>
+                            <path d="M8 4C8.55228 4 9 3.55228 9 3C9 2.44772 8.55228 2 8 2C7.44772 2 7 2.44772 7 3C7 3.55228 7.44772 4 8 4Z" fill="currentColor"/>
+                            <path d="M8 14C8.55228 14 9 13.5523 9 13C9 12.4477 8.55228 12 8 12C7.44772 12 7 12.4477 7 13C7 13.5523 7.44772 14 8 14Z" fill="currentColor"/>
+                          </svg>
+                        </button>
+                        {activeMobileEllipsisMenu === workspace.id && (
+                          <div className="header__mobile-workspace-ellipsis-menu">
+                            <button onClick={() => handleMobileMenuAction('rename', workspace)}>
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M6.36 2.68L2.5 6.54V8.96H4.92L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Rename
+                            </button>
+                            <button onClick={() => handleMobileMenuAction('share', workspace)}>
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M10.5 5.25C11.4665 5.25 12.25 4.4665 12.25 3.5C12.25 2.5335 11.4665 1.75 10.5 1.75C9.5335 1.75 8.75 2.5335 8.75 3.5C8.75 3.71 8.785 3.913 8.848 4.102L5.152 6.125C4.816 5.7525 4.336 5.25 3.5 5.25C2.5335 5.25 1.75 6.0335 1.75 7C1.75 7.9665 2.5335 8.75 3.5 8.75C4.336 8.75 4.816 8.2475 5.152 7.875L8.848 9.898C8.785 10.087 8.75 10.29 8.75 10.5C8.75 11.4665 9.5335 12.25 10.5 12.25C11.4665 12.25 12.25 11.4665 12.25 10.5C12.25 9.5335 11.4665 8.75 10.5 8.75C9.664 8.75 9.184 9.2525 8.848 9.625L5.152 7.602C5.215 7.413 5.25 7.21 5.25 7C5.25 6.79 5.215 6.587 5.152 6.398L8.848 4.375C9.184 4.7475 9.664 5.25 10.5 5.25Z" fill="currentColor"/>
+                              </svg>
+                              Share
+                            </button>
+                            <div className="header__mobile-workspace-menu-divider"></div>
+                            <button onClick={() => handleMobilePinToggle(workspace)} className="header__mobile-workspace-menu-item--pin">
+                              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M8.75 1.75L5.25 1.75C4.9668 1.75 4.7332 1.9668 4.7332 2.25L4.7332 7L3.5 8.75L10.5 8.75L9.2668 7L9.2668 2.25C9.2668 1.9668 9.0332 1.75 8.75 1.75ZM7 12.25L7 9.625L7 12.25Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              Pin
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       
       <div className="header__right">
