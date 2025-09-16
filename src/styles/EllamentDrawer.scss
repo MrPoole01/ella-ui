@@ -65,18 +65,6 @@
     line-height: 28px;
   }
 
-  // Brand Bot Selector in Header
-  &__brandbot-selector {
-    .brandbot-selector__button {
-      min-width: 200px;
-      background: var(--theme-bg-primary);
-      border: 1px solid var(--theme-border-primary);
-      
-      &:hover {
-        border-color: var(--theme-border-secondary);
-      }
-    }
-  }
 
   &__close {
     background: none;
@@ -105,10 +93,6 @@
     margin-bottom: 20px;
   }
 
-  // Mobile Brand Bot Container - Hidden on desktop
-  &__mobile-brandbot-container {
-    display: none;
-  }
 
   // Mobile Tabs Dropdown - Hidden on desktop
   &__mobile-tabs-dropdown,
@@ -790,17 +774,6 @@
       border-color: var(--theme-border-secondary);
     }
 
-    // Brand Bot Selector EV2 Dark theme
-    &__brandbot-selector {
-      .brandbot-selector__button {
-        background: var(--theme-gradient-card);
-        border: 2px solid var(--theme-border-secondary);
-        
-        &:hover {
-          border-color: var(--theme-primary);
-        }
-      }
-    }
 
     // Create ICP Button EV2 Dark theme
     &__create-icp-button {
@@ -831,33 +804,14 @@
       justify-content: flex-end;
       gap: 16px;
 
-      // Hide brandbot selector in header on mobile (it's moved to mobile container)
-      .ellament-drawer__brandbot-selector {
-        display: none;
-      }
     }
 
-    // Move brandbot selector above tabs as a stacked element
-    &__mobile-brandbot-container {
-      display: block;
-      width: 100%;
-      padding: 0 20px;
-      margin-bottom: 16px;
-    }
 
     // Show mobile tabs dropdown
     &__mobile-tabs-dropdown {
       display: flex;
     }
 
-    &__brandbot-selector {
-      width: 100%;
-      
-      .brandbot-selector__button {
-        min-width: auto;
-        width: 100%;
-      }
-    }
     
     &__grid {
       grid-template-columns: 1fr;

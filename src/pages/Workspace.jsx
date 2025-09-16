@@ -24,6 +24,7 @@ const Workspace = () => {
   const [isWorkspaceSlideMenuOpen, setIsWorkspaceSlideMenuOpen] = useState(false);
   const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
+  const [showProjectView, setShowProjectView] = useState(false);
   
   // Placeholder permissions and brandbot scoping
   const canManageCustomTemplates = true;
@@ -116,7 +117,11 @@ const Workspace = () => {
       <div className="workspace__mobile-layout">
         {/* Mobile Workspace Header */}
         <div className="workspace__mobile-header">
-          <div className="workspace__mobile-workspace-info">
+          <div 
+            className="workspace__mobile-workspace-info"
+            onClick={() => setShowProjectView(false)}
+            style={{ cursor: showProjectView ? 'pointer' : 'default' }}
+          >
             <FolderIcon />
             <span className="workspace__mobile-workspace-name">Workspace 1</span>
           </div>
@@ -127,7 +132,110 @@ const Workspace = () => {
 
         {/* Mobile Content */}
         <div className="workspace__mobile-content">
-          {/* Ellaments Card - Two Separate Buttons */}
+          {/* Show project view when a project is selected */}
+          {showProjectView ? (
+            <>
+              {/* Ellaments Card - Always visible in project view */}
+              <div className="workspace__mobile-ellaments-container">
+              <button className="workspace__mobile-ellaments-btn" onClick={handleOpenEllamentDrawer}>
+                <div className="workspace__mobile-ellaments-info">
+                  <span className="workspace__mobile-ellaments-title">Ella-ments</span>
+                </div>
+                <div className="MuiBox-root css-mjha5m">
+                  <span role="progressbar" aria-valuenow="50" className="MuiCircularProgress-root MuiCircularProgress-determinate MuiCircularProgress-colorPrimary MuiCircularProgress-variantSoft MuiCircularProgress-sizeMd css-rocgce-JoyCircularProgress-root" style={{"--CircularProgress-percent": 50}}>
+                    <svg className="MuiCircularProgress-svg css-qw6zo9-JoyCircularProgress-svg">
+                      <circle className="MuiCircularProgress-track css-zitgxn-JoyCircularProgress-track"></circle>
+                      <circle className="MuiCircularProgress-progress css-1hs7rf2-JoyCircularProgress-progress"></circle>
+                    </svg>
+                    50%
+                  </span>
+                </div>
+              </button>
+            
+            <button className="workspace__mobile-new-chat-btn">
+              <PlusIcon />
+              <span>New Chat</span>
+            </button>
+          </div>
+
+          {/* Chat Interface Project Header - Outside content for mobile positioning */}
+          <div className="chat-interface__project-header">
+            <div className="chat-interface__project-info">
+              <h2 className="chat-interface__project-title">
+                {selectedProject?.name || 'Project'}
+              </h2>
+              <div className="chat-interface__project-breadcrumb">
+                <span className="chat-interface__project-breadcrumb-item">Projects</span>
+                <svg className="chat-interface__project-breadcrumb-arrow" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                </svg>
+                <span className="chat-interface__project-breadcrumb-item">{selectedProject?.name || 'Untitled...'}</span>
+              </div>
+            </div>
+            <button className="chat-interface__project-add">
+              <span className="chat-interface__project-add-desktop">
+                <PlusIcon />
+              </span>
+              <span className="chat-interface__project-add-mobile">
+                project menu
+              </span>
+            </button>
+          </div>
+
+          {/* Chat Interface Project Content */}
+          <div className="chat-interface__project-content">
+            <div className="chat-interface__project-chat">
+              <div className="chat-interface__project-message">
+                <div className="chat-interface__project-avatar">
+                  <span>Ella</span>
+                </div>
+                <div className="chat-interface__project-message-content">
+                  <div className="chat-interface__project-message-header">
+                    <span className="chat-interface__project-sender">Ella:</span>
+                    <span className="chat-interface__project-timestamp">5/19/2025 09:30</span>
+                  </div>
+                  <div className="chat-interface__project-message-text">
+                    <p>
+                      <span>Absolutely, I'm ready to help craft a high-performing nurture email sequence for your campaign. To get started, I'll need to clarify a few details to ensure your emails are precisely tailored and impactful:</span>
+                    </p>
+                    <p>
+                      <span style={{ fontWeight: 600 }}>Key Info Needed</span>
+                    </p>
+                    <p>
+                      <span style={{ fontWeight: 600 }}>Ideal Customer Profile (ICP):</span>
+                    </p>
+                    <p>
+                      <span>Who is your target audience for this sequence? (e.g., Industry, role/title, company size, pain points)</span>
+                    </p>
+                    <p>
+                      <span style={{ fontWeight: 600 }}>Journey Stages:</span>
+                    </p>
+                    <p>
+                      <span>From which stage of the customer journey are you starting? (e.g., Problem-Aware, Solution-Aware)</span>
+                      <br />
+                      <span>To which stage do you want to guide them? (e.g., Product-Aware, Ready to Purchase)</span>
+                    </p>
+                    <p>
+                      <span style={{ fontWeight: 600 }}>Product/Service:</span>
+                    </p>
+                    <p>
+                      <span>What product or service are you nurturing them toward? (A brief summary or product name will help.)</span>
+                    </p>
+                    <p>
+                      <span style={{ fontWeight: 600 }}>Special Offers or CTAs:</span>
+                    </p>
+                    <p>
+                      <span>Any specific offers (e.g., free trial, demo, white paper) or CTAs you want to include?</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Default view - Ellaments Card */}
           <div className="workspace__mobile-ellaments-container">
               <button className="workspace__mobile-ellaments-btn" onClick={handleOpenEllamentDrawer}>
                 <div className="workspace__mobile-ellaments-info">
@@ -204,6 +312,8 @@ const Workspace = () => {
                 </button>
             </div>
           </div>
+        </>
+      )}
         </div>
 
         {/* Mobile Chat Input */}
@@ -476,6 +586,7 @@ const Workspace = () => {
                     onClick={() => {
                       setSelectedProject({ id: 1, name: 'Marketing Campaign Q4' });
                       setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
                     }}
                     style={{ cursor: 'pointer' }}
                   >
@@ -517,6 +628,7 @@ const Workspace = () => {
                     onClick={() => {
                       setSelectedProject({ id: 2, name: 'Product Launch Beta' });
                       setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
                     }}
                     style={{ cursor: 'pointer' }}
                   >
@@ -558,6 +670,7 @@ const Workspace = () => {
                     onClick={() => {
                       setSelectedProject({ id: 3, name: 'Customer Onboarding' });
                       setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
                     }}
                     style={{ cursor: 'pointer' }}
                   >
@@ -599,6 +712,7 @@ const Workspace = () => {
                     onClick={() => {
                       setSelectedProject({ id: 4, name: 'Project A' });
                       setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
                     }}
                     style={{ cursor: 'pointer' }}
                   >
@@ -638,7 +752,15 @@ const Workspace = () => {
                     </div>
                   </div>
 
-                  <div className="project-menu__project-card">
+                  <div 
+                    className="project-menu__project-card"
+                    onClick={() => {
+                      setSelectedProject({ id: 5, name: 'Project B' });
+                      setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="project-menu__project-header">
                       <h3 className="project-menu__project-title">Project B</h3>
                       <div className="project-menu__project-actions">
@@ -672,7 +794,15 @@ const Workspace = () => {
                     </div>
                   </div>
 
-                  <div className="project-menu__project-card">
+                  <div 
+                    className="project-menu__project-card"
+                    onClick={() => {
+                      setSelectedProject({ id: 6, name: 'Project C' });
+                      setIsProjectMenuOpen(false);
+                      setShowProjectView(true);
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="project-menu__project-header">
                       <h3 className="project-menu__project-title">Project C</h3>
                       <div className="project-menu__project-actions">

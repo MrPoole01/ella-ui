@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import BrandBotSelector from './BrandBotSelector';
 import { ShareModal } from '../ui/Modal';
 import '../../styles/EllamentDrawer.scss';
 
@@ -139,7 +138,6 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   const [activeEllamentMenu, setActiveEllamentMenu] = useState(null);
   const [personaDropdownOpen, setPersonaDropdownOpen] = useState(false);
   const [selectedPersonas, setSelectedPersonas] = useState(['all']);
-  const [selectedBrandBotId, setSelectedBrandBotId] = useState(null);
   const [activePersonaMenu, setActivePersonaMenu] = useState(null);
   const [editingPersona, setEditingPersona] = useState(null);
   const [editingPersonaName, setEditingPersonaName] = useState('');
@@ -346,12 +344,6 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
     }
   };
 
-  const handleBrandBotChange = (brandBotId, brandBot) => {
-    setSelectedBrandBotId(brandBotId);
-    console.log('Brand Bot changed to:', brandBot);
-    // Here you would typically update the context or make an API call
-    // to change the active brand bot for the session
-  };
 
   const handleMobileTabsDropdownToggle = () => {
     setIsMobileTabsDropdownOpen(!isMobileTabsDropdownOpen);
@@ -427,12 +419,6 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
           </div>
 
           <div className="ellament-drawer__header-right">
-            {/* Brand Bot Selector */}
-            <BrandBotSelector
-              selectedBrandBotId={selectedBrandBotId}
-              onBrandBotChange={handleBrandBotChange}
-              className="ellament-drawer__brandbot-selector"
-            />
 
             {/* Close Button */}
             <button className="ellament-drawer__close" onClick={onClose}>
@@ -447,14 +433,6 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
           Select form the Ella-ments below to ...
         </div>
 
-        {/* Mobile Brand Bot Selector - Stacked above tabs */}
-        <div className="ellament-drawer__mobile-brandbot-container">
-          <BrandBotSelector
-            selectedBrandBotId={selectedBrandBotId}
-            onBrandBotChange={handleBrandBotChange}
-            className="ellament-drawer__brandbot-selector"
-          />
-        </div>
 
         {/* Mobile Tab Navigation - Dropdown */}
         <div className="ellament-drawer__tabs">
