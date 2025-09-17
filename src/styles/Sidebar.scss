@@ -294,6 +294,11 @@
     width: inherit;
     gap: 11px;
     padding-left: 29px;
+
+    @include mobile-only {
+      gap: 21px;
+      padding: 29px 15px;
+    }
   }
 
   &__project-section-item {
@@ -701,6 +706,10 @@
     justify-content: start;
     align-items: center;
 
+    @include mobile-only {
+      justify-content: center;
+    }
+
     // Light theme specific styling
     .theme-light & {
       color: var(--theme-text-tertiary);
@@ -832,6 +841,7 @@
     align-items: center;
     gap: 8px;
     width: inherit;
+    transition: all 0.2s ease;
 
     .project-icon {
       margin-top: 2px;
@@ -843,6 +853,27 @@
       font-weight: $font-semibold;
       line-height: $line-height-xl;
       white-space: nowrap;
+    }
+
+    // Mobile-specific styles
+    @media (max-width: 768px) {
+      padding: 12px 8px;
+      margin: -12px -8px;
+      border-radius: 8px;
+      
+      &:hover {
+        background: var(--theme-bg-hover);
+      }
+
+      &:active {
+        background: var(--theme-bg-pressed);
+        transform: scale(0.98);
+      }
+
+      span {
+        color: var(--theme-text-primary);
+        font-weight: 600;
+      }
     }
   }
 

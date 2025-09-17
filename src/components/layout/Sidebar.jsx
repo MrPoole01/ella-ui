@@ -19,7 +19,7 @@ import Box from '@mui/joy/Box';
 import CircularProgress from '@mui/joy/CircularProgress';
 import '../../styles/Sidebar.scss';
 
-const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDrawer }) => {
+const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDrawer, onMobileProjectMenuOpen }) => {
   const [isRecentChatsExpanded, setIsRecentChatsExpanded] = useState(true);
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
   const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
@@ -546,6 +546,16 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
     setIsProjectMenuOpen(!isProjectMenuOpen);
   };
 
+  const handleMobileProjectsHeaderClick = () => {
+    // Check if we're in mobile view (window width <= 768px)
+    if (window.innerWidth <= 768 && onMobileProjectMenuOpen) {
+      onMobileProjectMenuOpen();
+    } else {
+      // Desktop behavior - toggle the regular project menu
+      handleProjectMenuClick();
+    }
+  };
+
   const handleProjectMenuClose = () => {
     setIsProjectMenuOpen(false);
   };
@@ -1054,7 +1064,11 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
 
       {/* Projects Section */}
       <div className="sidebar__projects-section">
-        <div className="sidebar__projects-header">
+        <div 
+          className="sidebar__projects-header"
+          onClick={handleMobileProjectsHeaderClick}
+          style={{ cursor: 'pointer' }}
+        >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="project-icon">
             <defs>
               <clipPath id="clipPath4532578984-project">

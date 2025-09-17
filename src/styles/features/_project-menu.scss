@@ -34,6 +34,8 @@
     opacity: 1;
     pointer-events: auto;
     z-index: 10001;
+    display: flex;
+    flex-direction: column;
 
     &--open {
       transform: translateX(0);
@@ -100,12 +102,27 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--theme-text-primary);
+
+    @media (max-width: 768px) {
+      flex: 1;
+      padding-bottom: 0;
+    }
   }
 
   &__projects {
     flex: 1;
     overflow-y: auto;
     margin-bottom: auto;
+
+    @media (max-width: 768px) {
+      margin-bottom: 0;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+      
+      &::-webkit-scrollbar {
+        display: none; /* WebKit */
+      }
+    }
   }
 
   &__pagination {
@@ -117,6 +134,15 @@
     justify-content: space-between;
     gap: 12px;
     flex-shrink: 0;
+
+    @media (max-width: 768px) {
+      position: sticky;
+      bottom: 0;
+      margin-top: 0;
+      padding: 16px;
+      border-top: 1px solid var(--theme-border-primary);
+      z-index: 1;
+    }
   }
 
   &__header {

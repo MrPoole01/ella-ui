@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import MainContent from '../components/layout/MainContent';
@@ -24,7 +24,16 @@ const Workspace = () => {
   const [isWorkspaceSlideMenuOpen, setIsWorkspaceSlideMenuOpen] = useState(false);
   const [isEllamentDrawerOpen, setIsEllamentDrawerOpen] = useState(false);
   const [isProjectMenuOpen, setIsProjectMenuOpen] = useState(false);
+  const [isMobileProjectMenuOpen, setIsMobileProjectMenuOpen] = useState(false);
   const [showProjectView, setShowProjectView] = useState(false);
+  const [isMobileProjectMenuEllipsisOpen, setIsMobileProjectMenuEllipsisOpen] = useState(false);
+  const [isRenamingProject, setIsRenamingProject] = useState(false);
+  const [renameValue, setRenameValue] = useState('');
+  const [isMobileSectionMenuOpen, setIsMobileSectionMenuOpen] = useState(false);
+  const [isMobileFilesMenuOpen, setIsMobileFilesMenuOpen] = useState(false);
+  const [isMobileSavedWorkMenuOpen, setIsMobileSavedWorkMenuOpen] = useState(false);
+  
+  const ellipsisMenuRef = useRef(null);
   
   // Placeholder permissions and brandbot scoping
   const canManageCustomTemplates = true;
@@ -108,10 +117,124 @@ const Workspace = () => {
     setIsProjectMenuOpen(false);
   };
 
+  const handleOpenMobileProjectMenu = () => {
+    setIsMobileProjectMenuOpen(true);
+  };
+
+  const handleCloseMobileProjectMenu = () => {
+    setIsMobileProjectMenuOpen(false);
+  };
+
+  const handleMobileProjectMenuEllipsisToggle = () => {
+    setIsMobileProjectMenuEllipsisOpen(!isMobileProjectMenuEllipsisOpen);
+  };
+
+  const handleStartRename = () => {
+    setIsRenamingProject(true);
+    setRenameValue(selectedProject?.name || '');
+    setIsMobileProjectMenuEllipsisOpen(false);
+  };
+
+  const handleRenameSubmit = () => {
+    if (renameValue.trim()) {
+      // Update the selected project name
+      setSelectedProject(prev => ({
+        ...prev,
+        name: renameValue.trim()
+      }));
+    }
+    setIsRenamingProject(false);
+    setRenameValue('');
+  };
+
+  const handleRenameCancel = () => {
+    setIsRenamingProject(false);
+    setRenameValue('');
+  };
+
+  const handleRenameKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleRenameSubmit();
+    } else if (e.key === 'Escape') {
+      handleRenameCancel();
+    }
+  };
+
+  const handleCreateNewProject = () => {
+    // Create a new project with "Untitled Project" as the name
+    const newProject = {
+      id: Date.now(), // Simple ID generation
+      name: 'Untitled Project',
+      description: 'A new project',
+      workspace: 'Workspace 1',
+      updatedDate: new Date().toLocaleDateString()
+    };
+
+    // Set the new project as selected
+    setSelectedProject(newProject);
+    
+    // Show the project view
+    setShowProjectView(true);
+  };
+
+  const handleResetToStartingView = () => {
+    // Reset to starting view
+    setShowProjectView(false);
+    setSelectedProject(null);
+  };
+
+  // Mobile menu handlers for project sections
+  const handleMobileSectionMenuOpen = () => {
+    setIsMobileSectionMenuOpen(true);
+    setIsMobileProjectMenuOpen(false);
+  };
+
+  const handleMobileFilesMenuOpen = () => {
+    setIsMobileFilesMenuOpen(true);
+    setIsMobileProjectMenuOpen(false);
+  };
+
+  const handleMobileSavedWorkMenuOpen = () => {
+    setIsMobileSavedWorkMenuOpen(true);
+    setIsMobileProjectMenuOpen(false);
+  };
+
+  const handleMobileSectionMenuClose = () => {
+    setIsMobileSectionMenuOpen(false);
+  };
+
+  const handleMobileFilesMenuClose = () => {
+    setIsMobileFilesMenuOpen(false);
+  };
+
+  const handleMobileSavedWorkMenuClose = () => {
+    setIsMobileSavedWorkMenuOpen(false);
+  };
+
+  // Click outside handler for ellipsis menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (ellipsisMenuRef.current && !ellipsisMenuRef.current.contains(event.target)) {
+        setIsMobileProjectMenuEllipsisOpen(false);
+      }
+    };
+
+    if (isMobileProjectMenuEllipsisOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileProjectMenuEllipsisOpen]);
+
   return (
     <div className="workspace clips-content">
       {/* Header */}
-      <Header />
+      <Header 
+        onResetToStartingView={handleResetToStartingView}
+        onOpenProjectMenu={handleOpenProjectMenu}
+      />
       
       {/* Mobile Layout */}
       <div className="workspace__mobile-layout">
@@ -152,7 +275,7 @@ const Workspace = () => {
                 </div>
               </button>
             
-            <button className="workspace__mobile-new-chat-btn">
+            <button className="workspace__mobile-new-chat-btn" onClick={handleCreateNewProject}>
               <PlusIcon />
               <span>New Chat</span>
             </button>
@@ -172,7 +295,7 @@ const Workspace = () => {
                 <span className="chat-interface__project-breadcrumb-item">{selectedProject?.name || 'Untitled...'}</span>
               </div>
             </div>
-            <button className="chat-interface__project-add">
+            <button className="chat-interface__project-add" onClick={handleOpenMobileProjectMenu}>
               <span className="chat-interface__project-add-desktop">
                 <PlusIcon />
               </span>
@@ -196,37 +319,46 @@ const Workspace = () => {
                   </div>
                   <div className="chat-interface__project-message-text">
                     <p>
-                      <span>Absolutely, I'm ready to help craft a high-performing nurture email sequence for your campaign. To get started, I'll need to clarify a few details to ensure your emails are precisely tailored and impactful:</span>
+                      <span>
+                        {selectedProject?.name === 'Untitled Project' 
+                          ? 'How can I help you?' 
+                          : 'Absolutely, I\'m ready to help craft a high-performing nurture email sequence for your campaign. To get started, I\'ll need to clarify a few details to ensure your emails are precisely tailored and impactful:'
+                        }
+                      </span>
                     </p>
-                    <p>
-                      <span style={{ fontWeight: 600 }}>Key Info Needed</span>
-                    </p>
-                    <p>
-                      <span style={{ fontWeight: 600 }}>Ideal Customer Profile (ICP):</span>
-                    </p>
-                    <p>
-                      <span>Who is your target audience for this sequence? (e.g., Industry, role/title, company size, pain points)</span>
-                    </p>
-                    <p>
-                      <span style={{ fontWeight: 600 }}>Journey Stages:</span>
-                    </p>
-                    <p>
-                      <span>From which stage of the customer journey are you starting? (e.g., Problem-Aware, Solution-Aware)</span>
-                      <br />
-                      <span>To which stage do you want to guide them? (e.g., Product-Aware, Ready to Purchase)</span>
-                    </p>
-                    <p>
-                      <span style={{ fontWeight: 600 }}>Product/Service:</span>
-                    </p>
-                    <p>
-                      <span>What product or service are you nurturing them toward? (A brief summary or product name will help.)</span>
-                    </p>
-                    <p>
-                      <span style={{ fontWeight: 600 }}>Special Offers or CTAs:</span>
-                    </p>
-                    <p>
-                      <span>Any specific offers (e.g., free trial, demo, white paper) or CTAs you want to include?</span>
-                    </p>
+                    {selectedProject?.name !== 'Untitled Project' && (
+                      <>
+                        <p>
+                          <span style={{ fontWeight: 600 }}>Key Info Needed</span>
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 600 }}>Ideal Customer Profile (ICP):</span>
+                        </p>
+                        <p>
+                          <span>Who is your target audience for this sequence? (e.g., Industry, role/title, company size, pain points)</span>
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 600 }}>Journey Stages:</span>
+                        </p>
+                        <p>
+                          <span>From which stage of the customer journey are you starting? (e.g., Problem-Aware, Solution-Aware)</span>
+                          <br />
+                          <span>To which stage do you want to guide them? (e.g., Product-Aware, Ready to Purchase)</span>
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 600 }}>Product/Service:</span>
+                        </p>
+                        <p>
+                          <span>What product or service are you nurturing them toward? (A brief summary or product name will help.)</span>
+                        </p>
+                        <p>
+                          <span style={{ fontWeight: 600 }}>Special Offers or CTAs:</span>
+                        </p>
+                        <p>
+                          <span>Any specific offers (e.g., free trial, demo, white paper) or CTAs you want to include?</span>
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -252,7 +384,7 @@ const Workspace = () => {
                 </div>
               </button>
             
-            <button className="workspace__mobile-new-chat-btn">
+            <button className="workspace__mobile-new-chat-btn" onClick={handleCreateNewProject}>
               <PlusIcon />
               <span>New Chat</span>
             </button>
@@ -867,6 +999,7 @@ const Workspace = () => {
           onProjectSelect={setSelectedProject}
           onNewChat={handleNewChat}
           onOpenTemplateDrawer={handleOpenTemplateDrawer}
+          onMobileProjectMenuOpen={handleOpenProjectMenu}
         />
         
         {/* Main Content Area */}
@@ -897,6 +1030,208 @@ const Workspace = () => {
           setIsEllamentDrawerOpen(false);
         }}
       />
+
+      {/* Mobile Project Menu Slide-up */}
+      {isMobileProjectMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className={`mobile-project-menu-backdrop ${isMobileProjectMenuOpen ? 'mobile-project-menu-backdrop--open' : ''}`}
+            onClick={handleCloseMobileProjectMenu}
+          />
+          
+          {/* Slide-up Menu */}
+          <div className={`mobile-project-menu ${isMobileProjectMenuOpen ? 'mobile-project-menu--open' : ''}`}>
+            {/* Handle */}
+            <div className="mobile-project-menu__handle" onClick={handleCloseMobileProjectMenu}></div>
+            
+            {/* Header */}
+            <div className="mobile-project-menu__header">
+              <div className="mobile-project-menu__header-content">
+                {isRenamingProject ? (
+                  <input
+                    type="text"
+                    className="mobile-project-menu__rename-input"
+                    value={renameValue}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    onKeyDown={handleRenameKeyDown}
+                    onBlur={handleRenameSubmit}
+                    autoFocus
+                  />
+                ) : (
+                  <h3>{selectedProject?.name || 'Projects'}</h3>
+                )}
+                
+                {selectedProject && (
+                  <div className="mobile-project-menu__ellipsis-container" ref={ellipsisMenuRef}>
+                    <button 
+                      className="mobile-project-menu__ellipsis-btn"
+                      onClick={handleMobileProjectMenuEllipsisToggle}
+                    >
+                      <EllipsisIcon />
+                    </button>
+                    
+                    {isMobileProjectMenuEllipsisOpen && (
+                      <div className="mobile-project-menu__ellipsis-menu">
+                        <button 
+                          className="mobile-project-menu__ellipsis-item"
+                          onClick={handleStartRename}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>Rename</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Content - Projects Section */}
+            <div className="mobile-project-menu__content">
+              <div className="sidebar__projects-section">
+                <div 
+                  className="sidebar__projects-header"
+                  onClick={() => {
+                    setIsMobileProjectMenuOpen(false);
+                    setIsProjectMenuOpen(true);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" className="project-icon">
+                    <defs>
+                      <clipPath id="clipPath4532578984-project">
+                        <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                      </clipPath>
+                    </defs>
+                    <g clipPath="url(#clipPath4532578984-project)">
+                      <defs>
+                        <clipPath id="clipPath0426603476-project">
+                          <path d="M0 0L20 0L20 20L0 20L0 0Z" fillRule="nonzero" transform="matrix(1 0 0 1 0 0)"/>
+                        </clipPath>
+                      </defs>
+                      <g clipPath="url(#clipPath0426603476-project)">
+                        <path d="M15.9375 14.375L1.5625 14.375Q0.656407 14.375 0.0157034 13.7343Q-0.625 13.0936 -0.625 12.1875L-0.625 1.5625Q-0.625 0.656408 0.0157039 0.0157039Q0.656408 -0.625 1.5625 -0.625L4.52695 -0.625Q4.8509 -0.624992 5.16094 -0.531102Q5.47097 -0.437213 5.74049 -0.257499L6.82794 0.467469Q6.94349 0.544519 7.07636 0.584758Q7.20923 0.624996 7.34806 0.625L15.9375 0.625Q16.8436 0.625 17.4843 1.2657Q18.125 1.90641 18.125 2.8125L18.125 12.1875Q18.125 13.0936 17.4843 13.7343Q16.8436 14.375 15.9375 14.375ZM16.875 5L16.875 12.1875Q16.875 12.5758 16.6004 12.8504Q16.3258 13.125 15.9375 13.125L1.5625 13.125Q1.17418 13.125 0.899588 12.8504Q0.625 12.5758 0.625 12.1875L0.625 5L16.875 5ZM16.875 3.75L0.625 3.75L0.625 1.5625Q0.625 1.17417 0.899587 0.899587Q1.17417 0.625 1.5625 0.625L4.52695 0.625Q4.66577 0.625003 4.79864 0.665242Q4.93151 0.70548 5.04701 0.782499L6.13456 1.50753Q6.40403 1.68721 6.71406 1.7811Q7.0241 1.87499 7.34803 1.875L15.9375 1.875Q16.3258 1.875 16.6004 2.14959Q16.875 2.42418 16.875 2.8125L16.875 3.75Z" fillRule="evenodd" transform="matrix(1 0 0 1 1.25 3.125)" fill="var(--theme-primary-deep)"/>
+                      </g>
+                    </g>
+                  </svg>
+                  <span>Select a Project</span>
+                </div>
+                
+                {/* Project List - You can add your project items here */}
+                <div className="sidebar__project-sections">
+                  <div className="sidebar__project-section-item" onClick={handleMobileSectionMenuOpen}>
+                    <div className="sidebar__project-section-content">
+                      Project Chats
+                    </div>
+                  </div>
+                  
+                  <div className="sidebar__project-section-item" onClick={handleMobileFilesMenuOpen}>
+                    <div className="sidebar__project-section-content">
+                      Uploaded Files
+                    </div>
+                  </div>
+                  
+                  <div className="sidebar__project-section-item" onClick={handleMobileSavedWorkMenuOpen}>
+                    <div className="sidebar__project-section-content">
+                      Saved Work
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Section Menu */}
+      {isMobileSectionMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="mobile-project-menu-backdrop mobile-project-menu-backdrop--open"
+            onClick={handleMobileSectionMenuClose}
+          />
+          
+          {/* Slide-up Menu */}
+          <div className="mobile-project-menu mobile-project-menu--open">
+            {/* Handle */}
+            <div className="mobile-project-menu__handle" onClick={handleMobileSectionMenuClose}></div>
+            
+            {/* Header */}
+            <div className="mobile-project-menu__header">
+              <h3>Project Chats</h3>
+            </div>
+            
+            {/* Content */}
+            <div className="mobile-project-menu__content">
+              <div className="section-menu__content">
+                <p>Section menu content would go here...</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Files Menu */}
+      {isMobileFilesMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="mobile-project-menu-backdrop mobile-project-menu-backdrop--open"
+            onClick={handleMobileFilesMenuClose}
+          />
+          
+          {/* Slide-up Menu */}
+          <div className="mobile-project-menu mobile-project-menu--open">
+            {/* Handle */}
+            <div className="mobile-project-menu__handle" onClick={handleMobileFilesMenuClose}></div>
+            
+            {/* Header */}
+            <div className="mobile-project-menu__header">
+              <h3>Uploaded Files</h3>
+            </div>
+            
+            {/* Content */}
+            <div className="mobile-project-menu__content">
+              <div className="files-menu__content">
+                <p>Files menu content would go here...</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Mobile Saved Work Menu */}
+      {isMobileSavedWorkMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div 
+            className="mobile-project-menu-backdrop mobile-project-menu-backdrop--open"
+            onClick={handleMobileSavedWorkMenuClose}
+          />
+          
+          {/* Slide-up Menu */}
+          <div className="mobile-project-menu mobile-project-menu--open">
+            {/* Handle */}
+            <div className="mobile-project-menu__handle" onClick={handleMobileSavedWorkMenuClose}></div>
+            
+            {/* Header */}
+            <div className="mobile-project-menu__header">
+              <h3>Saved Work</h3>
+            </div>
+            
+            {/* Content */}
+            <div className="mobile-project-menu__content">
+              <div className="saved-work-menu__content">
+                <p>Saved work menu content would go here...</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
