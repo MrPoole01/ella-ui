@@ -267,6 +267,10 @@
     height: 134px;
     transition: all 0.2s ease;
 
+    @include mobile-only {
+      width: auto;
+    }
+
     &:hover {
       .template-drawer__card-content {
         background: linear-gradient(135deg, var(--theme-bg-tertiary) 15%, var(--theme-bg-elevated) 85%);
@@ -300,6 +304,10 @@
     display: flex;
     flex-direction: column;
     transition: all 0.2s ease;
+
+    @include mobile-only {
+      width: 98%;
+    }
 
     // CSS variables will automatically adapt to any theme
   }
@@ -996,6 +1004,26 @@
   }
 
   @media (max-width: 768px) {
+    &__content {
+      // Hide scrollbar while keeping scroll functionality
+      scrollbar-width: none; // Firefox
+      -ms-overflow-style: none; // Internet Explorer and Edge
+      
+      &::-webkit-scrollbar {
+        display: none; // Chrome, Safari, and Opera
+      }
+    }
+
+    &__section-title {
+      position: sticky;
+      top: 0;
+      background: var(--theme-bg-primary);
+      z-index: 10;
+      padding: 12px 0;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--theme-border-primary);
+    }
+
     &__grid {
       grid-template-columns: repeat(2, 1fr);
       gap: 15px 10px;
@@ -1007,7 +1035,7 @@
     }
 
     &__search-section {
-      flex-direction: column;
+      flex-direction: row;
       gap: 12px;
     }
   }

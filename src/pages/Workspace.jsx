@@ -4,6 +4,9 @@ import Sidebar from '../components/layout/Sidebar';
 import MainContent from '../components/layout/MainContent';
 import TemplateDrawer from '../components/features/TemplateDrawer';
 import EllamentDrawer from '../components/features/EllamentDrawer';
+import SavedWorkDrawer from '../components/features/SavedWorkDrawer';
+import UploadedFilesDrawer from '../components/features/UploadedFilesDrawer';
+import ManageTagsDrawer from '../components/features/ManageTagsDrawer';
 import { 
   FolderIcon, 
   PlusIcon, 
@@ -32,6 +35,15 @@ const Workspace = () => {
   const [isMobileSectionMenuOpen, setIsMobileSectionMenuOpen] = useState(false);
   const [isMobileFilesMenuOpen, setIsMobileFilesMenuOpen] = useState(false);
   const [isMobileSavedWorkMenuOpen, setIsMobileSavedWorkMenuOpen] = useState(false);
+  
+  // Drawer states
+  const [isShowSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
+  const [isShowUploadedFilesDrawer, setShowUploadedFilesDrawer] = useState(false);
+  const [isShowManageTagsDrawer, setShowManageTagsDrawer] = useState(false);
+  
+  // Mic menu states for mobile
+  const [showMicMenu, setShowMicMenu] = useState(false);
+  const [micMenuLevel, setMicMenuLevel] = useState(1); // 1: main, 2: projects, 3: export
   
   const ellipsisMenuRef = useRef(null);
   
@@ -211,22 +223,51 @@ const Workspace = () => {
     setIsMobileSavedWorkMenuOpen(false);
   };
 
-  // Click outside handler for ellipsis menu
+  // Mic menu handlers
+  const handleMicClick = () => {
+    setShowMicMenu(!showMicMenu);
+    setMicMenuLevel(1);
+  };
+
+  const handleMicMenuBack = () => {
+    if (micMenuLevel > 1) {
+      setMicMenuLevel(micMenuLevel - 1);
+    } else {
+      setShowMicMenu(false);
+    }
+  };
+
+  const handleProjectsClick = () => {
+    setMicMenuLevel(2);
+  };
+
+  const handleSaveAsProjectClick = () => {
+    setMicMenuLevel(3);
+  };
+
+
+  // Click outside handler for ellipsis menu and mic menu
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (ellipsisMenuRef.current && !ellipsisMenuRef.current.contains(event.target)) {
         setIsMobileProjectMenuEllipsisOpen(false);
       }
+      
+      // Close mic menu when clicking outside
+      if (!event.target.closest('.workspace__mobile-mic-menu') && 
+          !event.target.closest('.workspace__mobile-input-btn')) {
+        setShowMicMenu(false);
+      }
     };
 
-    if (isMobileProjectMenuEllipsisOpen) {
+    if (isMobileProjectMenuEllipsisOpen || showMicMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isMobileProjectMenuEllipsisOpen]);
+  }, [isMobileProjectMenuEllipsisOpen, showMicMenu]);
 
   return (
     <div className="workspace clips-content">
@@ -463,7 +504,7 @@ const Workspace = () => {
             {/* Input Controls */}
             <div className="workspace__mobile-controls">
               <div className="workspace__mobile-left-controls">
-                <button className="workspace__mobile-input-btn">
+                <button className="workspace__mobile-input-btn" onClick={handleMicClick}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
                     <g style={{stroke: 'none', strokeWidth: 0, strokeDasharray: 'none', strokeLinecap: 'butt', strokeLinejoin: 'miter', strokeMiterlimit: 10, fill: 'currentColor', fillRule: 'nonzero', opacity: 1}}>
                       <rect x="1" y="1" width="18" height="18" rx="3" ry="3" style={{fill: 'none', stroke: 'currentColor', strokeWidth: 0.5}}/>
@@ -507,6 +548,159 @@ const Workspace = () => {
           </div>
         </div>
 
+        {/* Mobile Mic Menu */}
+        {showMicMenu && (
+          <div className="workspace__mobile-mic-menu">
+            {/* Handle */}
+            <div className="workspace__mobile-mic-menu-handle" onClick={() => setShowMicMenu(false)}></div>
+            
+            {micMenuLevel === 1 && (
+              <div className="workspace__mobile-mic-menu-main">
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M9 1.5L9 16.5M1.5 9L16.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Upload a file</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="19" height="19" viewBox="0 0 19 19" fill="none">
+                    <circle cx="9.5" cy="9.5" r="8.5" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6.5 9.5L8.5 11.5L12.5 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Crawl a website</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18.94" height="15.56" viewBox="0 0 19 16" fill="none">
+                    <rect x="1" y="1" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M1 4L19 4" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Take a screenshot</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18.92" height="19.59" viewBox="0 0 19 20" fill="none">
+                    <path d="M10 1L17 8L10 15M17 8L1 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Add a link/URL</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="15.32" height="18.19" viewBox="0 0 15 18" fill="none">
+                    <path d="M1 1L1 17L14 9L1 1Z" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Download as a PDF</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item workspace__mobile-mic-menu-item--expandable" onClick={() => setMicMenuLevel(3)}>
+                  <div className="workspace__mobile-mic-menu-item-content">
+                    <svg width="17.78" height="17.78" viewBox="0 0 18 18" fill="none">
+                      <path d="M9 1L12 4L9 7M12 4L1 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span>Export to...</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="workspace__mobile-mic-menu-divider"></div>
+                <div className="workspace__mobile-mic-menu-item workspace__mobile-mic-menu-item--expandable" onClick={handleProjectsClick}>
+                  <div className="workspace__mobile-mic-menu-item-content">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                      <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                    </svg>
+                    <span>Projects</span>
+                  </div>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M7 6L11 10L7 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            )}
+
+            {micMenuLevel === 2 && (
+              <div className="workspace__mobile-mic-menu-projects">
+                <div className="workspace__mobile-mic-menu-header">
+                  <button className="workspace__mobile-mic-menu-back" onClick={handleMicMenuBack}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M11 6L7 10L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <div className="workspace__mobile-mic-menu-search">
+                    <input type="text" placeholder="Search projects" />
+                  </div>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 1</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 2</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 3</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Project 4</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-divider"></div>
+                <div className="workspace__mobile-mic-menu-item" onClick={handleSaveAsProjectClick}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M9 1L9 17M1 9L17 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <span>Save as a project</span>
+                </div>
+              </div>
+            )}
+
+            {micMenuLevel === 3 && (
+              <div className="workspace__mobile-mic-menu-export">
+                <div className="workspace__mobile-mic-menu-header">
+                  <button className="workspace__mobile-mic-menu-back" onClick={handleMicMenuBack}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M11 6L7 10L11 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </button>
+                  <span>Export Options</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Export as PDF</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Export as Word</span>
+                </div>
+                <div className="workspace__mobile-mic-menu-item">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1"/>
+                    <path d="M6 6L12 6M6 9L12 9M6 12L9 12" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  <span>Export as Text</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Workspace Slide Menu for Mobile */}
         {isWorkspaceSlideMenuOpen && (
           <>
@@ -540,7 +734,7 @@ const Workspace = () => {
                 <button 
                   className="workspace-menu__action-btn"
                   onClick={() => {
-                    console.log('All Saved Work clicked');
+                    setShowSavedWorkDrawer(true);
                     setIsWorkspaceSlideMenuOpen(false);
                   }}
                 >
@@ -558,7 +752,7 @@ const Workspace = () => {
                 <button 
                   className="workspace-menu__action-btn"
                   onClick={() => {
-                    console.log('Workspace Uploads clicked');
+                    setShowUploadedFilesDrawer(true);
                     setIsWorkspaceSlideMenuOpen(false);
                   }}
                 >
@@ -567,7 +761,7 @@ const Workspace = () => {
                 <button 
                   className="workspace-menu__action-btn"
                   onClick={() => {
-                    console.log('Tag Manager clicked');
+                    setShowManageTagsDrawer(true);
                     setIsWorkspaceSlideMenuOpen(false);
                   }}
                 >
@@ -1031,6 +1225,28 @@ const Workspace = () => {
         }}
       />
 
+      {/* Saved Work Drawer */}
+      <SavedWorkDrawer
+        isOpen={isShowSavedWorkDrawer}
+        onClose={() => setShowSavedWorkDrawer(false)}
+        onDocumentSelect={(document) => {
+          console.log('Document selected:', document);
+          setShowSavedWorkDrawer(false);
+        }}
+      />
+
+      {/* Uploaded Files Drawer */}
+      <UploadedFilesDrawer
+        isOpen={isShowUploadedFilesDrawer}
+        onClose={() => setShowUploadedFilesDrawer(false)}
+      />
+
+      {/* Manage Tags Drawer */}
+      <ManageTagsDrawer
+        isOpen={isShowManageTagsDrawer}
+        onClose={() => setShowManageTagsDrawer(false)}
+      />
+
       {/* Mobile Project Menu Slide-up */}
       {isMobileProjectMenuOpen && (
         <>
@@ -1232,6 +1448,7 @@ const Workspace = () => {
           </div>
         </>
       )}
+
     </div>
   );
 };
