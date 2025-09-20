@@ -111,6 +111,13 @@ const Login = () => {
     // Store authentication token
     localStorage.setItem('ella-auth-token', authToken);
     
+    // For demo purposes - set admin role for demo@example.com
+    if (formData.email === 'demo@example.com') {
+      localStorage.setItem('ella-user-role', 'admin');
+    } else {
+      localStorage.setItem('ella-user-role', 'user');
+    }
+    
     // Navigate to homepage
     navigate('/', { replace: true });
   };

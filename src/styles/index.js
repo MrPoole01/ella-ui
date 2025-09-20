@@ -16,6 +16,8 @@ export const STYLE_PATHS = {
   // Page styles
   LOGIN: './Login.scss',
   WORKSPACE: './Workspace.scss',
+  ADMIN_TOOL: './AdminTool.scss',
+  ERROR_BOUNDARY: '../components/ui/ErrorBoundary.scss',
   
   // UI component styles
   CHAT_ITEM: './ChatItem.scss'

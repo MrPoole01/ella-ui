@@ -7,3 +7,5 @@ export { default as BrandBotConfirmationModal } from './BrandBotConfirmationModa
 export { default as ConvertToProjectModal } from './ConvertToProjectModal';
 export { default as DocumentUploadModal } from './DocumentUploadModal';
 export { default as ShareModal } from './ShareModal';
+export { default as TypeSelectorModal } from './TypeSelectorModal';
+export { default as ImportModal } from './ImportModal';

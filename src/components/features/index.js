@@ -9,3 +9,4 @@ export { default as EllamentDrawer } from './EllamentDrawer';
 export { default as UploadedFilesDrawer } from './UploadedFilesDrawer';
 export { default as TagSelector } from './TagSelector';
 export { default as WorkspaceFilter } from './WorkspaceFilter';
+export { default as CreateDrawer } from './CreateDrawer';

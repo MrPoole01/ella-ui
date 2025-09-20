@@ -4,4 +4,5 @@ export { default as Input, SearchInput, TextArea } from './Input';
 export { default as Dropdown, DropdownItem, DropdownDivider, ContextMenu, Select, MultiSelect } from './Dropdown';
 export { default as Card, CardHeader, CardBody, CardFooter } from './Card';
 export { default as ChatItem } from './ChatItem';
+export { default as ErrorBoundary } from './ErrorBoundary';
 export { TagManagementModal, CustomTemplateModal } from './Modal';

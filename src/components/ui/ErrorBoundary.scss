@@ -1,0 +1,133 @@
+.error-boundary {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.error-boundary-content {
+  background: #1A1A1A;
+  border: 1px solid #404040;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  color: #E5E5E5;
+}
+
+.error-boundary-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.error-boundary-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  color: #E5E5E5;
+}
+
+.error-boundary-message {
+  font-size: 16px;
+  color: #A3A3A3;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-boundary-retry,
+.error-boundary-close {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.error-boundary-retry {
+  background: #FFC700;
+  color: #1A1A1A;
+
+  &:hover {
+    background: #E5B300;
+    transform: translateY(-1px);
+  }
+}
+
+.error-boundary-close {
+  background: #333333;
+  color: #E5E5E5;
+  border: 1px solid #555555;
+
+  &:hover {
+    background: #404040;
+    border-color: #666666;
+  }
+}
+
+.error-boundary-details {
+  margin-top: 24px;
+  text-align: left;
+  border: 1px solid #404040;
+  border-radius: 8px;
+  padding: 16px;
+  background: #262626;
+
+  summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: #FFC700;
+    margin-bottom: 12px;
+
+    &:hover {
+      color: #E5B300;
+    }
+  }
+
+  .error-boundary-stack {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #A3A3A3;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .error-boundary {
+    padding: 16px;
+  }
+
+  .error-boundary-content {
+    padding: 24px;
+  }
+
+  .error-boundary-actions {
+    flex-direction: column;
+  }
+
+  .error-boundary-retry,
+  .error-boundary-close {
+    width: 100%;
+  }
+}
