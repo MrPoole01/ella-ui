@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ImportModal from './ImportModal';
 import './TypeSelectorModal.scss';
 
-const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelectedType = '' }) => {
+const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelectedType = '', onImportNavigate }) => {
   const [selectedType, setSelectedType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -175,11 +175,11 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
 
   const handleImportClick = () => {
     if (!selectedType) return;
-    
-    // Log telemetry event
-    logTelemetryEvent('import_excel_clicked', { type: selectedType });
-    
-    // Show import modal
+    logTelemetryEvent('import_docs_clicked', { type: selectedType });
+    if (onImportNavigate) {
+      onImportNavigate(selectedType);
+      return;
+    }
     setShowImportModal(true);
   };
 

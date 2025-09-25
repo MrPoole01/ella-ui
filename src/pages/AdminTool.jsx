@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation, useParams, Link } from 'react-router-dom';
 import { EllaLogoIcon } from '../components/icons';
 import { TypeSelectorModal } from '../components/ui/Modal';
 import { CreateDrawer } from '../components/features';
@@ -147,6 +147,7 @@ const AdminTool = () => {
       <main className="admin-main-content">
         <Routes>
           <Route path="/templates" element={<AdminTemplates />} />
+          <Route path="/import/:type" element={<AdminImport />} />
           <Route path="/users" element={<AdminUsers />} />
           <Route path="/playbooks" element={<AdminPlaybooks />} />
           <Route path="/brand-bots" element={<AdminBrandBots />} />
@@ -162,6 +163,7 @@ const AdminTool = () => {
 
 // Admin Templates Component
 const AdminTemplates = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [tagsFilter, setTagsFilter] = useState('');
@@ -284,6 +286,10 @@ const AdminTemplates = () => {
     
     // Log modal opened event
     logTelemetryEvent('type_selector_opened');
+  };
+
+  const navigateToImport = (type) => {
+    navigate(`/admin/import/${type}`);
   };
 
   const handleTypeSelectorContinue = (selectedType, draft) => {
@@ -556,6 +562,7 @@ const AdminTemplates = () => {
           onCancel={handleTypeSelectorCancel}
           onClose={handleTypeSelectorCancel}
           initialSelectedType={selectedCreateType}
+          onImportNavigate={(type) => { setIsTypeSelectorOpen(false); navigate(`/admin/import/${type}`); }}
         />
       </ErrorBoundary>
 
@@ -782,3 +789,140 @@ const AdminTags = () => <div className="admin-placeholder">Tags - Coming Soon</d
 const AdminSettings = () => <div className="admin-placeholder">Settings - Coming Soon</div>;
 
 export default AdminTool;
+// Admin Import Page
+const AdminImport = () => {
+  const { type } = useParams();
+  const navigate = useNavigate();
+  const [placement, setPlacement] = useState({
+    edition: '',
+    locationType: '',
+    locationId: '',
+    drawer: '',
+    section: ''
+  });
+  const [sections, setSections] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [batchResults, setBatchResults] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const canUpload = placement.edition && placement.drawer && placement.section && files.length > 0 && files.length <= 10;
+
+  const downloadTemplate = () => {
+    const blob = new Blob([
+      `# Ella ${type === 'template' ? 'Template' : type === 'playbook' ? 'Playbook' : 'Playbook Series'} Import\n\n` +
+      `ASSET_ID: <auto>\n` +
+      `PARAMETERS: title, preview, description, prompt, instructions, required_elements, knowledge_files, input_fields, next_suggested_templates` +
+      `${type === 'playbook' ? '\nPLAYBOOK: plays[], estimated_time, additional_context' : ''}` +
+      `${type === 'group' ? '\nSERIES: playbooks[] (each with title, description, plays[])' : ''}`
+    ], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ella-${type}-doc-template.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleFiles = (e) => {
+    const selected = Array.from(e.target.files || []);
+    setFiles(selected.slice(0, 10));
+  };
+
+  const parseDocMock = async (file) => {
+    // Simulate parsing; in real app, send to backend.
+    await new Promise(r => setTimeout(r, 500 + Math.random() * 800));
+    const success = Math.random() > 0.1;
+    return success ? { status: 'success', name: file.name, fields: { title: file.name.replace(/\.[^.]+$/, ''), preview: 'Parsed preview', description: '', prompt: '', instructions: '' }, tags: ['auto'], keywords: ['auto'] } : { status: 'failed', name: file.name, reason: 'Invalid header block' };
+  };
+
+  const startBatch = async () => {
+    if (!canUpload) return;
+    setIsProcessing(true);
+    const results = [];
+    for (const f of files) {
+      // eslint-disable-next-line no-await-in-loop
+      const r = await parseDocMock(f);
+      results.push(r);
+    }
+    setBatchResults(results);
+    setIsProcessing(false);
+    setFiles([]);
+  };
+
+  const successCount = batchResults.filter(r => r.status === 'success').length;
+
+  return (
+    <div className="admin-import">
+      <header className="admin-content-header">
+        <h1 className="admin-page-title">Import {type === 'template' ? 'Templates' : type === 'playbook' ? 'Playbooks' : 'Playbook Series'}</h1>
+        <div className="admin-header-actions">
+          <button className="admin-btn admin-btn--secondary" onClick={() => navigate(-1)}>Back</button>
+          <button className="admin-btn admin-btn--primary" onClick={downloadTemplate}>Download Doc Template</button>
+        </div>
+      </header>
+
+      <section className="admin-filters-section">
+        <div className="admin-filters">
+          <select className="admin-select" value={placement.edition} onChange={(e) => setPlacement({ ...placement, edition: e.target.value, section: '' })}>
+            <option value="">Edition/Collection</option>
+            <option value="dtm">DTM Edition</option>
+            <option value="partner">Partner Edition</option>
+          </select>
+          <select className="admin-select" value={placement.locationType} onChange={(e) => setPlacement({ ...placement, locationType: e.target.value })}>
+            <option value="">Location</option>
+            <option value="org">Organization</option>
+            <option value="workspace">Workspace</option>
+            <option value="brandbot">BrandBot</option>
+          </select>
+          <select className="admin-select" value={placement.drawer} onChange={(e) => setPlacement({ ...placement, drawer: e.target.value, section: '' })}>
+            <option value="">Drawer</option>
+            <option value="templates">Templates</option>
+            <option value="ellaments">Ella-ments</option>
+          </select>
+          <select className="admin-select" value={placement.section} onChange={(e) => setPlacement({ ...placement, section: e.target.value })}>
+            <option value="">Section</option>
+            {/* In real app, populate from API for edition+drawer */}
+            <option value="planning">Planning</option>
+            <option value="execution">Execution</option>
+            <option value="strategy">Strategy</option>
+          </select>
+        </div>
+        {!placement.section && (
+          <div className="admin-inline-help">Select Edition/Collection, Location, Drawer and Section before uploading. If no Sections exist, create them first.</div>
+        )}
+      </section>
+
+      <section className="admin-results-section">
+        <div className="admin-import-uploader">
+          <input type="file" accept=".doc,.docx,.txt,.md" multiple onChange={handleFiles} />
+          <div className="admin-inline-help">Upload up to 10 docs per batch. You can upload another batch after processing completes.</div>
+          <button className="admin-btn admin-btn--primary" disabled={!canUpload || isProcessing} onClick={startBatch}>
+            {isProcessing ? 'Processing…' : 'Start Import'}
+          </button>
+        </div>
+
+        {batchResults.length > 0 && (
+          <div className="admin-import-results">
+            <div className="admin-import-summary">{successCount} succeeded, {batchResults.length - successCount} failed</div>
+            <ul className="admin-import-list">
+              {batchResults.map((r, idx) => (
+                <li key={idx} className={`admin-import-item ${r.status}`}>
+                  <span className="name">{r.name}</span>
+                  {r.status === 'success' ? (
+                    <span className="status">✅ Parsed</span>
+                  ) : (
+                    <span className="status">❌ {r.reason}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <div className="admin-import-actions">
+              <button className="admin-btn admin-btn--secondary" onClick={() => setBatchResults([])}>Clear Results</button>
+              <button className="admin-btn admin-btn--primary" disabled={successCount === 0}>Confirm & Create</button>
+            </div>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+};
