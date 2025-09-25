@@ -24,7 +24,7 @@ const predefinedTags = [
   { value: 'other', label: 'Other' }
 ];
 
-const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
+const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Workspace' }) => {
   const [selectedVersion, setSelectedVersion] = useState('Version 1');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showVersionDropdown, setShowVersionDropdown] = useState(false);
@@ -165,7 +165,15 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
       <div className={`document-drawer ${isOpen ? 'document-drawer--open' : ''} ${isEditMode ? 'document-drawer--edit-mode' : ''}`}>
         {/* Header */}
         <div className="document-drawer__header">
-          <div className="document-drawer__header-left">
+          <div className="document-drawer__breadcrumb">
+            <span className="document-drawer__crumb">{workspaceName}</span>
+            <span className="document-drawer__crumb-sep">/</span>
+            <span className="document-drawer__crumb">{document?.project || 'Project'}</span>
+            <span className="document-drawer__crumb-sep">/</span>
+            <span className="document-drawer__crumb document-drawer__crumb--current">{document?.title || 'Untitled'}</span>
+          </div>
+          <div className="document-drawer__header-row">
+            <div className="document-drawer__header-left">
             <div className="document-drawer__title">
               {isEditMode ? 'Edit Document' : 'Review Document'}
             </div>
@@ -177,9 +185,9 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
                 {getStatusLabel(document.status)}
               </div>
             )}
-          </div>
+            </div>
 
-          <div className="document-drawer__header-right">
+            <div className="document-drawer__header-right">
             {/* Version Dropdown - Only show when NOT in edit mode */}
             {!isEditMode && (
               <div className="document-drawer__version-selector">
@@ -230,6 +238,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit }) => {
             <button className="document-drawer__close" onClick={onClose}>
               ×
             </button>
+            </div>
           </div>
         </div>
 

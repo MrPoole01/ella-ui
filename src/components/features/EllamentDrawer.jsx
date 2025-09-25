@@ -405,6 +405,17 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
 
   if (!isOpen) return null;
 
+  // Persist current visible Ella-ment titles for other UIs (e.g., Workspace Create)
+  useEffect(() => {
+    try {
+      const titles = filteredEllaments.map(e => e.title);
+      localStorage.setItem('ella-ellaments', JSON.stringify(titles));
+      if (activeTab === 'special_edition') {
+        localStorage.setItem('ella-special-editions', JSON.stringify(titles));
+      }
+    } catch (_) {}
+  }, [filteredEllaments, activeTab]);
+
   return (
     <>
       {/* Backdrop */}

@@ -341,7 +341,7 @@ const Workspace = () => {
                 <PlusIcon />
               </span>
               <span className="chat-interface__project-add-mobile">
-                project menu
+                Project Menu
               </span>
             </button>
           </div>

@@ -10,8 +10,11 @@ const WorkspaceCreateModal = ({
 }) => {
   const [workspaceName, setWorkspaceName] = useState('');
   const [workspaceType, setWorkspaceType] = useState('organization'); // 'organization' | 'personal'
-  const [setupPath, setSetupPath] = useState('fresh'); // 'fresh' | 'connect' | 'clone'
+  const [setupPath, setSetupPath] = useState('fresh'); // 'fresh' | 'connect'
   const [selectedBrandBotId, setSelectedBrandBotId] = useState('');
+  const [selectedVersion, setSelectedVersion] = useState(''); // empty, edition key, or ellament key
+  const [availableEditions, setAvailableEditions] = useState([]);
+  const [availableEllaments, setAvailableEllaments] = useState([]);
   const [errors, setErrors] = useState({});
 
   const hasOrgBrandBots = useMemo(() => Array.isArray(orgBrandBots) && orgBrandBots.length > 0, [orgBrandBots]);
@@ -22,14 +25,28 @@ const WorkspaceCreateModal = ({
       setWorkspaceType('organization');
       setSetupPath('fresh');
       setSelectedBrandBotId('');
+      setSelectedVersion('');
       setErrors({});
+      // Pull special editions and ella-ments derived from Ella-ment cards (populated elsewhere)
+      try {
+        const stored = JSON.parse(localStorage.getItem('ella-special-editions') || '[]');
+        if (Array.isArray(stored)) setAvailableEditions(stored);
+      } catch (_) {
+        setAvailableEditions([]);
+      }
+      try {
+        const ellaments = JSON.parse(localStorage.getItem('ella-ellaments') || '[]');
+        if (Array.isArray(ellaments)) setAvailableEllaments(ellaments);
+      } catch (_) {
+        setAvailableEllaments([]);
+      }
     }
   }, [isOpen]);
 
   const validate = () => {
     const next = {};
     if (!workspaceName.trim()) next.workspaceName = 'Workspace name is required';
-    if ((setupPath === 'connect' || setupPath === 'clone') && hasOrgBrandBots && !selectedBrandBotId) {
+    if ((setupPath === 'connect') && hasOrgBrandBots && !selectedBrandBotId) {
       next.selectedBrandBotId = 'Please select a Brand Bot';
     }
     setErrors(next);
@@ -42,7 +59,8 @@ const WorkspaceCreateModal = ({
       name: workspaceName.trim(),
       type: workspaceType,
       setupPath,
-      brandBotId: selectedBrandBotId || null
+      brandBotId: selectedBrandBotId || null,
+      ellaVersion: selectedVersion
     });
   };
 
@@ -128,39 +146,53 @@ const WorkspaceCreateModal = ({
                 </label>
               )}
 
-              {hasOrgBrandBots && (
-                <label className={`workspace-create__option ${setupPath === 'clone' ? 'workspace-create__option--selected' : ''}`}>
+              {(setupPath === 'connect' || setupPath === 'clone') && hasOrgBrandBots && (
+                <div className="workspace-create__field">
+                  <label>Select Brand Bot<span className="required">*</span></label>
+                  <select
+                    className={`workspace-create__select ${errors.selectedBrandBotId ? 'has-error' : ''}`}
+                    value={selectedBrandBotId}
+                    onChange={(e) => setSelectedBrandBotId(e.target.value)}
+                  >
+                    <option className="workspace-create__placeholder" value="" disabled>Choose a Brand Bot…</option>
+                    {orgBrandBots.map(bb => (
+                      <option key={bb.id} value={bb.id}>{bb.name}</option>
+                    ))}
+                  </select>
+                  {errors.selectedBrandBotId && <div className="workspace-create__error">{errors.selectedBrandBotId}</div>}
+                </div>
+              )}
+
+              {/* Ella Version Selector (moved below Connect option) */}
+              <label className={`workspace-create__option ${setupPath === 'ella-ments' ? 'workspace-create__option--selected' : ''}`}>
                   <input
                     type="radio"
                     name="setupPath"
-                    value="clone"
-                    checked={setupPath === 'clone'}
-                    onChange={() => setSetupPath('clone')}
+                    value="ella-ments"
+                    checked={setupPath === 'ella-ments'}
+                    onChange={() => setSetupPath('ella-ments')}
                   />
-                  <div className="workspace-create__option-content">
-                    <div className="workspace-create__option-title">Clone a Brand Bot</div>
-                    <div className="workspace-create__option-desc">Clone an existing Brand Bot to use as a starting point.</div>
-                  </div>
-                </label>
-              )}
+                <div className="workspace-create__section-title">Select From the List of Your Ella-ments Bots: </div>
+              </label>
+               {setupPath === 'ella-ments' && (
+                 <div className="workspace-create__field">
+                   <label>Select an Ella-ments Bot<span className="required">*</span></label>
+                   <select
+                     className="workspace-create__select"
+                     value={selectedVersion}
+                     onChange={(e) => setSelectedVersion(e.target.value)}
+                   >
+                     <option className="workspace-create__placeholder" value="" disabled>Choose an Ella-ments Bot....</option>
+                     {availableEditions.map((name) => (
+                       <option key={name} value={`edition:${name}`}>{name}</option>
+                     ))}
+                     {Array.isArray(availableEllaments) && availableEllaments.map((title) => (
+                       <option key={title} value={`ellament:${title}`}>{title}</option>
+                     ))}
+                   </select>
+                 </div>
+               )}
             </div>
-
-            {(setupPath === 'connect' || setupPath === 'clone') && hasOrgBrandBots && (
-              <div className="workspace-create__field">
-                <label>Select Brand Bot<span className="required">*</span></label>
-                <select
-                  className={`workspace-create__select ${errors.selectedBrandBotId ? 'has-error' : ''}`}
-                  value={selectedBrandBotId}
-                  onChange={(e) => setSelectedBrandBotId(e.target.value)}
-                >
-                  <option value="">Choose a Brand Bot…</option>
-                  {orgBrandBots.map(bb => (
-                    <option key={bb.id} value={bb.id}>{bb.name}</option>
-                  ))}
-                </select>
-                {errors.selectedBrandBotId && <div className="workspace-create__error">{errors.selectedBrandBotId}</div>}
-              </div>
-            )}
           </div>
         </div>
 

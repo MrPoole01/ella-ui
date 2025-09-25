@@ -39,9 +39,28 @@
   // Header
   &__header {
     display: flex;
+    flex-direction: column;
+    padding: 24px 32px 0 32px;
+    gap: 8px;
+  }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--theme-text-muted);
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__crumb { color: var(--theme-text-secondary); }
+  &__crumb--current { color: var(--theme-text-primary); font-weight: 600; }
+  &__crumb-sep { color: var(--theme-border-secondary); }
+
+  &__header-row {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 37.5px 32px 0 32px;
     gap: 6px;
   }
 

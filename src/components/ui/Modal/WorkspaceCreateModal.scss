@@ -153,6 +153,10 @@
   color: var(--theme-text-primary);
   border-radius: 8px;
   padding: 10px 12px;
+
+  &::placeholder {
+    color: var(--theme-text-light);
+  }
 }
 
 .workspace-create__select {
@@ -199,6 +203,10 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
+.workspace-create__placeholder::placeholder {
+  color: var(--theme-text-light);
+}
+
 .workspace-create__option-title {
   font-weight: 600;
   color: var(--theme-text-primary);
@@ -228,7 +236,7 @@
 .workspace-create__submit {
   background: var(--theme-interactive-primary);
   border: 1px solid var(--theme-interactive-primary);
-  color: #fff;
+  color: var(--theme-bg-primary);
   border-radius: 8px;
   padding: 8px 14px;
 }
