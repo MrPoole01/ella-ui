@@ -235,6 +235,108 @@
   }
 }
 
+// Uploaded files list
+.type-selector-uploaded {
+  margin-top: 16px;
+
+  .type-selector-uploaded-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #E5E5E5;
+    margin: 0 0 8px 0;
+  }
+
+  .type-selector-uploaded-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: scroll;
+    max-height: 320px;
+  }
+
+  .ts-uploaded-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #262626;
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 8px 12px;
+
+    &.success {
+      background: #262626;
+      border-color: #404040;
+    }
+
+    &.failed {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.35);
+    }
+
+    &.parsing {
+      background: rgba(255, 199, 0, 0.08);
+      border-color: rgba(255, 199, 0, 0.35);
+    }
+
+    .ts-up-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+
+      .ts-up-name {
+        max-width: 260px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #E5E5E5;
+        font-size: 13px;
+      }
+
+      .ts-up-count {
+        color: #A3A3A3;
+        font-size: 12px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 999px;
+        padding: 2px 8px;
+      }
+    }
+
+    .ts-up-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .ts-up-status {
+        color: #A3A3A3;
+        font-size: 12px;
+      }
+
+      .ts-up-remove {
+        background: #262626;
+        color: #E5E5E5;
+        border: 1px solid #404040;
+        border-radius: 6px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 12px;
+
+        &:hover {
+          background: #333333;
+          border-color: #555555;
+        }
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+        }
+      }
+    }
+  }
+}
+
 .type-selector-option-icon {
   flex-shrink: 0;
   width: 48px;

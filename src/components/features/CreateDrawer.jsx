@@ -14,6 +14,10 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [selectedBrandBot, setSelectedBrandBot] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedDrawer, setSelectedDrawer] = useState('playbooks'); // 'playbooks' | 'ellaments'
+  const [elementSubtype, setElementSubtype] = useState(''); // company | customer | brand | special_edition
+  const [selectedICPs, setSelectedICPs] = useState([]); // when elementSubtype === 'customer'
+  const [autosaveError, setAutosaveError] = useState('');
   
   // Template authoring form state
   const [templateForm, setTemplateForm] = useState({
@@ -30,15 +34,21 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   
   // Playbook authoring state
   const [playbook, setPlaybook] = useState({
-    name: '',
-    steps: [], // { id, templateId, templateTitle, templatePreview, stepName, notes, mappings: [] }
+    title: '',
+    preview: '',
+    description: '',
+    instructions: '',
+    knowledgeFiles: [], // top-level knowledge files
+    plays: [], // [{ id, title, preview, description, instructions, knowledgeFiles: [], steps: [{ id, title, prompt, inputs: [], notes: '' }] }]
     execution: {
       mode: 'step_by_step', // 'step_by_step' | 'auto_run'
       consolidatedSchema: [] // computed for auto-run
     }
   });
+  const [showAddPlayModal, setShowAddPlayModal] = useState(false);
   const [showAddStepModal, setShowAddStepModal] = useState(false);
   const [addStepMode, setAddStepMode] = useState(null); // 'select' | 'create'
+  const [expandedPlayIds, setExpandedPlayIds] = useState([]); // UI collapse state per play
   const [templateSearch, setTemplateSearch] = useState('');
   const [inlineTemplateForm, setInlineTemplateForm] = useState({
     title: '',
@@ -48,8 +58,13 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   });
   // Series (Playbook Group) authoring state
   const [series, setSeries] = useState({
-    name: '',
-    items: [], // { id, playbookId, name, label, stepCount, preview }
+    title: '',
+    preview: '',
+    description: '',
+    instructions: '',
+    knowledgeFiles: [],
+    estMinutes: '', // author override
+    items: [], // { id, playbookId, name, label, stepCount, preview, estMinutes, tags, section_id, knowledgeFiles }
   });
   const [showAddPlaybookModal, setShowAddPlaybookModal] = useState(false);
   const [addPlaybookMode, setAddPlaybookMode] = useState(null); // 'select' | 'create'
@@ -57,6 +72,7 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [inlinePlaybookForm, setInlinePlaybookForm] = useState({ name: '', stepCount: 1, preview: '' });
   const [lastSaved, setLastSaved] = useState(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewIssues, setPreviewIssues] = useState({ errors: [], warnings: [] });
   const [activeSection, setActiveSection] = useState('basics');
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -116,6 +132,33 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     { id: 'technical_writer', name: 'Technical Writer Bot', workspaceId: 'development' }
   ];
 
+  // Mock sections catalogs for Playbooks and Ella-ments by availability
+  const mockSections = {
+    playbooks: {
+      ella: [ { id: 'pb_el_1', name: 'Strategy' }, { id: 'pb_el_2', name: 'Execution' }, { id: 'pb_el_3', name: 'Planning' } ],
+      edition: [ { id: 'pb_ed_1', name: 'Partner Programs' }, { id: 'pb_ed_2', name: 'Enablement' } ],
+      organization: [ { id: 'pb_org_1', name: 'Org Playbooks' } ],
+      workspace: [ { id: 'pb_ws_1', name: 'Team Processes' } ],
+      brandbot: [ { id: 'pb_bb_1', name: 'Bot Routines' } ],
+      global: [ { id: 'pb_gl_1', name: 'Company Standards' } ]
+    },
+    ellaments: {
+      ella: [ { id: 'el_el_1', name: 'Components' }, { id: 'el_el_2', name: 'Snippets' } ],
+      edition: [ { id: 'el_ed_1', name: 'Edition Elements' } ],
+      organization: [ { id: 'el_org_1', name: 'Org Elements' } ],
+      workspace: [ { id: 'el_ws_1', name: 'Workspace Elements' } ],
+      brandbot: [ { id: 'el_bb_1', name: 'Bot-Scoped Elements' } ],
+      global: [ { id: 'el_gl_1', name: 'Global Elements' } ]
+    }
+  };
+
+  const mockICPs = [
+    { id: 'icp_enterprise', name: 'Enterprise' },
+    { id: 'icp_smb', name: 'SMB' },
+    { id: 'icp_startup', name: 'Startup' },
+    { id: 'icp_agency', name: 'Agency' }
+  ];
+
   const mockTags = [
     // Ella tags (system, non-editable)
     { id: 'ella_marketing', name: 'Marketing', type: 'ella', editable: false },
@@ -169,9 +212,10 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
 
   // Mock playbooks for series selection
   const mockPlaybooks = [
-    { id: 'p1', name: 'Content Pipeline', stepCount: 3, preview: 'Outline → Draft → Edit' },
-    { id: 'p2', name: 'Outbound Sequence', stepCount: 2, preview: 'Email → Follow-up' },
-    { id: 'p3', name: 'Ad Creative Sprint', stepCount: 4, preview: 'Brief → Variations → QA → Publish' }
+    { id: 'p1', name: 'Content Pipeline', stepCount: 3, preview: 'Outline → Draft → Edit', version_type: 'ella', drawer: 'playbooks', section_id: 'pb_el_1', estMinutes: 30, tags: ['Content', 'Writing'], knowledgeFiles: [{ name: 'content_guide.pdf', type: 'file' }] },
+    { id: 'p2', name: 'Outbound Sequence', stepCount: 2, preview: 'Email → Follow-up', version_type: 'edition', version_id: 'dtm', drawer: 'playbooks', section_id: 'pb_ed_1', estMinutes: 20, tags: ['Sales', 'Email'], knowledgeFiles: [] },
+    { id: 'p3', name: 'Ad Creative Sprint', stepCount: 4, preview: 'Brief → Variations → QA → Publish', version_type: 'workspace', version_id: 'creative', drawer: 'playbooks', section_id: 'pb_ws_1', estMinutes: 45, tags: ['Ads', 'Creative'], knowledgeFiles: [{ name: 'brand_guide.pdf', type: 'file' }] },
+    { id: 'p4', name: 'Customer Onboarding', stepCount: 5, preview: 'Welcome → Setup → Training → Support', version_type: 'ella', drawer: 'playbooks', section_id: 'pb_el_2', estMinutes: 60, tags: ['Onboarding', 'Support'], knowledgeFiles: [] }
   ];
 
   useEffect(() => {
@@ -195,6 +239,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         setSelectedBrandBot(draft.scope.brandbot || '');
         setSelectedSection(draft.scope.section || '');
         setSelectedTags(draft.scope.tags || []);
+        setSelectedDrawer(draft.scope.drawer || 'playbooks');
+        setElementSubtype(draft.scope.element_subtype || '');
+        setSelectedICPs(draft.scope.icp_ids || []);
       } else if (draft.version_type) {
         // Fallback to old format
         setSelectedVersion(draft.version_type);
@@ -476,13 +523,63 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const handleVersionSelect = (versionId) => {
     setSelectedVersion(versionId);
     setShowVersionDropdown(false);
-    saveDraft();
+    // Reset cascading selections
+    setSelectedEdition('');
+    setSelectedOrganization('');
+    setSelectedWorkspace('');
+    setSelectedBrandBot('');
+    setSelectedSection('');
+    autosaveScope({ version_type: versionId });
   };
 
   const handleEditionSelect = (editionId) => {
     setSelectedEdition(editionId);
     setShowEditionDropdown(false);
-    saveDraft();
+    autosaveScope({ version_type: 'edition', version_id: editionId });
+  };
+
+  const handleOrgSelect = (orgId) => {
+    setSelectedOrganization(orgId);
+    setSelectedWorkspace('');
+    setSelectedBrandBot('');
+    setShowOrgDropdown(false);
+    autosaveScope({ version_type: 'organization', version_id: orgId });
+  };
+
+  const handleWorkspaceSelect = (wsId) => {
+    setSelectedWorkspace(wsId);
+    setSelectedBrandBot('');
+    setShowWorkspaceDropdown(false);
+    autosaveScope({ version_type: 'workspace', version_id: wsId });
+  };
+
+  const handleBrandBotSelect = (bbId) => {
+    setSelectedBrandBot(bbId);
+    setShowBrandBotDropdown(false);
+    autosaveScope({ version_type: 'brandbot', version_id: bbId });
+  };
+
+  const handleDrawerSelect = (drawer) => {
+    setSelectedDrawer(drawer);
+    setSelectedSection('');
+    // Clear element subtype when switching away from ellaments
+    if (drawer !== 'ellaments') {
+      setElementSubtype('');
+      setSelectedICPs([]);
+    }
+    autosaveScope({ drawer });
+  };
+
+  const handleElementSubtypeSelect = (sub) => {
+    setElementSubtype(sub);
+    if (sub !== 'customer') setSelectedICPs([]);
+    autosaveScope({ element_subtype: sub, icp_ids: sub === 'customer' ? selectedICPs : [] });
+  };
+
+  const handleSectionSelect = (sectionId) => {
+    setSelectedSection(sectionId);
+    setShowSectionDropdown(false);
+    autosaveScope({ section_id: sectionId || null });
   };
 
   const handleTagAdd = (tag) => {
@@ -490,13 +587,14 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
       setSelectedTags(prev => [...prev, tag]);
       setTagInput('');
       setFilteredTags(availableTags);
-      saveDraft();
+      autosaveScope({ tags: [...selectedTags, tag] });
     }
   };
 
   const handleTagRemove = (tagId) => {
-    setSelectedTags(prev => prev.filter(t => t.id !== tagId));
-    saveDraft();
+    const updated = selectedTags.filter(t => t.id !== tagId);
+    setSelectedTags(updated);
+    autosaveScope({ tags: updated });
   };
 
   const handleTagInputChange = (value) => {
@@ -536,6 +634,60 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         return { icon: '🌐', color: '#10B981', tooltip: 'Global Tag' };
       default:
         return { icon: '🏷️', color: '#6B7280', tooltip: 'Tag' };
+    }
+  };
+
+  const getSectionCatalog = () => {
+    const domain = selectedDrawer === 'ellaments' ? 'ellaments' : 'playbooks';
+    const scope = selectedVersion || 'ella';
+    const list = mockSections[domain][scope] || [];
+    return list;
+  };
+
+  const autosaveScope = (partial) => {
+    if (!draft?.id) return;
+    try {
+      const existingDrafts = JSON.parse(localStorage.getItem('ella-drafts') || '[]');
+      const current = existingDrafts.find(d => d.id === draft.id) || draft;
+      const next = {
+        ...current,
+        scope: {
+          version: selectedVersion,
+          edition: selectedEdition,
+          organization: selectedOrganization,
+          workspace: selectedWorkspace,
+          brandbot: selectedBrandBot,
+          section: selectedSection,
+          tags: selectedTags,
+          drawer: selectedDrawer,
+          element_subtype: elementSubtype,
+          icp_ids: selectedICPs,
+          ...partial
+        },
+        version_type: partial?.version_type || current.version_type,
+        version_id: partial?.version_id || current.version_id,
+        drawer: selectedDrawer,
+        section_id: (partial?.section_id ?? selectedSection) || null,
+        tags: selectedTags,
+        progress_step: 'scoping',
+        last_modified_at: new Date().toISOString()
+      };
+      const updated = existingDrafts.map(d => d.id === draft.id ? next : d);
+      localStorage.setItem('ella-drafts', JSON.stringify(updated));
+      logTelemetryEvent('draft_autosave_success', { draft_id: draft.id });
+      setAutosaveError('');
+    } catch (e) {
+      setAutosaveError("Couldn’t save changes. We’ll retry automatically.");
+      logTelemetryEvent('draft_autosave_failure', { draft_id: draft?.id, error_code: 500 });
+      // Best-effort retry
+      setTimeout(() => {
+        try {
+          const existingDrafts = JSON.parse(localStorage.getItem('ella-drafts') || '[]');
+          localStorage.setItem('ella-drafts', JSON.stringify(existingDrafts));
+          setAutosaveError('');
+          logTelemetryEvent('draft_autosave_success', { draft_id: draft?.id });
+        } catch (_) {}
+      }, 1500);
     }
   };
 
@@ -624,57 +776,60 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const validatePlaybookBuilder = () => {
     const errors = [];
     const warnings = [];
-    if (!playbook.name || !playbook.name.trim()) {
-      errors.push({ id: 'pb_name', msg: 'Playbook name is required', to: () => {} });
-    }
-    if (!playbook.steps || playbook.steps.length === 0) {
-      errors.push({ id: 'pb_steps_empty', msg: 'Add at least one step', to: () => {} });
-    }
-    // Step template validity
-    (playbook.steps || []).forEach((s, i) => {
-      const tmpl = mockTemplates.find(t => t.id === s.templateId);
-      if (!tmpl) {
-        errors.push({ id: `pb_step_${i+1}_tmpl`, msg: `Step ${i+1} has invalid template`, to: () => {} });
-      }
-    });
-    if (!playbook.execution || !playbook.execution.mode) {
-      errors.push({ id: 'pb_mode', msg: 'Execution mode must be selected', to: () => {} });
-    }
-    if (playbook.execution?.mode === 'auto_run') {
-      // detect pre-dedupe collisions by originalKey
-      const originalKeys = [];
-      (playbook.steps || []).forEach((s, idx) => {
-        const tmpl = mockTemplates.find(t => t.id === s.templateId);
-        (tmpl?.inputs || []).forEach(inp => originalKeys.push(inp.key));
+    // Top-level required
+    if (!playbook.title || !playbook.title.trim()) errors.push({ id: 'pb_title', msg: 'Playbook Title is required', to: () => {} });
+    if (!playbook.preview || !playbook.preview.trim()) errors.push({ id: 'pb_preview', msg: 'Playbook Preview is required', to: () => {} });
+    if ((playbook.preview || '').length > 160) errors.push({ id: 'pb_preview_len', msg: 'Playbook Preview must be ≤160 characters', to: () => {} });
+    if (!playbook.instructions || !playbook.instructions.trim()) errors.push({ id: 'pb_instructions', msg: 'Playbook Instructions are required', to: () => {} });
+    if (!Array.isArray(playbook.plays) || playbook.plays.length === 0) errors.push({ id: 'pb_plays', msg: 'Add at least one Play', to: () => {} });
+
+    // Validate each Play
+    const playTitles = new Set();
+    (playbook.plays || []).forEach((p, pIdx) => {
+      if (!p.title || !p.title.trim()) errors.push({ id: `play_${pIdx+1}_title`, msg: `Play ${pIdx+1}: Title is required`, to: () => {} });
+      if (!p.preview || !p.preview.trim()) errors.push({ id: `play_${pIdx+1}_preview`, msg: `Play ${pIdx+1}: Preview is required`, to: () => {} });
+      if ((p.preview || '').length > 160) errors.push({ id: `play_${pIdx+1}_preview_len`, msg: `Play ${pIdx+1}: Preview must be ≤160 chars`, to: () => {} });
+      if (!p.instructions || !p.instructions.trim()) errors.push({ id: `play_${pIdx+1}_instr`, msg: `Play ${pIdx+1}: Instructions are required`, to: () => {} });
+      if (!Array.isArray(p.steps) || p.steps.length === 0) errors.push({ id: `play_${pIdx+1}_steps`, msg: `Play ${pIdx+1}: Add at least one Step`, to: () => {} });
+
+      // Optional duplicate warning across plays
+      const t = (p.title || '').toLowerCase();
+      if (t && playTitles.has(t)) warnings.push({ id: `play_${pIdx+1}_dup_title`, msg: `Duplicate Play title '${p.title}'`, to: () => {} });
+      playTitles.add(t);
+
+      // Validate steps
+      const inputKeys = new Set();
+      (p.steps || []).forEach((s, sIdx) => {
+        if (!s.title || !s.title.trim()) errors.push({ id: `play_${pIdx+1}_step_${sIdx+1}_title`, msg: `Play ${pIdx+1} • Step ${sIdx+1}: Title is required`, to: () => {} });
+        if (!s.prompt || !s.prompt.trim()) errors.push({ id: `play_${pIdx+1}_step_${sIdx+1}_prompt`, msg: `Play ${pIdx+1} • Step ${sIdx+1}: Prompt is required`, to: () => {} });
+        (s.inputs || []).forEach(inp => {
+          if (!inp.label || !inp.label.trim()) errors.push({ id: `play_${pIdx+1}_step_${sIdx+1}_inp_label`, msg: `Play ${pIdx+1} • Step ${sIdx+1}: Input label is required`, to: () => {} });
+          const key = (inp.key || '').trim();
+          if (!key || !/^[a-z][a-z0-9_]*$/.test(key) || key.length < 2 || key.length > 40) {
+            errors.push({ id: `play_${pIdx+1}_step_${sIdx+1}_inp_key`, msg: `Play ${pIdx+1} • Step ${sIdx+1}: Key must be snake_case (2–40 chars)`, to: () => {} });
+          } else if (inputKeys.has(key)) {
+            errors.push({ id: `play_${pIdx+1}_step_${sIdx+1}_inp_key_dup`, msg: `Play ${pIdx+1}: Duplicate input key '${key}'`, to: () => {} });
+          }
+          if (key) inputKeys.add(key);
+        });
       });
-      const collision = originalKeys.find((k, idx) => originalKeys.indexOf(k) !== idx);
-      if (collision) {
-        warnings.push({ id: 'pb_autorun_keys', msg: `Auto-Run had duplicate key '${collision}'. Keys were suffixed by step index.` });
-      }
-    }
+    });
+
     return { errors, warnings };
   };
 
   const validateSeriesBuilder = () => {
     const errors = [];
     const warnings = [];
-    if (!series.name || !series.name.trim()) {
-      errors.push({ id: 'sr_name', msg: 'Series name is required', to: () => {} });
-    }
-    if (!series.items || series.items.length === 0) {
-      errors.push({ id: 'sr_items', msg: 'Add at least one playbook to the series', to: () => {} });
-    }
-    // Unique labels
+    if (!series.title || !series.title.trim()) errors.push({ id: 'sr_title', msg: 'Series Title is required', to: () => {} });
+    if (!series.preview || !series.preview.trim()) errors.push({ id: 'sr_preview', msg: 'Series Preview is required', to: () => {} });
+    if ((series.preview || '').length > 160) errors.push({ id: 'sr_preview_len', msg: 'Series Preview must be ≤160 chars', to: () => {} });
+    if (!series.instructions || !series.instructions.trim()) errors.push({ id: 'sr_instr', msg: 'Series Instructions are required', to: () => {} });
+    if (!series.items || series.items.length === 0) errors.push({ id: 'sr_items', msg: 'Add at least one playbook to the series', to: () => {} });
+    // Unique labels within series
     const labels = (series.items || []).map(i => (i.label || i.name || '').toLowerCase());
     const dup = labels.find((l, idx) => l && labels.indexOf(l) !== idx);
-    if (dup) {
-      errors.push({ id: 'sr_labels', msg: 'Playbook labels in series must be unique', to: () => {} });
-    }
-    // References valid (existing or inline okay)
-    (series.items || []).forEach((i, idx) => {
-      const exists = mockPlaybooks.find(p => p.id === i.playbookId) || i.playbookId?.startsWith('new_');
-      if (!exists) errors.push({ id: `sr_ref_${idx+1}`, msg: `Playbook ${idx+1} reference is invalid`, to: () => {} });
-    });
+    if (dup) warnings.push({ id: 'sr_labels', msg: 'Playbook labels in series should be unique', to: () => {} });
     return { errors, warnings };
   };
 
@@ -684,6 +839,7 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     else if (type === 'playbook') res = validatePlaybookBuilder();
     else if (type === 'group') res = validateSeriesBuilder();
     setValidation(res);
+    setPreviewIssues(res);
   };
 
   useEffect(() => {
@@ -780,6 +936,170 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         </div>
       )}
 
+      {selectedVersion === 'organization' && (
+        <div className="create-drawer-field">
+          <label className="create-drawer-label">Select Organization</label>
+          <div className="create-drawer-dropdown" ref={orgRef}>
+            <button className="create-drawer-dropdown-trigger" onClick={() => setShowOrgDropdown(!showOrgDropdown)}>
+              <span>{selectedOrganization ? mockOrganizations.find(o => o.id === selectedOrganization)?.name : 'Select organization...'}</span>
+              <span className={`create-drawer-chevron ${showOrgDropdown ? 'create-drawer-chevron-up' : ''}`}>{showOrgDropdown ? '▲' : '▼'}</span>
+            </button>
+            {showOrgDropdown && (
+              <div className="create-drawer-dropdown-menu">
+                {mockOrganizations.map(org => (
+                  <button key={org.id} className={`create-drawer-dropdown-item ${selectedOrganization === org.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleOrgSelect(org.id)}>
+                    {org.name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {selectedVersion === 'workspace' && (
+        <>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Select Organization</label>
+            <div className="create-drawer-dropdown" ref={orgRef}>
+              <button className="create-drawer-dropdown-trigger" onClick={() => setShowOrgDropdown(!showOrgDropdown)}>
+                <span>{selectedOrganization ? mockOrganizations.find(o => o.id === selectedOrganization)?.name : 'Select organization...'}</span>
+                <span className={`create-drawer-chevron ${showOrgDropdown ? 'create-drawer-chevron-up' : ''}`}>{showOrgDropdown ? '▲' : '▼'}</span>
+              </button>
+              {showOrgDropdown && (
+                <div className="create-drawer-dropdown-menu">
+                  {mockOrganizations.map(org => (
+                    <button key={org.id} className={`create-drawer-dropdown-item ${selectedOrganization === org.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleOrgSelect(org.id)}>
+                      {org.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Select Workspace</label>
+            <div className="create-drawer-dropdown" ref={workspaceRef}>
+              <button className="create-drawer-dropdown-trigger" onClick={() => setShowWorkspaceDropdown(!showWorkspaceDropdown)}>
+                <span>{selectedWorkspace ? mockWorkspaces.find(w => w.id === selectedWorkspace)?.name : 'Select workspace...'}</span>
+                <span className={`create-drawer-chevron ${showWorkspaceDropdown ? 'create-drawer-chevron-up' : ''}`}>{showWorkspaceDropdown ? '▲' : '▼'}</span>
+              </button>
+              {showWorkspaceDropdown && (
+                <div className="create-drawer-dropdown-menu">
+                  {mockWorkspaces.filter(w => !selectedOrganization || w.orgId === selectedOrganization).map(ws => (
+                    <button key={ws.id} className={`create-drawer-dropdown-item ${selectedWorkspace === ws.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleWorkspaceSelect(ws.id)}>
+                      {ws.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {selectedVersion === 'brandbot' && (
+        <>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Select Workspace</label>
+            <div className="create-drawer-dropdown" ref={workspaceRef}>
+              <button className="create-drawer-dropdown-trigger" onClick={() => setShowWorkspaceDropdown(!showWorkspaceDropdown)}>
+                <span>{selectedWorkspace ? mockWorkspaces.find(w => w.id === selectedWorkspace)?.name : 'Select workspace...'}</span>
+                <span className={`create-drawer-chevron ${showWorkspaceDropdown ? 'create-drawer-chevron-up' : ''}`}>{showWorkspaceDropdown ? '▲' : '▼'}</span>
+              </button>
+              {showWorkspaceDropdown && (
+                <div className="create-drawer-dropdown-menu">
+                  {mockWorkspaces.map(ws => (
+                    <button key={ws.id} className={`create-drawer-dropdown-item ${selectedWorkspace === ws.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleWorkspaceSelect(ws.id)}>
+                      {ws.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Select BrandBot</label>
+            <div className="create-drawer-dropdown" ref={brandBotRef}>
+              <button className="create-drawer-dropdown-trigger" onClick={() => setShowBrandBotDropdown(!showBrandBotDropdown)}>
+                <span>{selectedBrandBot ? mockBrandBots.find(b => b.id === selectedBrandBot)?.name : 'Select brandbot...'}</span>
+                <span className={`create-drawer-chevron ${showBrandBotDropdown ? 'create-drawer-chevron-up' : ''}`}>{showBrandBotDropdown ? '▲' : '▼'}</span>
+              </button>
+              {showBrandBotDropdown && (
+                <div className="create-drawer-dropdown-menu">
+                  {mockBrandBots.filter(b => !selectedWorkspace || b.workspaceId === selectedWorkspace).map(bb => (
+                    <button key={bb.id} className={`create-drawer-dropdown-item ${selectedBrandBot === bb.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleBrandBotSelect(bb.id)}>
+                      {bb.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Drawer Selector */}
+      <div className="create-drawer-field">
+        <label className="create-drawer-label">
+          Choose a Drawer
+          <span className="create-drawer-help">This controls where users will find it.</span>
+        </label>
+        <div className="create-drawer-segmented">
+          <button className={`create-drawer-seg ${selectedDrawer === 'playbooks' ? 'create-drawer-seg--active' : ''}`} onClick={() => handleDrawerSelect('playbooks')}>Playbooks Drawer</button>
+          <button className={`create-drawer-seg ${selectedDrawer === 'ellaments' ? 'create-drawer-seg--active' : ''}`} onClick={() => handleDrawerSelect('ellaments')}>Ella-ments Drawer</button>
+        </div>
+      </div>
+
+      {/* Element Sub-Type (conditional) */}
+      {selectedDrawer === 'ellaments' && (
+        <div className="create-drawer-field">
+          <label className="create-drawer-label">Element Type</label>
+          <div className="create-drawer-radios">
+            {['company','customer','brand','special_edition'].map(sub => (
+              <label key={sub} className="create-drawer-radio">
+                <input type="radio" checked={elementSubtype === sub} onChange={() => handleElementSubtypeSelect(sub)} />
+                <span className="create-drawer-radio-label">{sub.replace('_',' ')}</span>
+              </label>
+            ))}
+          </div>
+
+          {elementSubtype === 'customer' && (
+            <div className="create-drawer-field" style={{ marginTop: 8 }}>
+              <label className="create-drawer-label">ICPs</label>
+              <select className="create-drawer-input" multiple value={selectedICPs} onChange={(e) => {
+                const vals = Array.from(e.target.selectedOptions).map(o => o.value);
+                setSelectedICPs(vals);
+                autosaveScope({ icp_ids: vals });
+              }}>
+                {mockICPs.map(i => <option key={i.id} value={i.id}>{i.name}</option>)}
+              </select>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Section Selector */}
+      <div className="create-drawer-field">
+        <label className="create-drawer-label">Assign to Section</label>
+        <div className="create-drawer-dropdown" ref={sectionRef}>
+          <button className="create-drawer-dropdown-trigger" onClick={() => setShowSectionDropdown(!showSectionDropdown)}>
+            <span>{selectedSection ? (getSectionCatalog().find(s => s.id === selectedSection)?.name || 'Unknown') : 'Unassigned'}</span>
+            <span className={`create-drawer-chevron ${showSectionDropdown ? 'create-drawer-chevron-up' : ''}`}>{showSectionDropdown ? '▲' : '▼'}</span>
+          </button>
+          {showSectionDropdown && (
+            <div className="create-drawer-dropdown-menu">
+              <button className={`create-drawer-dropdown-item ${!selectedSection ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleSectionSelect('')}>Unassigned</button>
+              {getSectionCatalog().map(sec => (
+                <button key={sec.id} className={`create-drawer-dropdown-item ${selectedSection === sec.id ? 'create-drawer-dropdown-item--selected' : ''}`} onClick={() => handleSectionSelect(sec.id)}>
+                  {sec.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Tags Section */}
       {selectedVersion && (
         <div className="create-drawer-field">
@@ -846,6 +1166,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
             )}
           </div>
         </div>
+      )}
+      {autosaveError && (
+        <div className="create-drawer-inline-toast create-drawer-inline-toast--error" role="status">{autosaveError}</div>
       )}
     </div>
   );
@@ -1610,197 +1933,230 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
 
       {type === 'playbook' && (
         <div className="playbook-authoring">
-          {/* Playbook name */}
+          {/* Header fields */}
           <div className="create-drawer-field">
-            <label className="create-drawer-label">
-              Playbook Name
-              <span className="create-drawer-required">*</span>
-            </label>
-            <input
-              type="text"
-              className="create-drawer-input"
-              placeholder="Enter playbook name..."
-              value={playbook.name}
-              onChange={(e) => {
-                setPlaybook(prev => ({ ...prev, name: e.target.value }));
-                saveTemplateDraft();
-              }}
-            />
+            <label className="create-drawer-label">Title <span className="create-drawer-required">*</span></label>
+            <input className="create-drawer-input" value={playbook.title} placeholder="Enter playbook title..." onChange={(e) => { setPlaybook(prev => ({ ...prev, title: e.target.value })); saveTemplateDraft(); }} />
           </div>
-
-          {/* Execution Settings */}
-          <div className="playbook-execution-settings">
-            <h4 className="playbook-section-title">Execution Settings</h4>
-            <div className="playbook-exec-modes">
-              <label className="playbook-radio">
-                <input
-                  type="radio"
-                  name="exec_mode"
-                  checked={playbook.execution.mode === 'step_by_step'}
-                  onChange={() => {
-                    setPlaybook(prev => ({ ...prev, execution: { ...prev.execution, mode: 'step_by_step', consolidatedSchema: [] } }));
-                    saveTemplateDraft();
-                  }}
-                />
-                <span className="playbook-radio-label">Step-by-Step (default)</span>
-              </label>
-              <div className="playbook-radio-help">Review outputs after each step. Provide inputs per step.</div>
-
-              <label className="playbook-radio">
-                <input
-                  type="radio"
-                  name="exec_mode"
-                  checked={playbook.execution.mode === 'auto_run'}
-                  onChange={() => {
-                    setPlaybook(prev => ({ ...prev, execution: { ...prev.execution, mode: 'auto_run' } }));
-                    setTimeout(() => recomputeConsolidatedSchema(), 0);
-                    saveTemplateDraft();
-                  }}
-                />
-                <span className="playbook-radio-label">Auto-Run</span>
-              </label>
-              <div className="playbook-radio-help">Provide all inputs up front. System runs all steps in sequence automatically.</div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Preview <span className="create-drawer-required">*</span></label>
+            <input className="create-drawer-input" value={playbook.preview} maxLength={160} placeholder="Short summary (≤160 chars)" onChange={(e) => { setPlaybook(prev => ({ ...prev, preview: e.target.value })); saveTemplateDraft(); }} />
+            <div className="create-drawer-field-hint">{(playbook.preview || '').length}/160</div>
+          </div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Description <span className="create-drawer-optional">(optional)</span></label>
+            <textarea className="create-drawer-input create-drawer-textarea" rows={3} value={playbook.description} onChange={(e) => { setPlaybook(prev => ({ ...prev, description: e.target.value })); saveTemplateDraft(); }} />
+          </div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Instructions <span className="create-drawer-required">*</span></label>
+            <textarea className="create-drawer-input create-drawer-textarea" rows={5} value={playbook.instructions} onChange={(e) => { setPlaybook(prev => ({ ...prev, instructions: e.target.value })); saveTemplateDraft(); }} />
+          </div>
+          <div className="create-drawer-field">
+            <label className="create-drawer-label">Knowledge Files <span className="create-drawer-optional">(optional)</span></label>
+            <div className="template-form-context-attachments">
+              {(playbook.knowledgeFiles || []).length === 0 ? (
+                <div className="template-form-empty-state"><span className="template-form-empty-icon">📎</span><h4>No files</h4></div>
+              ) : (
+                <div className="template-form-attachments-list">
+                  {playbook.knowledgeFiles.map((f, i) => (
+                    <div key={i} className="template-form-attachment-item">
+                      <div className="template-form-attachment-info"><span className="template-form-attachment-name">{f.name}</span><span className="template-form-attachment-type">{f.type}</span></div>
+                      <button className="template-form-attachment-remove" onClick={() => { const next = [...playbook.knowledgeFiles]; next.splice(i,1); setPlaybook(prev => ({ ...prev, knowledgeFiles: next })); saveTemplateDraft(); }}>🗑️</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="template-form-add-attachment">
+                <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => { const name = prompt('Mock file name'); if (name) { setPlaybook(prev => ({ ...prev, knowledgeFiles: [...(prev.knowledgeFiles||[]), { name, type: 'file' }] })); saveTemplateDraft(); } }}>📤 Upload File</button>
+                <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => { const url = prompt('Enter URL'); if (url) { setPlaybook(prev => ({ ...prev, knowledgeFiles: [...(prev.knowledgeFiles||[]), { name: url, type: 'link', url }] })); saveTemplateDraft(); } }}>🔗 Add Link</button>
+              </div>
             </div>
-
-            {playbook.execution.mode === 'auto_run' && (
-              <div className="playbook-consolidated-preview">
-                <div className="playbook-consolidated-header">Consolidated Intake Form (Preview)</div>
-                {playbook.execution.consolidatedSchema.length === 0 ? (
-                  <div className="playbook-empty-small">Add steps to build the form.</div>
-                ) : (
-                  <div className="playbook-consolidated-list">
-                    {playbook.execution.consolidatedSchema.map((field, idx) => (
-                      <div key={`${field.key}_${idx}`} className="playbook-consolidated-item">
-                        <div className="playbook-consolidated-label">
-                          {field.label}
-                          {field.required && <span className="create-drawer-required">*</span>}
-                        </div>
-                        <div className="playbook-consolidated-meta">
-                          key: <code>{field.key}</code> • from step {field.stepIndex} ({field.stepName})
-                        </div>
-                        <div className="playbook-consolidated-input-mock">
-                          {/* Mock input preview based on type */}
-                          {field.type === 'single_select' ? (
-                            <select disabled><option>—</option></select>
-                          ) : field.type === 'long_text' ? (
-                            <textarea disabled rows={2} />
-                          ) : (
-                            <input disabled type="text" />
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
-          {/* Steps list */}
-          <div className="playbook-steps-list">
-            {playbook.steps.length === 0 && (
-              <div className="playbook-empty">
-                <span className="playbook-empty-icon">🧩</span>
-                <p>No steps yet. Add your first template as a step.</p>
-              </div>
-            )}
+          {/* Plays Section */}
+          <div className="playbook-plays">
+        <div className="playbook-plays-header">
+          <h4 className="playbook-section-title">Add Plays</h4>
+          {isAdmin && (
+            <div className="playbook-import-actions">
+              <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => downloadPlayDocTemplate()}>Download Doc Template</button>
+              <label className="create-drawer-btn create-drawer-btn--primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                Upload (up to 10)
+                <input type="file" accept=".doc,.docx,.txt,.md" multiple style={{ display: 'none' }} onChange={(e) => handlePlayImportFiles(e)} />
+              </label>
+            </div>
+          )}
+        </div>
+        <div className="create-drawer-field-hint">Have more than 10 docs? Finish this batch, then click Upload again to add the next set.</div>
 
-            {playbook.steps.map((step, index) => (
-              <div key={step.id} className="playbook-step-card">
-                <div className="playbook-step-header">
-                  <div className="playbook-step-index">{index + 1}</div>
-                  <div className="playbook-step-meta">
-                    <div className="playbook-step-template-title">{step.templateTitle || 'Untitled Template'}</div>
-                    <div className="playbook-step-template-preview">{step.templatePreview || ''}</div>
-                  </div>
-                  <div className="playbook-step-actions">
-                    <button
-                      className="playbook-step-action"
-                      disabled={index === 0}
-                      title="Move up"
-                      onClick={() => handlePlaybookReorder(step.id, 'up')}
-                    >▲</button>
-                    <button
-                      className="playbook-step-action"
-                      disabled={index === playbook.steps.length - 1}
-                      title="Move down"
-                      onClick={() => handlePlaybookReorder(step.id, 'down')}
-                    >▼</button>
-                    <button
-                      className="playbook-step-action playbook-step-remove"
-                      title="Remove"
-                      onClick={() => handlePlaybookRemove(step.id)}
-                    >🗑️</button>
-                  </div>
-                </div>
-                <div className="playbook-step-body">
-                  <div className="create-drawer-field">
-                    <label className="create-drawer-label">Step Name</label>
-                    <input
-                      type="text"
-                      className="create-drawer-input"
-                      placeholder="Defaults to template title"
-                      value={step.stepName || ''}
-                      onChange={(e) => handlePlaybookStepUpdate(step.id, 'stepName', e.target.value)}
-                    />
-                  </div>
-                  <div className="create-drawer-field">
-                    <label className="create-drawer-label">Notes</label>
-                    <textarea
-                      className="create-drawer-input create-drawer-textarea"
-                      placeholder="Optional notes or instructions for this step"
-                      rows={3}
-                      value={step.notes || ''}
-                      onChange={(e) => handlePlaybookStepUpdate(step.id, 'notes', e.target.value)}
-                    />
-                  </div>
-                  {/* Basic mapping placeholder */}
-                  <div className="create-drawer-field">
-                    <label className="create-drawer-label">Input Mapping</label>
-                    <div className="playbook-mapping-placeholder">Map outputs from prior steps to this step's inputs (basic mapping)</div>
-                  </div>
-                </div>
+        {/* Import results */}
+        {importJobs.length > 0 && (
+          <div className="playbook-import-results" role="status" aria-live="polite">
+            {importJobs.map((job, idx) => (
+              <div key={idx} className={`playbook-import-row ${job.status}`}>
+                <span className="pir-name">{job.name}</span>
+                <span className="pir-status">{job.status === 'queued' ? 'Queued' : job.status === 'parsing' ? 'Parsing…' : job.status === 'success' ? 'Success' : 'Failed'}</span>
+                {job.message && <span className="pir-msg">{job.message}</span>}
               </div>
             ))}
           </div>
+        )}
 
-          {/* Add Step */}
-          <div className="playbook-add-step">
-            <button className="create-drawer-btn create-drawer-btn--primary" onClick={() => setShowAddStepModal(true)}>
-              <span className="create-drawer-btn-icon">➕</span>
-              Add Step
-            </button>
+        <h4 className="playbook-section-title" style={{ marginTop: 16 }}>Plays</h4>
+            {(playbook.plays || []).length === 0 && (
+              <div className="playbook-empty"><span className="playbook-empty-icon">🧩</span><p>No plays yet. Add your first play.</p></div>
+            )}
+            {(playbook.plays || []).map((pl, pIdx) => (
+              <div key={pl.id} className="play-card">
+                <div className="play-card-summary">
+                  <div className="play-index">{pIdx + 1}</div>
+                  <div className="play-summary-text">
+                    <div className="play-title">{pl.title || 'Untitled Play'}</div>
+                    <div className="play-preview">{pl.preview || ''}</div>
+                  </div>
+                  <div className="play-summary-actions">
+                    <button title="Up" disabled={pIdx===0} onClick={() => reorderPlay(pIdx, pIdx-1)}>▲</button>
+                    <button title="Down" disabled={pIdx===(playbook.plays.length-1)} onClick={() => reorderPlay(pIdx, pIdx+1)}>▼</button>
+                    <button title="Remove" onClick={() => removePlay(pl.id)}>🗑️</button>
+                    <button title="Expand/Collapse" onClick={() => togglePlayExpanded(pl.id)}>{expandedPlayIds.includes(pl.id) ? 'Collapse' : 'Expand'}</button>
+                  </div>
+                </div>
+
+                {expandedPlayIds.includes(pl.id) && (
+                  <div className="play-card-details">
+                    {/* Play fields */}
+                    <div className="create-drawer-field"><label className="create-drawer-label">Play Title <span className="create-drawer-required">*</span></label><input className="create-drawer-input" value={pl.title} onChange={(e)=> updatePlay(pl.id,{ title: e.target.value })} /></div>
+                    <div className="create-drawer-field"><label className="create-drawer-label">Play Preview <span className="create-drawer-required">*</span></label><input className="create-drawer-input" maxLength={160} value={pl.preview} onChange={(e)=> updatePlay(pl.id,{ preview: e.target.value })} /></div>
+                    <div className="create-drawer-field"><label className="create-drawer-label">Play Description <span className="create-drawer-optional">(optional)</span></label><textarea className="create-drawer-input create-drawer-textarea" rows={3} value={pl.description || ''} onChange={(e)=> updatePlay(pl.id,{ description: e.target.value })} /></div>
+                    <div className="create-drawer-field"><label className="create-drawer-label">Play Instructions <span className="create-drawer-required">*</span></label><textarea className="create-drawer-input create-drawer-textarea" rows={4} value={pl.instructions || ''} onChange={(e)=> updatePlay(pl.id,{ instructions: e.target.value })} /></div>
+                    <div className="create-drawer-field">
+                      <label className="create-drawer-label">Play Knowledge Files <span className="create-drawer-optional">(optional)</span></label>
+                      <div className="template-form-context-attachments">
+                        {(pl.knowledgeFiles||[]).length === 0 ? (
+                          <div className="template-form-empty-state"><span className="template-form-empty-icon">📎</span><h4>No files</h4></div>
+                        ) : (
+                          <div className="template-form-attachments-list">
+                            {(pl.knowledgeFiles||[]).map((f, i) => (
+                              <div key={i} className="template-form-attachment-item">
+                                <div className="template-form-attachment-info"><span className="template-form-attachment-name">{f.name}</span><span className="template-form-attachment-type">{f.type}</span></div>
+                                <button className="template-form-attachment-remove" onClick={() => updatePlayFile(pl.id, i, 'remove')}>🗑️</button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        <div className="template-form-add-attachment">
+                          <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => updatePlayFile(pl.id, null, 'add_file')}>📤 Upload File</button>
+                          <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => updatePlayFile(pl.id, null, 'add_link')}>🔗 Add Link</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Steps */}
+                    <div className="play-steps">
+                      <h5>Steps</h5>
+                      {(pl.steps||[]).length === 0 && (<div className="playbook-empty-small">No steps yet</div>)}
+                      {(pl.steps||[]).map((st, sIdx) => (
+                        <div key={st.id} className="step-card">
+                          <div className="step-header">
+                            <div className="step-index">{sIdx+1}</div>
+                            <input className="create-drawer-input step-title-input" placeholder={`Step ${sIdx+1}`} value={st.title} onChange={(e)=> updateStep(pl.id, st.id, { title: e.target.value })} />
+                            <div className="step-actions">
+                              <button title="Up" disabled={sIdx===0} onClick={()=> reorderStep(pl.id, sIdx, sIdx-1)}>▲</button>
+                              <button title="Down" disabled={sIdx===(pl.steps.length-1)} onClick={()=> reorderStep(pl.id, sIdx, sIdx+1)}>▼</button>
+                              <button title="Remove" onClick={()=> removeStep(pl.id, st.id)}>🗑️</button>
+                            </div>
+                          </div>
+                          <div className="step-body">
+                            <div className="create-drawer-field"><label className="create-drawer-label">Prompt <span className="create-drawer-required">*</span></label><textarea className="create-drawer-input create-drawer-textarea" rows={3} value={st.prompt} onChange={(e)=> updateStep(pl.id, st.id, { prompt: e.target.value })} /></div>
+                            <div className="create-drawer-field">
+                              <label className="create-drawer-label">Inputs (optional)</label>
+                              {(st.inputs||[]).map((inp, ii) => (
+                                <div key={inp.id} className="step-input-row">
+                                  <input className="create-drawer-input" placeholder="Label *" value={inp.label} onChange={(e)=> updateStepInput(pl.id, st.id, inp.id, 'label', e.target.value)} />
+                                  <input className="create-drawer-input" placeholder="key_snake_case *" value={inp.key} onChange={(e)=> updateStepInput(pl.id, st.id, inp.id, 'key', e.target.value)} />
+                                  <select className="create-drawer-input" value={inp.type} onChange={(e)=> updateStepInput(pl.id, st.id, inp.id, 'type', e.target.value)}>
+                                    <option value="short_text">Short Text</option>
+                                    <option value="long_text">Long Text</option>
+                                    <option value="number">Number</option>
+                                    <option value="boolean">Boolean</option>
+                                    <option value="single_select">Single Select</option>
+                                    <option value="multi_select">Multi Select</option>
+                                    <option value="date">Date</option>
+                                    <option value="file_upload">File Upload</option>
+                                    <option value="url">URL</option>
+                                  </select>
+                                  <label className="step-input-checkbox"><input type="checkbox" checked={!!inp.required} onChange={(e)=> updateStepInput(pl.id, st.id, inp.id, 'required', e.target.checked)} /> Required</label>
+                                  <button className="step-input-remove" onClick={()=> removeStepInput(pl.id, st.id, inp.id)}>🗑️</button>
+                                  {(inp.type === 'single_select' || inp.type === 'multi_select') && (
+                                    <div className="step-input-options">
+                                      {(inp.options||[]).map((opt, oi)=>(
+                                        <div key={oi} className="step-input-option">
+                                          <input className="create-drawer-input" placeholder="Option label" value={opt.label} onChange={(e)=> updateStepInputOption(pl.id, st.id, inp.id, oi, 'label', e.target.value)} />
+                                          <input className="create-drawer-input" placeholder="value" value={opt.value} onChange={(e)=> updateStepInputOption(pl.id, st.id, inp.id, oi, 'value', e.target.value)} />
+                                          <button onClick={()=> removeStepInputOption(pl.id, st.id, inp.id, oi)}>🗑️</button>
+                                        </div>
+                                      ))}
+                                      <button className="create-drawer-btn" onClick={()=> addStepInputOption(pl.id, st.id, inp.id)}>Add Option</button>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                              <button className="create-drawer-btn create-drawer-btn--secondary" onClick={()=> addStepInput(pl.id, st.id)}>Add Input</button>
+                            </div>
+                            <div className="create-drawer-field"><label className="create-drawer-label">Notes</label><textarea className="create-drawer-input create-drawer-textarea" rows={2} value={st.notes||''} onChange={(e)=> updateStep(pl.id, st.id, { notes: e.target.value })} /></div>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="play-add-step">
+                        <button className="create-drawer-btn create-drawer-btn--primary" onClick={()=> addStep(pl.id)}><span className="create-drawer-btn-icon">➕</span>Add Step</button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            <div className="plays-add">
+              <button className="create-drawer-btn create-drawer-btn--primary" onClick={()=> setShowAddPlayModal(true)}><span className="create-drawer-btn-icon">➕</span>Add Play</button>
+            </div>
           </div>
 
-          {/* Preview & Validation */}
+          {/* Builder Preview & Validation */}
           <div className="builder-preview-validation">
             <div className="builder-preview">
-              <h4 className="builder-section-title">Preview</h4>
-              <div className="preview-playbook-seq">
-                {(playbook.steps || []).length === 0 ? (
-                  <div className="preview-empty">No steps yet</div>
-                ) : (
-                  playbook.steps.map((s, idx) => (
-                    <div key={s.id} className="preview-step">
-                      <div className="preview-step-head">
-                        <div className="preview-step-index">{idx + 1}</div>
-                        <div className="preview-step-title">{s.stepName || s.templateTitle}</div>
-                      </div>
-                      <div className="preview-step-sub">{s.templatePreview || ''}</div>
-                      <details className="preview-step-details">
-                        <summary>Intake Preview</summary>
-                        <div className="preview-intake">
-                          {(mockTemplates.find(t => t.id === s.templateId)?.inputs || []).map((inp, i) => (
-                            <div key={`${s.id}_${i}`} className="preview-intake-field">
-                              <div className="preview-label">{inp.label}{inp.required && <span className="create-drawer-required">*</span>}</div>
-                              {inp.type === 'single_select' ? <select disabled><option>—</option></select> : inp.type === 'long_text' ? <textarea disabled rows={2}/> : <input disabled type="text" />}
-                            </div>
-                          ))}
-                        </div>
-                      </details>
-                    </div>
-                  ))
+              <h4 className="builder-section-title">Preview Playbook</h4>
+              <div className="preview-playbook">
+                <h5>{playbook.title || 'Untitled Playbook'}</h5>
+                <div className="preview-sub">{playbook.preview || ''}</div>
+                {playbook.description && <div className="preview-desc">{playbook.description}</div>}
+                <div className="preview-instr"><strong>Instructions:</strong> {playbook.instructions || '—'}</div>
+                {(playbook.knowledgeFiles||[]).length>0 && (
+                  <div className="preview-files"><strong>Files:</strong> {(playbook.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>
                 )}
+                <div className="preview-plays">
+                  {(playbook.plays||[]).map((p, pi)=> (
+                    <div key={p.id} className="preview-play">
+                      <div className="preview-play-head"><div className="preview-step-index">{pi+1}</div><div className="preview-play-title">{p.title}</div></div>
+                      <div className="preview-play-sub">{p.preview}</div>
+                      {p.description && <div className="preview-play-desc">{p.description}</div>}
+                      <div className="preview-play-instr"><strong>Instructions:</strong> {p.instructions}</div>
+                      {(p.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Files:</strong> {(p.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
+                      <div className="preview-steps">
+                        {(p.steps||[]).map((s, si)=> (
+                          <div key={s.id} className="preview-step">
+                            <div className="preview-step-head"><div className="preview-step-index">{si+1}</div><div className="preview-step-title">{s.title}</div></div>
+                            <div className="preview-step-sub">{s.prompt}</div>
+                            {(s.inputs||[]).length>0 && (
+                              <div className="preview-intake">
+                                {(s.inputs||[]).map((inp,ii)=> <div key={ii} className="preview-intake-field"><div className="preview-label">{inp.label}{inp.required && <span className="create-drawer-required">*</span>}</div></div>)}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="builder-validation" ref={validationRef}>
@@ -1810,127 +2166,129 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               ) : (
                 <ul className="validation-list">
                   {validation.errors.map(v => (
-                    <li key={v.id} className="validation-item validation-item--error">
-                      <span className="validation-badge">Error</span>
-                      <span className="validation-msg">{v.msg}</span>
-                    </li>
+                    <li key={v.id} className="validation-item validation-item--error"><span className="validation-badge">Error</span><span className="validation-msg">{v.msg}</span></li>
                   ))}
                   {validation.warnings.map(v => (
-                    <li key={v.id} className="validation-item validation-item--warning">
-                      <span className="validation-badge validation-badge--warning">Warning</span>
-                      <span className="validation-msg">{v.msg}</span>
-                    </li>
+                    <li key={v.id} className="validation-item validation-item--warning"><span className="validation-badge validation-badge--warning">Warning</span><span className="validation-msg">{v.msg}</span></li>
                   ))}
                 </ul>
               )}
               <button className="create-drawer-btn" onClick={recomputeValidation}>Re-check</button>
             </div>
           </div>
+
+          {/* Add Play Modal (inline) */}
+          {showAddPlayModal && (
+            <div className="playbook-modal-backdrop" role="dialog" aria-modal="true">
+              <div className="playbook-modal">
+                <div className="playbook-modal-header"><h3>Add Play</h3><button className="playbook-modal-close" onClick={()=> setShowAddPlayModal(false)}>✕</button></div>
+                <div className="playbook-modal-content">
+                  <button className="create-drawer-btn create-drawer-btn--primary" onClick={()=> addPlayInline()}>Create New Play</button>
+                  <button className="create-drawer-btn create-drawer-btn--secondary" onClick={()=> importPlayMock()}>Import Play</button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {type === 'group' && (
         <div className="series-authoring">
-          {/* Series name */}
-          <div className="create-drawer-field">
-            <label className="create-drawer-label">
-              Series Name
-              <span className="create-drawer-required">*</span>
-            </label>
-            <input
-              type="text"
-              className="create-drawer-input"
-              placeholder="Enter series name..."
-              value={series.name}
-              onChange={(e) => { setSeries(prev => ({ ...prev, name: e.target.value })); saveTemplateDraft(); }}
-            />
-          </div>
-
-          {/* Playbooks list */}
-          <div className="series-list">
-            {series.items.length === 0 && (
-              <div className="series-empty">
-                <span className="series-empty-icon">🧩</span>
-                <p>No playbooks yet. Add your first playbook.</p>
+          {/* Series metadata */}
+          <div className="create-drawer-field"><label className="create-drawer-label">Title <span className="create-drawer-required">*</span></label><input className="create-drawer-input" value={series.title} onChange={(e)=> { setSeries(prev=>({ ...prev, title: e.target.value })); saveTemplateDraft(); }} /></div>
+          <div className="create-drawer-field"><label className="create-drawer-label">Preview <span className="create-drawer-required">*</span></label><input className="create-drawer-input" maxLength={160} value={series.preview} onChange={(e)=> { setSeries(prev=>({ ...prev, preview: e.target.value })); saveTemplateDraft(); }} /><div className="create-drawer-field-hint">{(series.preview||'').length}/160</div></div>
+          <div className="create-drawer-field"><label className="create-drawer-label">Description <span className="create-drawer-optional">(optional)</span></label><textarea className="create-drawer-input create-drawer-textarea" rows={3} value={series.description} onChange={(e)=> { setSeries(prev=>({ ...prev, description: e.target.value })); saveTemplateDraft(); }} /></div>
+          <div className="create-drawer-field"><label className="create-drawer-label">Instructions <span className="create-drawer-required">*</span></label><textarea className="create-drawer-input create-drawer-textarea" rows={4} value={series.instructions} onChange={(e)=> { setSeries(prev=>({ ...prev, instructions: e.target.value })); saveTemplateDraft(); }} /></div>
+          <div className="create-drawer-field"><label className="create-drawer-label">Knowledge Files <span className="create-drawer-optional">(optional)</span></label>
+            <div className="template-form-context-attachments">
+              {(series.knowledgeFiles||[]).length===0 ? (<div className="template-form-empty-state"><span className="template-form-empty-icon">📎</span><h4>No files</h4></div>) : (
+                <div className="template-form-attachments-list">{(series.knowledgeFiles||[]).map((f,i)=>(<div key={i} className="template-form-attachment-item"><div className="template-form-attachment-info"><span className="template-form-attachment-name">{f.name}</span><span className="template-form-attachment-type">{f.type}</span></div><button className="template-form-attachment-remove" onClick={()=>{ const next=[...(series.knowledgeFiles||[])]; next.splice(i,1); setSeries(prev=>({ ...prev, knowledgeFiles: next })); saveTemplateDraft(); }}>🗑️</button></div>))}</div>
+              )}
+              <div className="template-form-add-attachment">
+                <button className="create-drawer-btn create-drawer-btn--secondary" onClick={()=>{ const name=prompt('Mock file name'); if(name){ setSeries(prev=>({ ...prev, knowledgeFiles:[...(prev.knowledgeFiles||[]),{ name, type:'file' }] })); saveTemplateDraft(); } }}>📤 Upload File</button>
+                <button className="create-drawer-btn create-drawer-btn--secondary" onClick={()=>{ const url=prompt('Enter URL'); if(url){ setSeries(prev=>({ ...prev, knowledgeFiles:[...(prev.knowledgeFiles||[]),{ name:url, type:'link', url }] })); saveTemplateDraft(); } }}>🔗 Add Link</button>
               </div>
-            )}
+            </div>
+          </div>
+          <div className="create-drawer-field"><label className="create-drawer-label">Estimated Time (minutes) <span className="create-drawer-optional">(optional)</span></label><input type="number" min={0} className="create-drawer-input" value={series.estMinutes} onChange={(e)=> { setSeries(prev=>({ ...prev, estMinutes: e.target.value })); saveTemplateDraft(); }} />
+            <div className="create-drawer-field-hint">Calculated Estimate: {(series.items||[]).reduce((sum,i)=> sum + (Number(i.estMinutes)||0), 0)} minutes</div>
+          </div>
+          {selectedTags?.length>0 && (
+            <div className="create-drawer-field"><label className="create-drawer-label">Tags (from Scoping)</label><div className="preview-tags">{selectedTags.map(t=> <span key={t.id} className="preview-tag">{t.name}</span>)}</div></div>
+          )}
 
-            {series.items.map((pb, index) => (
+          {/* Composer Section */}
+          <div className="series-composer">
+            <h4 className="playbook-section-title">Select & Order Playbooks</h4>
+            <div className="series-search-row">
+              <input className="create-drawer-input" placeholder="Search by title or preview..." value={playbookSearch} onChange={(e)=> setPlaybookSearch(e.target.value)} />
+            </div>
+            <div className="series-results">
+              {getFilteredPlaybooks().filter(p=> p.name.toLowerCase().includes(playbookSearch.toLowerCase())).map(p=> {
+                const already = (series.items||[]).some(i=> i.playbookId === p.id);
+                return (
+                  <div key={p.id} className="series-result-row">
+                    <div className="sr-meta">
+                      <div className="sr-title">{p.name}</div>
+                      <div className="sr-sub">{p.preview}</div>
+                      <div className="sr-tags">{(p.tags||[]).map(t=> <span key={t} className="preview-tag">{t}</span>)}</div>
+                    </div>
+                    <div className="sr-actions">
+                      <button className="create-drawer-btn" disabled={already} onClick={()=> addPlaybookToSeries(p)}>{already ? 'Already added' : 'Add to Series'}</button>
+                    </div>
+                  </div>
+                );
+              })}
+              {getFilteredPlaybooks().length === 0 && (
+                <div className="series-empty">
+                  <span className="series-empty-icon">📚</span>
+                  <p>No Playbooks found for this Version/Drawer/Section.</p>
+                  <p className="series-empty-hint">Create Playbooks in this scope first.</p>
+                </div>
+              )}
+            </div>
+
+            <h4 className="playbook-section-title" style={{ marginTop: 16 }}>Series List</h4>
+            {(series.items||[]).length===0 && (<div className="series-empty"><span className="series-empty-icon">🧩</span><p>Add Playbooks to build your Series.</p></div>)}
+            {(series.items||[]).map((pb, index)=> (
               <div key={pb.id} className="series-card">
                 <div className="series-card-header">
-                  <div className="series-index">{index + 1}</div>
-                  <div className="series-meta">
-                    <div className="series-name">{pb.label || pb.name}</div>
-                    <div className="series-sub">{pb.stepCount || 0} steps • {pb.preview || ''}</div>
-                  </div>
+                  <div className="series-index">{index+1}</div>
+                  <div className="series-meta"><div className="series-name">{pb.label || pb.name}</div><div className="series-sub">{pb.preview || ''}</div></div>
                   <div className="series-actions">
-                    <button className="series-action" disabled={index === 0} title="Move up" onClick={() => handleSeriesReorder(pb.id, 'up')}>▲</button>
-                    <button className="series-action" disabled={index === series.items.length - 1} title="Move down" onClick={() => handleSeriesReorder(pb.id, 'down')}>▼</button>
-                    <button className="series-action series-remove" title="Remove" onClick={() => handleSeriesRemove(pb.id)}>🗑️</button>
+                    <button className="series-action" disabled={index===0} title="Move up" onClick={()=> handleSeriesReorder(pb.id, 'up')}>▲</button>
+                    <button className="series-action" disabled={index===(series.items.length-1)} title="Move down" onClick={()=> handleSeriesReorder(pb.id, 'down')}>▼</button>
+                    <button className="series-action series-remove" title="Remove" onClick={()=> handleSeriesRemove(pb.id)}>🗑️</button>
                   </div>
                 </div>
-                {/* Expandable preview placeholder */}
                 <div className="series-card-body">
-                  <div className="create-drawer-field">
-                    <label className="create-drawer-label">Label in Series</label>
-                    <input
-                      type="text"
-                      className="create-drawer-input"
-                      placeholder="Must be unique within the series"
-                      value={pb.label || ''}
-                      onChange={(e) => handleSeriesItemUpdate(pb.id, 'label', e.target.value)}
-                    />
-                  </div>
+                  <div className="create-drawer-field"><label className="create-drawer-label">Label in Series</label><input className="create-drawer-input" placeholder="Must be unique within the series" value={pb.label || ''} onChange={(e)=> handleSeriesItemUpdate(pb.id, 'label', e.target.value)} /></div>
+                  {(pb.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Playbook Files:</strong> {(pb.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="series-add">
-            <button className="create-drawer-btn create-drawer-btn--primary" onClick={() => setShowAddPlaybookModal(true)}>
-              <span className="create-drawer-btn-icon">➕</span>
-              Add Playbook
-            </button>
-          </div>
-
           {/* Preview & Validation */}
           <div className="builder-preview-validation">
             <div className="builder-preview">
-              <h4 className="builder-section-title">Preview</h4>
+              <h4 className="builder-section-title">Series Preview</h4>
               <div className="preview-series">
-                {(series.items || []).length === 0 ? (
-                  <div className="preview-empty">No playbooks yet</div>
-                ) : (
-                  series.items.map((pb, idx) => (
-                    <div key={pb.id} className="preview-series-item">
-                      <div className="preview-step-head">
-                        <div className="preview-step-index">{idx + 1}</div>
-                        <div className="preview-step-title">{pb.label || pb.name}</div>
-                      </div>
-                      <div className="preview-step-sub">{pb.stepCount || 0} steps • {pb.preview || ''}</div>
-                    </div>
-                  ))
-                )}
+                <h5>{series.title || 'Untitled Series'}</h5>
+                <div className="preview-sub">{series.preview || ''}</div>
+                {series.description && <div className="preview-desc">{series.description}</div>}
+                <div className="preview-instr"><strong>Instructions:</strong> {series.instructions || '—'}</div>
+                {(series.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Files:</strong> {(series.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
+                <div className="preview-est">Calculated Estimate: {(series.items||[]).reduce((sum,i)=> sum + (Number(i.estMinutes)||0), 0)} min {series.estMinutes && (<span>• Series Estimate: {series.estMinutes} min</span>)}</div>
+                <div className="preview-series-list">{(series.items||[]).map((pb, idx)=> (<div key={pb.id} className="preview-series-item"><div className="preview-step-head"><div className="preview-step-index">{idx+1}</div><div className="preview-step-title">{pb.label || pb.name}</div></div><div className="preview-step-sub">{pb.preview || ''}</div></div>))}</div>
               </div>
             </div>
             <div className="builder-validation" ref={validationRef}>
               <h4 className="builder-section-title">Validation</h4>
-              {validation.errors.length === 0 && validation.warnings.length === 0 ? (
-                <div className="validation-clear">No issues found</div>
-              ) : (
+              {validation.errors.length === 0 && validation.warnings.length === 0 ? (<div className="validation-clear">No issues found</div>) : (
                 <ul className="validation-list">
-                  {validation.errors.map(v => (
-                    <li key={v.id} className="validation-item validation-item--error">
-                      <span className="validation-badge">Error</span>
-                      <span className="validation-msg">{v.msg}</span>
-                    </li>
-                  ))}
-                  {validation.warnings.map(v => (
-                    <li key={v.id} className="validation-item validation-item--warning">
-                      <span className="validation-badge validation-badge--warning">Warning</span>
-                      <span className="validation-msg">{v.msg}</span>
-                    </li>
-                  ))}
+                  {validation.errors.map(v => (<li key={v.id} className="validation-item validation-item--error"><span className="validation-badge">Error</span><span className="validation-msg">{v.msg}</span></li>))}
+                  {validation.warnings.map(v => (<li key={v.id} className="validation-item validation-item--warning"><span className="validation-badge validation-badge--warning">Warning</span><span className="validation-msg">{v.msg}</span></li>))}
                 </ul>
               )}
               <button className="create-drawer-btn" onClick={recomputeValidation}>Re-check</button>
@@ -2056,25 +2414,337 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     });
   };
 
+  // -------- Playbook: Plays & Steps handlers --------
+  const persistPlaybook = (next) => {
+    setPlaybook(next);
+    // persist to draft
+    clearTimeout(window.playbookAutosaveTimeout);
+    window.playbookAutosaveTimeout = setTimeout(() => saveTemplateDraft(), 400);
+  };
+
+  const addPlayInline = () => {
+    const newPlay = {
+      id: `play_${Date.now()}`,
+      title: '',
+      preview: '',
+      description: '',
+      instructions: '',
+      knowledgeFiles: [],
+      steps: []
+    };
+    const next = { ...playbook, plays: [...(playbook.plays||[]), newPlay] };
+    persistPlaybook(next);
+    setShowAddPlayModal(false);
+    setExpandedPlayIds(prev => [...prev, newPlay.id]);
+    logTelemetryEvent('play_added', { source: 'inline', draft_id: draft?.id });
+  };
+
+  const importPlayMock = () => {
+    const newPlay = {
+      id: `play_${Date.now()}`,
+      title: 'Imported Play',
+      preview: 'Auto-extracted preview',
+      description: 'Imported description',
+      instructions: 'Imported instructions',
+      knowledgeFiles: [{ name: 'imported_doc.docx', type: 'file' }],
+      steps: [
+        { id: `st_${Date.now()}_1`, title: 'Draft', prompt: 'Write draft', inputs: [], notes: '' },
+        { id: `st_${Date.now()}_2`, title: 'Review', prompt: 'Review draft', inputs: [], notes: '' }
+      ]
+    };
+    const next = { ...playbook, plays: [...(playbook.plays||[]), newPlay] };
+    persistPlaybook(next);
+    setShowAddPlayModal(false);
+    setExpandedPlayIds(prev => [...prev, newPlay.id]);
+    logTelemetryEvent('play_added', { source: 'import', draft_id: draft?.id });
+  };
+
+  // Import UI state
+  const [importJobs, setImportJobs] = useState([]); // { name, status: queued|parsing|success|failed, message }
+
+  const downloadPlayDocTemplate = () => {
+    const content = `# Ella Play with Steps Template\n\nPLAY:\nTitle: <required>\nPreview: <required, <=160>\nDescription: <optional>\nInstructions: <required>\nKnowledge Files: <optional, URLs or notes>\nEstimated Time (min): <optional>\n\nSTEPS:\n- Step Title: <required>\n  Prompt: <required>\n  Inputs: <optional list>\n  Notes: <optional>\n`;
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ella-play-with-steps-template.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handlePlayImportFiles = async (e) => {
+    if (!isAdmin) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const batch = files.slice(0, 10); // enforce 10 per batch
+    setImportJobs(prev => [...prev, ...batch.map(f => ({ name: f.name, status: 'queued', message: '' }))]);
+    logTelemetryEvent('play_import_batch_started', { count: batch.length });
+
+    for (const f of batch) {
+      await processPlayFile(f);
+    }
+
+    logTelemetryEvent('playbook_import_completed', { draft_id: draft?.id });
+    // reset input to allow same files again if needed
+    e.target.value = '';
+  };
+
+  const processPlayFile = async (file) => {
+    // update to parsing
+    setImportJobs(prev => prev.map(j => j.name === file.name ? { ...j, status: 'parsing', message: '' } : j));
+    try {
+      // Simulate parse delay
+      await new Promise(r => setTimeout(r, 600));
+      // Mock parse: succeed unless name contains 'fail'
+      const shouldFail = /fail/i.test(file.name);
+      if (shouldFail) {
+        throw { status: 422, message: 'Missing Instructions. Ensure the Instructions section is present.' };
+      }
+      // Create a mock play from filename
+      const base = file.name.replace(/\.[^.]+$/, '');
+      const play = {
+        id: `play_${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        title: base,
+        preview: 'Imported from document',
+        description: '',
+        instructions: 'Follow the steps to produce the deliverable.',
+        knowledgeFiles: [],
+        estMinutes: 15,
+        steps: [
+          { id: `st_${Date.now()}_a`, title: 'Analyze Input', prompt: 'Analyze the provided context.', inputs: [], notes: '' },
+          { id: `st_${Date.now()}_b`, title: 'Draft Output', prompt: 'Draft the output per guidelines.', inputs: [], notes: '' }
+        ]
+      };
+      // Append to rows in upload order
+      const next = { ...playbook, plays: [...(playbook.plays||[]), play] };
+      persistPlaybook(next);
+      setImportJobs(prev => prev.map(j => j.name === file.name ? { ...j, status: 'success', message: 'Parsed' } : j));
+      logTelemetryEvent('play_import_file_parsed_success', { file: file.name });
+    } catch (err) {
+      const code = err?.status || 500;
+      setImportJobs(prev => prev.map(j => j.name === file.name ? { ...j, status: 'failed', message: err?.message || 'Server error' } : j));
+      logTelemetryEvent('play_import_file_parsed_failure', { file: file.name, error_code: code });
+    }
+  };
+
+  const removePlay = (playId) => {
+    if (!window.confirm('Remove this play? This will remove all its steps.')) return;
+    const next = { ...playbook, plays: (playbook.plays||[]).filter(p => p.id !== playId) };
+    persistPlaybook(next);
+    setExpandedPlayIds(prev => prev.filter(id => id !== playId));
+    logTelemetryEvent('play_removed', { play_id: playId, draft_id: draft?.id });
+  };
+
+  const reorderPlay = (from, to) => {
+    const arr = [...(playbook.plays||[])];
+    if (to < 0 || to >= arr.length) return;
+    const [moved] = arr.splice(from, 1);
+    arr.splice(to, 0, moved);
+    persistPlaybook({ ...playbook, plays: arr });
+    logTelemetryEvent('play_reordered', { from_index: from, to_index: to, draft_id: draft?.id });
+  };
+
+  const togglePlayExpanded = (playId) => {
+    setExpandedPlayIds(prev => prev.includes(playId) ? prev.filter(id => id !== playId) : [...prev, playId]);
+  };
+
+  const updatePlay = (playId, patch) => {
+    const next = {
+      ...playbook,
+      plays: (playbook.plays||[]).map(p => p.id === playId ? { ...p, ...patch } : p)
+    };
+    persistPlaybook(next);
+  };
+
+  const updatePlayFile = (playId, index, action) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const files = [...(p.knowledgeFiles||[])];
+      if (action === 'remove') files.splice(index, 1);
+      if (action === 'add_file') files.push({ name: `file_${Date.now()}.pdf`, type: 'file' });
+      if (action === 'add_link') files.push({ name: 'https://example.com', type: 'link' });
+      return { ...p, knowledgeFiles: files };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const addStep = (playId) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const newStep = { id: `step_${Date.now()}`, title: `Step ${(p.steps||[]).length + 1}`, prompt: '', inputs: [], notes: '' };
+      return { ...p, steps: [...(p.steps||[]), newStep] };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+    logTelemetryEvent('step_added', { play_id: playId, draft_id: draft?.id });
+  };
+
+  const removeStep = (playId, stepId) => {
+    if (!window.confirm('Remove this step?')) return;
+    const nextPlays = (playbook.plays||[]).map(p => p.id === playId ? { ...p, steps: (p.steps||[]).filter(s => s.id !== stepId) } : p);
+    persistPlaybook({ ...playbook, plays: nextPlays });
+    logTelemetryEvent('step_removed', { play_id: playId, draft_id: draft?.id });
+  };
+
+  const reorderStep = (playId, from, to) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const arr = [...(p.steps||[])];
+      if (to < 0 || to >= arr.length) return p;
+      const [m] = arr.splice(from, 1);
+      arr.splice(to, 0, m);
+      return { ...p, steps: arr };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+    logTelemetryEvent('step_reordered', { play_id: playId, from_index: from, to_index: to, draft_id: draft?.id });
+  };
+
+  const updateStep = (playId, stepId, patch) => {
+    const nextPlays = (playbook.plays||[]).map(p => p.id === playId ? { ...p, steps: (p.steps||[]).map(s => s.id === stepId ? { ...s, ...patch } : s) } : p);
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const addStepInput = (playId, stepId) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const steps = (p.steps||[]).map(s => {
+        if (s.id !== stepId) return s;
+        const newInput = { id: `inp_${Date.now()}`, label: '', key: '', type: 'short_text', required: false, defaultValue: '', helpText: '', placeholder: '', options: [] };
+        return { ...s, inputs: [...(s.inputs||[]), newInput] };
+      });
+      return { ...p, steps };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const updateStepInput = (playId, stepId, inputId, field, value) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const steps = (p.steps||[]).map(s => {
+        if (s.id !== stepId) return s;
+        const inputs = (s.inputs||[]).map(inp => inp.id === inputId ? { ...inp, [field]: value } : inp);
+        return { ...s, inputs };
+      });
+      return { ...p, steps };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const removeStepInput = (playId, stepId, inputId) => {
+    const nextPlays = (playbook.plays||[]).map(p => p.id === playId ? { ...p, steps: (p.steps||[]).map(s => s.id === stepId ? { ...s, inputs: (s.inputs||[]).filter(inp => inp.id !== inputId) } : s) } : p);
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const updateStepInputOption = (playId, stepId, inputId, optIndex, field, value) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const steps = (p.steps||[]).map(s => {
+        if (s.id !== stepId) return s;
+        const inputs = (s.inputs||[]).map(inp => {
+          if (inp.id !== inputId) return inp;
+          const opts = [...(inp.options||[])];
+          opts[optIndex] = { ...opts[optIndex], [field]: value };
+          return { ...inp, options: opts };
+        });
+        return { ...s, inputs };
+      });
+      return { ...p, steps };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const addStepInputOption = (playId, stepId, inputId) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const steps = (p.steps||[]).map(s => {
+        if (s.id !== stepId) return s;
+        const inputs = (s.inputs||[]).map(inp => inp.id === inputId ? { ...inp, options: [...(inp.options||[]), { label: '', value: '' }] } : inp);
+        return { ...s, inputs };
+      });
+      return { ...p, steps };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  const removeStepInputOption = (playId, stepId, inputId, optIndex) => {
+    const nextPlays = (playbook.plays||[]).map(p => {
+      if (p.id !== playId) return p;
+      const steps = (p.steps||[]).map(s => {
+        if (s.id !== stepId) return s;
+        const inputs = (s.inputs||[]).map(inp => {
+          if (inp.id !== inputId) return inp;
+          const opts = [...(inp.options||[])];
+          opts.splice(optIndex, 1);
+          return { ...inp, options: opts };
+        });
+        return { ...s, inputs };
+      });
+      return { ...p, steps };
+    });
+    persistPlaybook({ ...playbook, plays: nextPlays });
+  };
+
+  // Series-specific helpers
+  const getFilteredPlaybooks = () => {
+    return mockPlaybooks.filter(p => {
+      // Match version constraint
+      const versionMatch = p.version_type === selectedVersion && 
+        (selectedVersion === 'ella' || selectedVersion === 'global' || 
+         (selectedVersion === 'edition' && p.version_id === selectedEdition) ||
+         (selectedVersion === 'organization' && p.version_id === selectedOrganization) ||
+         (selectedVersion === 'workspace' && p.version_id === selectedWorkspace) ||
+         (selectedVersion === 'brandbot' && p.version_id === selectedBrandBot));
+      
+      // Match drawer (only Playbooks drawer for Series)
+      const drawerMatch = p.drawer === 'playbooks';
+      
+      // Match section if selected
+      const sectionMatch = !selectedSection || p.section_id === selectedSection;
+      
+      return versionMatch && drawerMatch && sectionMatch;
+    });
+  };
+
+  const addPlaybookToSeries = (playbook) => {
+    if ((series.items||[]).some(i => i.playbookId === playbook.id)) return;
+    const newItem = {
+      id: `series_item_${Date.now()}`,
+      playbookId: playbook.id,
+      name: playbook.name,
+      label: playbook.name,
+      stepCount: playbook.stepCount,
+      preview: playbook.preview,
+      estMinutes: playbook.estMinutes || 0,
+      tags: playbook.tags || [],
+      section_id: playbook.section_id,
+      knowledgeFiles: playbook.knowledgeFiles || []
+    };
+    setSeries(prev => ({ ...prev, items: [...(prev.items||[]), newItem] }));
+    saveTemplateDraft();
+    logTelemetryEvent('series_playbook_added', { playbook_id: playbook.id, draft_id: draft?.id });
+  };
+
   // Series helpers
   const isSeriesValid = () => {
-    if (!series.name || series.name.trim().length === 0) return false;
+    if (!series.title || series.title.trim().length === 0) return false;
+    if (!series.preview || series.preview.trim().length === 0) return false;
+    if ((series.preview || '').length > 160) return false;
+    if (!series.instructions || series.instructions.trim().length === 0) return false;
     if (!series.items || series.items.length === 0) return false;
-    // unique labels
-    const labels = series.items.map(i => (i.label || i.name || '').toLowerCase());
-    const dup = labels.some((n, i) => n && labels.indexOf(n) !== i);
-    if (dup) return false;
     return true;
   };
 
   const handleSeriesAddExisting = (p) => {
+    if ((series.items||[]).some(i => i.playbookId === p.id)) return;
     const newItem = {
       id: `series_item_${Date.now()}`,
       playbookId: p.id,
       name: p.name,
       label: p.name,
       stepCount: p.stepCount,
-      preview: p.preview
+      preview: p.preview,
+      estMinutes: p.stepCount ? p.stepCount * 10 : 0,
+      knowledgeFiles: []
     };
     setSeries(prev => ({ ...prev, items: [...prev.items, newItem] }));
     setShowAddPlaybookModal(false);
@@ -2091,7 +2761,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
       name: p.name,
       label: p.name,
       stepCount: p.stepCount || 1,
-      preview: p.preview || ''
+      preview: p.preview || '',
+      estMinutes: (p.stepCount || 1) * 10,
+      knowledgeFiles: []
     };
     setSeries(prev => ({ ...prev, items: [...prev.items, newItem] }));
     setInlinePlaybookForm({ name: '', stepCount: 1, preview: '' });
@@ -2110,6 +2782,7 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
       return { ...prev, items };
     });
     saveTemplateDraft();
+    logTelemetryEvent('series_reordered', { from_index: direction === 'up' ? idx : idx + 1, to_index: direction === 'up' ? idx - 1 : idx, draft_id: draft?.id });
   };
 
   const handleSeriesRemove = (itemId) => {
@@ -2351,6 +3024,137 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
             )}
           </div>
           
+      {/* Full-screen Preview Overlay */}
+      {showPreviewModal && (type === 'playbook' || type === 'group') && (
+        <div className="preview-overlay" role="dialog" aria-modal="true" aria-labelledby="pb-preview-title">
+          <div className="preview-header">
+            <div className="preview-header-left">
+              <h2 id="pb-preview-title">{type === 'playbook' ? (playbook.title || 'Untitled Playbook') : (series.title || 'Untitled Series')}</h2>
+              <span className="preview-status-badge">Draft</span>
+              <span className="preview-pill">{selectedDrawer === 'ellaments' ? 'Ella-ments' : 'Playbooks'} • {selectedSection ? (getSectionCatalog().find(s => s.id === selectedSection)?.name || 'Section') : 'Unassigned'}</span>
+              <span className="preview-badge">{getVersionLabel()}</span>
+            </div>
+            <div className="preview-header-right">
+              <button className="create-drawer-btn" onClick={() => { recomputeValidation(); logTelemetryEvent('playbook_preview_validated', { errors: previewIssues.errors.length, warnings: previewIssues.warnings.length }); }}>Re-run checks</button>
+              <button className="create-drawer-btn" onClick={() => window.print()}>Print / PDF</button>
+              {isAdmin && (
+                <button className="create-drawer-btn create-drawer-btn--primary" disabled={previewIssues.errors.length > 0 || !selectedSection || !selectedDrawer} onClick={() => {
+                  logTelemetryEvent('playbook_publish_clicked', { draft_id: draft?.id });
+                  try {
+                    // Simulate publish
+                    const published = JSON.parse(localStorage.getItem('ella-published') || '[]');
+                    published.push({ id: draft?.id, type: 'playbook', scope: selectedVersion, drawer: selectedDrawer, section: selectedSection, published_at: new Date().toISOString(), published_by: 'current_user_id' });
+                    localStorage.setItem('ella-published', JSON.stringify(published));
+                    setShowPreviewModal(false);
+                    logTelemetryEvent('playbook_publish_success', { draft_id: draft?.id });
+                    // Success toast
+                    alert('Published. It is now available in the selected Drawer/Section.');
+                  } catch (e) {
+                    logTelemetryEvent('playbook_publish_failure', { draft_id: draft?.id, error_code: 500 });
+                    alert("Couldn’t publish. Try again.");
+                  }
+                }}>Publish</button>
+              )}
+              <button className="create-drawer-btn" onClick={() => setShowPreviewModal(false)}>Close</button>
+            </div>
+          </div>
+
+          {/* Validation Banner */}
+          {(previewIssues.errors.length > 0 || previewIssues.warnings.length > 0) && (
+            <div className={`preview-banner ${previewIssues.errors.length ? 'preview-banner--error' : 'preview-banner--warning'}`} role="status" aria-live="polite">
+              {previewIssues.errors.length > 0 && <span className="preview-pill-error">{previewIssues.errors.length} errors</span>}
+              {previewIssues.warnings.length > 0 && <span className="preview-pill-warning">{previewIssues.warnings.length} warnings</span>}
+            </div>
+          )}
+
+          <div className="preview-body">
+            <section className="preview-overview" aria-labelledby="preview-overview-title">
+              <h3 id="preview-overview-title">Overview</h3>
+              <div className="preview-grid">
+                <div>
+                  <div className="preview-field"><strong>Preview</strong><div>{type === 'playbook' ? (playbook.preview || '—') : (series.preview || '—')}</div></div>
+                  {((type === 'playbook' && playbook.description) || (type === 'group' && series.description)) && <div className="preview-field"><strong>Description</strong><div>{type === 'playbook' ? playbook.description : series.description}</div></div>}
+                  <div className="preview-field"><strong>Instructions</strong><div>{type === 'playbook' ? (playbook.instructions || '—') : (series.instructions || '—')}</div></div>
+                  {((type === 'playbook' && (playbook.knowledgeFiles||[]).length>0) || (type === 'group' && (series.knowledgeFiles||[]).length>0)) && (
+                    <div className="preview-field"><strong>Knowledge Files</strong><ul className="preview-files-list">{(type === 'playbook' ? (playbook.knowledgeFiles||[]) : (series.knowledgeFiles||[])).map((f,i)=> <li key={i}>{f.name}</li>)}</ul></div>
+                  )}
+                  {type === 'group' && (
+                    <div className="preview-field"><strong>Estimated Time</strong><div>Calculated: {(series.items||[]).reduce((sum,i)=> sum + (Number(i.estMinutes)||0), 0)} min{series.estMinutes && (<span> • Series: {series.estMinutes} min</span>)}</div></div>
+                  )}
+                </div>
+                <div>
+                  <div className="preview-field"><strong>Placement</strong><div>{selectedDrawer === 'ellaments' ? 'Ella-ments' : 'Playbooks'} → {selectedSection ? (getSectionCatalog().find(s => s.id === selectedSection)?.name || 'Section') : 'Unassigned'}</div></div>
+                  <div className="preview-field"><strong>Version</strong><div>{getVersionLabel()}</div></div>
+                  {selectedTags?.length>0 && (<div className="preview-field"><strong>Tags</strong><div className="preview-tags">{selectedTags.map(t => <span key={t.id} className="preview-tag">{t.name}</span>)}</div></div>)}
+                </div>
+              </div>
+              {isAdmin && <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => { setShowPreviewModal(false); setCurrentStep('authoring'); }}>{type === 'playbook' ? 'Edit Playbook' : 'Edit Series'}</button>}
+            </section>
+
+            {type === 'playbook' && (
+              <section className="preview-plays" aria-labelledby="preview-plays-title">
+                <h3 id="preview-plays-title">Plays</h3>
+                {(playbook.plays||[]).map((p, pi)=> (
+                  <details key={p.id} className="preview-play-card" open>
+                    <summary>
+                      <span className="preview-step-index">{pi+1}</span>
+                      <span className="preview-play-title">{p.title || 'Untitled Play'}</span>
+                      <span className="preview-play-sub">{p.preview || ''}</span>
+                      {isAdmin && <button className="create-drawer-btn create-drawer-btn--ghost" onClick={(e) => { e.preventDefault(); setShowPreviewModal(false); setCurrentStep('authoring'); setExpandedPlayIds(prev => [...new Set([...prev, p.id])]); }}>Edit Play</button>}
+                    </summary>
+                    <div className="preview-play-body">
+                      {p.description && <div className="preview-field"><strong>Description</strong><div>{p.description}</div></div>}
+                      <div className="preview-field"><strong>Instructions</strong><div>{p.instructions || '—'}</div></div>
+                      {(p.knowledgeFiles||[]).length>0 && (<div className="preview-field"><strong>Files</strong><ul className="preview-files-list">{(p.knowledgeFiles||[]).map((f,i)=> <li key={i}>{f.name}</li>)}</ul></div>)}
+                      <div className="preview-steps-table">
+                        <div className="preview-steps-header"><span>#</span><span>Step Name</span><span>Prompt</span><span>Inputs</span><span></span></div>
+                        {(p.steps||[]).map((s,si)=> (
+                          <div key={s.id} className="preview-steps-row">
+                            <span>{si+1}</span>
+                            <span>{s.title || `Step ${si+1}`}</span>
+                            <span className="preview-prompt-cell">{(s.prompt||'').length>140 ? `${s.prompt.slice(0,140)}…` : (s.prompt||'')}</span>
+                            <span>{(s.inputs||[]).length} inputs</span>
+                            {isAdmin && <button className="create-drawer-btn create-drawer-btn--ghost" onClick={() => { setShowPreviewModal(false); setCurrentStep('authoring'); setExpandedPlayIds(prev => [...new Set([...prev, p.id])]); }}>Edit Step</button>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+                ))}
+              </section>
+            )}
+
+            {type === 'group' && (
+              <section className="preview-series-section" aria-labelledby="preview-series-title">
+                <h3 id="preview-series-title">Playbook Sequence</h3>
+                <div className="preview-series-list">
+                  {(series.items||[]).map((pb, idx)=> (
+                    <div key={pb.id} className="preview-series-item">
+                      <div className="preview-step-head">
+                        <div className="preview-step-index">{idx+1}</div>
+                        <div className="preview-step-title">{pb.label || pb.name}</div>
+                      </div>
+                      <div className="preview-step-sub">{pb.preview || ''} • {pb.estMinutes || 0} min</div>
+                      {(pb.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Files:</strong> {(pb.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
+                      {(pb.tags||[]).length>0 && (<div className="preview-tags">{(pb.tags||[]).map(t=> <span key={t} className="preview-tag">{t}</span>)}</div>)}
+                    </div>
+                  ))}
+                </div>
+                {/* Aggregated child tags */}
+                {type === 'group' && (series.items||[]).length > 0 && (
+                  <div className="preview-field" style={{ marginTop: 16 }}>
+                    <strong>Aggregated Tags (from Playbooks)</strong>
+                    <div className="preview-tags">
+                      {Array.from(new Set((series.items||[]).flatMap(i => i.tags||[]))).map(t=> <span key={t} className="preview-tag preview-tag--aggregated">{t}</span>)}
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+          </div>
+        </div>
+      )}
+
           <div className="create-drawer-footer-right">
             {currentStep === 'authoring' && (
               <>
@@ -2383,14 +3187,20 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               <>
                 <button
                   className="create-drawer-btn create-drawer-btn--ghost"
-                  onClick={() => setShowPreviewModal(true)}
+                  onClick={() => {
+                    // Autosave before preview
+                    saveTemplateDraft();
+                    setShowPreviewModal(true);
+                    if (type === 'playbook') logTelemetryEvent('playbook_preview_opened', { draft_id: draft?.id });
+                    recomputeValidation();
+                  }}
                 >
                   <span className="create-drawer-btn-icon">👁️</span>
                   {type === 'playbook' ? 'Preview Playbook' : 'Preview'}
                 </button>
                 <button
                   className="create-drawer-btn create-drawer-btn--primary"
-                  disabled={type === 'template' ? !isTemplateFormValid() : type === 'playbook' ? !isPlaybookValid() : !isSeriesValid()}
+                  disabled={type === 'template' ? !isTemplateFormValid() : type === 'playbook' ? validation.errors.length > 0 : !isSeriesValid()}
                 >
                   Save & Continue
                 </button>

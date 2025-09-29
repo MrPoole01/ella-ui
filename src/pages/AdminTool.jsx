@@ -16,6 +16,9 @@ const AdminTool = () => {
     const path = location.pathname;
     if (path.includes('/admin/templates')) {
       setActiveTab('templates');
+    } else if (path.includes('/admin/playbooks')) {
+      // Map legacy /admin/playbooks to Playbooks tab (Templates slot)
+      setActiveTab('templates');
     } else if (path.includes('/admin/users')) {
       setActiveTab('users');
     } else if (path.includes('/admin/playbooks')) {
@@ -91,16 +94,16 @@ const AdminTool = () => {
             onClick={() => handleNavigation('templates', '/admin/templates')}
           >
             <i className="fa-solid fa-layer-group"></i>
-            <span>Templates</span>
+            <span>Playbooks</span>
           </button>
           
-          <button 
+          {/* <button 
             className={`admin-nav-item ${activeTab === 'playbooks' ? 'admin-nav-item--active' : ''}`}
             onClick={() => handleNavigation('playbooks', '/admin/playbooks')}
           >
             <i className="fa-solid fa-book"></i>
             <span>Playbooks</span>
-          </button>
+          </button> */}
           
           <button 
             className={`admin-nav-item ${activeTab === 'brand-bots' ? 'admin-nav-item--active' : ''}`}
@@ -115,7 +118,7 @@ const AdminTool = () => {
             onClick={() => handleNavigation('tags', '/admin/tags')}
           >
             <i className="fa-solid fa-tags"></i>
-            <span>Tags</span>
+            <span>Tag Management</span>
           </button>
           
           <button 
@@ -149,7 +152,7 @@ const AdminTool = () => {
           <Route path="/templates" element={<AdminTemplates />} />
           <Route path="/import/:type" element={<AdminImport />} />
           <Route path="/users" element={<AdminUsers />} />
-          <Route path="/playbooks" element={<AdminPlaybooks />} />
+          <Route path="/playbooks" element={<Navigate to="/admin/templates" replace />} />
           <Route path="/brand-bots" element={<AdminBrandBots />} />
           <Route path="/tags" element={<AdminTags />} />
           <Route path="/settings" element={<AdminSettings />} />
@@ -164,15 +167,22 @@ const AdminTool = () => {
 // Admin Templates Component
 const AdminTemplates = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdmin = (localStorage.getItem('ella-user-role') || '') === 'admin';
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [tagsFilter, setTagsFilter] = useState('');
-  const [partnerEditionFilter, setPartnerEditionFilter] = useState('');
-  const [brandBotFilter, setBrandBotFilter] = useState('');
+  const [tagsFilter, setTagsFilter] = useState([]); // multi
+  const [partnerEditionFilter, setPartnerEditionFilter] = useState([]); // multi
+  const [brandBotFilter, setBrandBotFilter] = useState([]); // multi
   const [sortBy, setSortBy] = useState('updated');
   const [currentPage, setCurrentPage] = useState(1);
   const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastKind, setToastKind] = useState('success'); // 'success' | 'error'
+  const [isCreatingDraft, setIsCreatingDraft] = useState(false);
   
   // Modal and drawer states
   const [isTypeSelectorOpen, setIsTypeSelectorOpen] = useState(false);
@@ -190,8 +200,13 @@ const AdminTemplates = () => {
       timeNeeded: '45 min',
       templateKind: 'system',
       tags: ['Social Media', 'Content', 'Q3 Planning'],
-      partnerEdition: false,
-      brandBot: false
+      partnerEdition: true,
+      partnerEditionName: 'Partner A',
+      brandBot: false,
+      brandBotName: '',
+      usage: 42,
+      createdAt: '2025-07-02T10:00:00Z',
+      updatedAt: '2025-09-20T08:30:00Z'
     },
     {
       id: 2,
@@ -202,7 +217,12 @@ const AdminTemplates = () => {
       templateKind: 'custom',
       tags: ['Email Marketing', 'Newsletter'],
       partnerEdition: false,
-      brandBot: true
+      partnerEditionName: '',
+      brandBot: true,
+      brandBotName: 'Bot X',
+      usage: 18,
+      createdAt: '2025-06-15T13:10:00Z',
+      updatedAt: '2025-09-24T09:45:00Z'
     },
     {
       id: 3,
@@ -213,7 +233,12 @@ const AdminTemplates = () => {
       templateKind: 'system',
       tags: ['Planning', 'OKR', 'Strategy'],
       partnerEdition: true,
-      brandBot: false
+      partnerEditionName: 'Partner B',
+      brandBot: false,
+      brandBotName: '',
+      usage: 33,
+      createdAt: '2025-04-11T16:05:00Z',
+      updatedAt: '2025-09-18T12:00:00Z'
     },
     {
       id: 4,
@@ -224,7 +249,12 @@ const AdminTemplates = () => {
       templateKind: 'system',
       tags: ['SEO', 'Blog', 'Writing'],
       partnerEdition: false,
-      brandBot: false
+      partnerEditionName: '',
+      brandBot: false,
+      brandBotName: '',
+      usage: 9,
+      createdAt: '2025-05-02T08:00:00Z',
+      updatedAt: '2025-09-10T14:00:00Z'
     },
     {
       id: 5,
@@ -235,7 +265,12 @@ const AdminTemplates = () => {
       templateKind: 'system',
       tags: ['Product Marketing', 'Launch'],
       partnerEdition: false,
-      brandBot: false
+      partnerEditionName: '',
+      brandBot: false,
+      brandBotName: '',
+      usage: 21,
+      createdAt: '2025-03-05T10:00:00Z',
+      updatedAt: '2025-09-12T10:00:00Z'
     },
     {
       id: 6,
@@ -246,7 +281,12 @@ const AdminTemplates = () => {
       templateKind: 'custom',
       tags: ['CRO', 'Experimentation'],
       partnerEdition: true,
-      brandBot: true
+      partnerEditionName: 'Partner A',
+      brandBot: true,
+      brandBotName: 'Bot Y',
+      usage: 27,
+      createdAt: '2025-02-18T09:00:00Z',
+      updatedAt: '2025-09-22T11:20:00Z'
     },
     {
       id: 7,
@@ -257,7 +297,12 @@ const AdminTemplates = () => {
       templateKind: 'system',
       tags: ['LinkedIn', 'Personal Brand'],
       partnerEdition: false,
-      brandBot: false
+      partnerEditionName: '',
+      brandBot: false,
+      brandBotName: '',
+      usage: 13,
+      createdAt: '2025-01-10T12:20:00Z',
+      updatedAt: '2025-09-05T13:00:00Z'
     },
     {
       id: 8,
@@ -268,24 +313,106 @@ const AdminTemplates = () => {
       templateKind: 'system',
       tags: ['Market Research', 'SWOT'],
       partnerEdition: false,
-      brandBot: false
+      partnerEditionName: '',
+      brandBot: false,
+      brandBotName: '',
+      usage: 6,
+      createdAt: '2025-06-01T08:30:00Z',
+      updatedAt: '2025-09-08T08:10:00Z'
     }
   ];
 
+  // Query param helpers
+  const parseCsv = (val) => (val ? val.split(',').filter(Boolean) : []);
+  const toCsv = (arr) => (arr && arr.length ? arr.join(',') : '');
+
+  // Load data and read query params
   useEffect(() => {
+    setLoading(true);
+    setError('');
+    // Simulate async fetch
+    const timer = setTimeout(() => {
+      try {
     setTemplates(mockTemplates);
+        const params = new URLSearchParams(location.search);
+        setSearchQuery(params.get('q') || '');
+        setTypeFilter(params.get('type') || 'all');
+        setTagsFilter(parseCsv(params.get('tags')));
+        setPartnerEditionFilter(parseCsv(params.get('pe')));
+        setBrandBotFilter(parseCsv(params.get('bb')));
+        setSortBy(params.get('sort') || 'updated');
+        setCurrentPage(Math.max(1, parseInt(params.get('page') || '1', 10)));
+      } catch (e) {
+        setError('Failed to load playbooks.');
+      } finally {
+        setLoading(false);
+      }
+    }, 400);
+    return () => clearTimeout(timer);
   }, []);
+
+  // Persist to query params
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchQuery) params.set('q', searchQuery);
+    if (typeFilter && typeFilter !== 'all') params.set('type', typeFilter);
+    if (tagsFilter.length) params.set('tags', toCsv(tagsFilter));
+    if (partnerEditionFilter.length) params.set('pe', toCsv(partnerEditionFilter));
+    if (brandBotFilter.length) params.set('bb', toCsv(brandBotFilter));
+    if (sortBy && sortBy !== 'updated') params.set('sort', sortBy);
+    if (currentPage && currentPage !== 1) params.set('page', String(currentPage));
+    const search = params.toString();
+    navigate({ pathname: '/admin/templates', search: search ? `?${search}` : '' }, { replace: true });
+  }, [searchQuery, typeFilter, tagsFilter, partnerEditionFilter, brandBotFilter, sortBy, currentPage, navigate]);
 
   // Create flow handlers
   const handleCreateClick = () => {
-    // Log telemetry event
+    if (!isAdmin) return;
     logTelemetryEvent('admin_create_clicked');
-    
-    // Open type selector modal
     setIsTypeSelectorOpen(true);
-    
-    // Log modal opened event
     logTelemetryEvent('type_selector_opened');
+  };
+
+  const createDraftMock = async (selectedType) => {
+    // RBAC: only admins allowed
+    if (!isAdmin) {
+      const err = new Error('Forbidden');
+      err.status = 403;
+      throw err;
+    }
+    // Validation
+    if (selectedType !== 'playbook' && selectedType !== 'series') {
+      const err = new Error('Invalid type');
+      err.status = 422;
+      throw err;
+    }
+    // Simulate server error via toggle
+    const simulate = localStorage.getItem('ella-simulate-create-failure');
+    if (simulate === '500') {
+      const err = new Error('Server error');
+      err.status = 500;
+      throw err;
+    }
+    // Simulate latency
+    await new Promise(r => setTimeout(r, 400));
+    // Create draft DTO
+    const id = crypto?.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const nowIso = new Date().toISOString();
+    const draft = {
+      id,
+      type: selectedType,
+      status: 'draft',
+      created_by: 'current_user_id',
+      created_at: nowIso,
+      last_modified_at: nowIso,
+      origin: 'admin',
+      progress_step: 'type_selected'
+    };
+    // Persist to localStorage (mock DB)
+    const store = JSON.parse(localStorage.getItem('ella-drafts') || '[]');
+    store.unshift(draft);
+    localStorage.setItem('ella-drafts', JSON.stringify(store));
+    return draft;
   };
 
   const navigateToImport = (type) => {
@@ -344,8 +471,30 @@ const AdminTemplates = () => {
   };
 
   const handleCardAction = (action, template) => {
-    console.log(`${action} template:`, template);
-    // Implement actions: view, edit, duplicate, delete
+    if (action === 'view') {
+      logTelemetryEvent('playbook_view', { id: template.id });
+      alert(`View details for: ${template.title}`);
+      return;
+    }
+    if (action === 'edit') {
+      if (!isAdmin) return;
+      logTelemetryEvent('playbook_edit', { id: template.id });
+      alert(`Edit: ${template.title}`);
+      return;
+    }
+    if (action === 'duplicate') {
+      logTelemetryEvent('playbook_duplicate', { id: template.id });
+      const copy = { ...template, id: Math.max(...templates.map(t => t.id)) + 1, title: `${template.title} (Copy)` };
+      setTemplates([copy, ...templates]);
+      return;
+    }
+    if (action === 'delete') {
+      if (!isAdmin) return;
+      if (window.confirm('Are you sure you want to delete this playbook?')) {
+        logTelemetryEvent('playbook_delete', { id: template.id });
+        setTemplates(templates.filter(t => t.id !== template.id));
+      }
+    }
   };
 
   const getTypeColor = (type) => {
@@ -357,29 +506,53 @@ const AdminTemplates = () => {
     }
   };
 
+  // Derived options for multi-selects
+  const allTags = Array.from(new Set(templates.flatMap(t => t.tags))).sort();
+  const allPartnerNames = Array.from(new Set(templates.map(t => t.partnerEditionName).filter(Boolean))).sort();
+  const allBrandBotNames = Array.from(new Set(templates.map(t => t.brandBotName).filter(Boolean))).sort();
+
   const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.preview.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         template.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const q = (searchQuery || '').toLowerCase();
+    const matchesSearch =
+      template.title.toLowerCase().includes(q) ||
+      template.preview.toLowerCase().includes(q) ||
+      (template.tags || []).some(tag => tag.toLowerCase().includes(q));
     
     const matchesType = typeFilter === 'all' || template.type === typeFilter;
     
-    return matchesSearch && matchesType;
+    const matchesTags = tagsFilter.length === 0 || tagsFilter.every(t => (template.tags || []).includes(t));
+
+    const matchesPartner = partnerEditionFilter.length === 0 || partnerEditionFilter.includes(template.partnerEditionName || '');
+
+    const matchesBrandBot = brandBotFilter.length === 0 || brandBotFilter.includes(template.brandBotName || '');
+
+    return matchesSearch && matchesType && matchesTags && matchesPartner && matchesBrandBot;
   });
 
-  const totalPages = Math.ceil(filteredTemplates.length / 24);
+  // Sorting
+  const sortedTemplates = [...filteredTemplates].sort((a, b) => {
+    if (sortBy === 'updated') return new Date(b.updatedAt) - new Date(a.updatedAt);
+    if (sortBy === 'created') return new Date(b.createdAt) - new Date(a.createdAt);
+    if (sortBy === 'title') return a.title.localeCompare(b.title);
+    if (sortBy === 'usage') return (b.usage || 0) - (a.usage || 0);
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedTemplates.length / 24) || 1;
   const startIndex = (currentPage - 1) * 24;
-  const paginatedTemplates = filteredTemplates.slice(startIndex, startIndex + 24);
+  const paginatedTemplates = sortedTemplates.slice(startIndex, startIndex + 24);
 
   return (
     <div className="admin-templates">
       {/* Header */}
       <header className="admin-content-header">
-        <h1 className="admin-page-title">Templates</h1>
+        <h1 className="admin-page-title">Playbooks</h1>
         <div className="admin-header-actions">
+          {isAdmin && (
           <button className="admin-btn admin-btn--primary" onClick={handleCreateClick}>
             Create
           </button>
+          )}
         </div>
       </header>
       
@@ -401,7 +574,7 @@ const AdminTemplates = () => {
             <select 
               className="admin-select"
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
+              onChange={(e) => { setTypeFilter(e.target.value); setCurrentPage(1); }}
             >
               <option value="all">Type: All</option>
               <option value="strategy">Strategy</option>
@@ -409,23 +582,31 @@ const AdminTemplates = () => {
               <option value="execution">Execution</option>
             </select>
             
-            <select className="admin-select">
-              <option>Tags</option>
-              <option>Marketing</option>
-              <option>Sales</option>
-              <option>SEO</option>
+            <select
+              className="admin-select"
+              value={tagsFilter}
+              onChange={(e) => { setTagsFilter(Array.from(e.target.selectedOptions).map(o => o.value)); setCurrentPage(1); }}
+            >
+              <option value="" disabled>Tags</option>
+              {allTags.map(t => (<option key={t} value={t}>{t}</option>))}
             </select>
             
-            <select className="admin-select">
-              <option>Partner Edition</option>
-              <option>Partner A</option>
-              <option>Partner B</option>
+            <select
+              className="admin-select"
+              value={partnerEditionFilter}
+              onChange={(e) => { setPartnerEditionFilter(Array.from(e.target.selectedOptions).map(o => o.value)); setCurrentPage(1); }}
+            >
+              <option value="" disabled>Partner Edition</option>
+              {allPartnerNames.map(n => (<option key={n} value={n}>{n}</option>))}
             </select>
             
-            <select className="admin-select">
-              <option>Brand Bot</option>
-              <option>Bot X</option>
-              <option>Bot Y</option>
+            <select
+              className="admin-select"
+              value={brandBotFilter}
+              onChange={(e) => { setBrandBotFilter(Array.from(e.target.selectedOptions).map(o => o.value)); setCurrentPage(1); }}
+            >
+              <option value="" disabled>Brand Bot</option>
+              {allBrandBotNames.map(n => (<option key={n} value={n}>{n}</option>))}
             </select>
           </div>
           
@@ -434,7 +615,7 @@ const AdminTemplates = () => {
             <select 
               className="admin-select"
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
             >
               <option value="updated">Updated</option>
               <option value="created">Created</option>
@@ -448,17 +629,43 @@ const AdminTemplates = () => {
       {/* Results Grid */}
       <section className="admin-results-section">
         <div className="admin-templates-grid">
-          {paginatedTemplates.map((template) => (
+          {loading && (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={`s-${i}`} className="admin-template-card">
+                <div className="admin-card-content">
+                  <div className="admin-card-header">
+                    <span className="admin-type-badge skeleton" style={{ width: 80 }}></span>
+                    <div className="admin-card-menu"><span className="skeleton" style={{ width: 24, height: 24 }}></span></div>
+                  </div>
+                  <div className="admin-card-title skeleton" style={{ height: 20, width: '70%', marginTop: 8 }}></div>
+                  <div className="admin-card-preview skeleton" style={{ height: 48, width: '100%', marginTop: 8 }}></div>
+                  <div className="admin-card-meta">
+                    <span className="skeleton" style={{ width: 80, height: 16 }}></span>
+                    <span className="skeleton" style={{ width: 60, height: 16 }}></span>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+          {!loading && paginatedTemplates.map((template) => (
             <div key={template.id} className="admin-template-card">
               <div className="admin-card-content">
                 <div className="admin-card-header">
                   <span className={`admin-type-badge ${getTypeColor(template.type)}`}>
                     {template.type.charAt(0).toUpperCase() + template.type.slice(1)}
                   </span>
-                  <div className="admin-card-menu">
-                    <button className="admin-card-menu-btn">
+                  <div className="admin-card-menu" style={{ position: 'relative' }}>
+                    <button className="admin-card-menu-btn" onClick={() => setOpenMenuId(openMenuId === template.id ? null : template.id)}>
                       <i className="fa-solid fa-ellipsis-vertical"></i>
                     </button>
+                    {openMenuId === template.id && (
+                      <div className="admin-card-menu-list" style={{ position: 'absolute', right: 0, top: 28, background: 'var(--surface-2, #1f1f1f)', border: '1px solid var(--border, #333)', borderRadius: 8, padding: 8, zIndex: 3 }}>
+                        <button className="admin-card-menu-item" onClick={() => { setOpenMenuId(null); handleCardAction('view', template); }}>View Details</button>
+                        {isAdmin && <button className="admin-card-menu-item" onClick={() => { setOpenMenuId(null); handleCardAction('edit', template); }}>Edit</button>}
+                        <button className="admin-card-menu-item" onClick={() => { setOpenMenuId(null); handleCardAction('duplicate', template); }}>Duplicate</button>
+                        {isAdmin && <button className="admin-card-menu-item" onClick={() => { setOpenMenuId(null); handleCardAction('delete', template); }}>Delete</button>}
+                      </div>
+                    )}
                   </div>
                 </div>
                 
@@ -473,8 +680,8 @@ const AdminTemplates = () => {
                   <span className={`admin-template-kind ${template.templateKind === 'custom' ? 'admin-template-kind--custom' : ''}`}>
                     {template.templateKind === 'custom' ? 'Custom' : 'System'}
                   </span>
-                  {template.brandBot && <i className="fa-solid fa-robot admin-brand-bot-icon" title="Brand Bot Enabled"></i>}
-                  {template.partnerEdition && <i className="fa-solid fa-handshake admin-partner-icon" title="Partner Edition"></i>}
+                  {template.brandBot && <i className="fa-solid fa-robot admin-brand-bot-icon" title={template.brandBotName || 'Brand Bot Enabled'}></i>}
+                  {template.partnerEdition && <i className="fa-solid fa-handshake admin-partner-icon" title={template.partnerEditionName || 'Partner Edition'}></i>}
                 </div>
               </div>
               
@@ -490,22 +697,34 @@ const AdminTemplates = () => {
         </div>
 
         {/* Empty State */}
-        {filteredTemplates.length === 0 && (
+        {!loading && !error && filteredTemplates.length === 0 && (
           <div className="admin-empty-state">
             <i className="fa-solid fa-folder-open admin-empty-icon"></i>
-            <h3 className="admin-empty-title">No Templates Found</h3>
+            <h3 className="admin-empty-title">No Playbooks Found</h3>
             <p className="admin-empty-description">
               Your search and filter combination did not return any results. Try adjusting your criteria or create a new template.
             </p>
           </div>
         )}
+        {error && (
+          <div className="admin-empty-state">
+            <i className="fa-solid fa-triangle-exclamation admin-empty-icon"></i>
+            <h3 className="admin-empty-title">Something went wrong</h3>
+            <p className="admin-empty-description">{error}</p>
+            <button className="admin-btn admin-btn--secondary" onClick={() => {
+              setError('');
+              setLoading(true);
+              setTimeout(() => { setTemplates(mockTemplates); setLoading(false); }, 400);
+            }}>Retry</button>
+          </div>
+        )}
       </section>
 
       {/* Pagination */}
-      {filteredTemplates.length > 0 && (
+      {!loading && filteredTemplates.length > 0 && (
         <footer className="admin-pagination-footer">
           <span className="admin-pagination-info">
-            Showing {startIndex + 1}-{Math.min(startIndex + 24, filteredTemplates.length)} of {filteredTemplates.length} templates
+            Showing {startIndex + 1}-{Math.min(startIndex + 24, sortedTemplates.length)} of {sortedTemplates.length} playbooks
           </span>
           <div className="admin-pagination-controls">
             <button 
@@ -554,15 +773,46 @@ const AdminTemplates = () => {
       <ErrorBoundary 
         name="TypeSelectorModal"
         fallbackMessage="There was an error with the type selector. Please try again."
-        onError={handleTypeSelectorCancel}
+        onError={() => { setIsTypeSelectorOpen(false); }}
       >
         <TypeSelectorModal
           isOpen={isTypeSelectorOpen}
-          onContinue={handleTypeSelectorContinue}
-          onCancel={handleTypeSelectorCancel}
-          onClose={handleTypeSelectorCancel}
+          onContinue={async (selectedType) => {
+            if (!selectedType) return;
+            setSelectedCreateType(selectedType);
+            logTelemetryEvent('type_selected', { value: selectedType });
+            try {
+              setIsCreatingDraft(true);
+              const draft = await createDraftMock(selectedType);
+              logTelemetryEvent('create_draft_success');
+              setCurrentDraft(draft);
+              setIsTypeSelectorOpen(false);
+              setIsCreateDrawerOpen(true);
+              logTelemetryEvent('create_drawer_opened', { value: selectedType });
+            } catch (e) {
+              const status = e?.status || 500;
+              if (status === 403) {
+                setIsTypeSelectorOpen(false);
+                setToastKind('error');
+                setToastMsg('You don’t have permission to create items.');
+                setTimeout(() => setToastMsg(''), 2500);
+              } else if (status === 422) {
+                setToastKind('error');
+                setToastMsg('Invalid selection. Please choose a valid type.');
+                setTimeout(() => setToastMsg(''), 2500);
+              } else {
+                setToastKind('error');
+                setToastMsg('Couldn’t start a new build. Try again.');
+                setTimeout(() => setToastMsg(''), 2500);
+              }
+              logTelemetryEvent('create_draft_failure', { error_code: status });
+            } finally {
+              setIsCreatingDraft(false);
+            }
+          }}
+          onCancel={() => { setIsTypeSelectorOpen(false); }}
+          onClose={() => { setIsTypeSelectorOpen(false); }}
           initialSelectedType={selectedCreateType}
-          onImportNavigate={(type) => { setIsTypeSelectorOpen(false); navigate(`/admin/import/${type}`); }}
         />
       </ErrorBoundary>
 
@@ -570,16 +820,25 @@ const AdminTemplates = () => {
       <ErrorBoundary 
         name="CreateDrawer"
         fallbackMessage="There was an error with the creation form. Please try again."
-        onError={handleCreateDrawerClose}
+        onError={() => { setIsCreateDrawerOpen(false); }}
       >
         <CreateDrawer
           isOpen={isCreateDrawerOpen}
-          onClose={handleCreateDrawerClose}
-          onChangeType={handleChangeType}
+          onClose={() => { setIsCreateDrawerOpen(false); }}
+          onChangeType={() => {
+            // Allow switching type by returning to modal; keep draft
+            setIsCreateDrawerOpen(false);
+            setIsTypeSelectorOpen(true);
+          }}
           type={selectedCreateType}
           draft={currentDraft}
+          loading={isCreatingDraft}
         />
       </ErrorBoundary>
+
+      {toastMsg && (
+        <div className={`admin-toast ${toastKind === 'error' ? 'admin-toast--error' : 'admin-toast--success'}`} role="status">{toastMsg}</div>
+      )}
     </div>
   );
 };
@@ -785,7 +1044,226 @@ const AdminPlaybooks = () => {
   );
 };
 const AdminBrandBots = () => <div className="admin-placeholder">Brand Bots - Coming Soon</div>;
-const AdminTags = () => <div className="admin-placeholder">Tags - Coming Soon</div>;
+const AdminTags = () => {
+  const [editions, setEditions] = useState([
+    { id: 'dtm', name: 'DTM Edition', kind: 'Edition' },
+    { id: 'partner', name: 'Partner Edition', kind: 'Edition' },
+    { id: 'col-a', name: 'Content Collection A', kind: 'Collection' },
+    { id: 'col-b', name: 'Content Collection B', kind: 'Collection' }
+  ]);
+  const [selectedEditionId, setSelectedEditionId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAsc, setIsAsc] = useState(true); // default A–Z
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTagName, setNewTagName] = useState('');
+  const [formError, setFormError] = useState('');
+  const [toast, setToast] = useState('');
+
+  // Ensure we have a tags store in localStorage
+  useEffect(() => {
+    const existing = localStorage.getItem('ella-tags');
+    if (!existing) {
+      const seed = {
+        dtm: [
+          { name: 'SEO', usageCount: 12 },
+          { name: 'Content', usageCount: 7 },
+          { name: 'Newsletter', usageCount: 3 }
+        ],
+        partner: [
+          { name: 'Sales', usageCount: 4 },
+          { name: 'Outbound', usageCount: 2 },
+          { name: 'ABM', usageCount: 1 }
+        ],
+        'col-a': [
+          { name: 'Legal', usageCount: 0 },
+          { name: 'Product', usageCount: 5 }
+        ],
+        'col-b': []
+      };
+      localStorage.setItem('ella-tags', JSON.stringify(seed));
+    }
+  }, []);
+
+  const readTagsStore = () => JSON.parse(localStorage.getItem('ella-tags') || '{}');
+  const writeTagsStore = (store) => localStorage.setItem('ella-tags', JSON.stringify(store));
+
+  const getCurrentEdition = () => editions.find(e => e.id === selectedEditionId) || null;
+
+  const currentTags = () => {
+    if (!selectedEditionId) return [];
+    const store = readTagsStore();
+    const list = store[selectedEditionId] || [];
+    const filtered = list.filter(t => t.name.toLowerCase().includes((searchQuery || '').toLowerCase()));
+    const sorted = [...filtered].sort((a, b) => {
+      const cmp = a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      return isAsc ? cmp : -cmp;
+    });
+    return sorted;
+  };
+
+  const onAddTag = (e) => {
+    e.preventDefault();
+    if (!selectedEditionId) return;
+    const name = (newTagName || '').trim();
+    if (!name) {
+      setFormError('Tag Name is required');
+      return;
+    }
+    const store = readTagsStore();
+    const list = store[selectedEditionId] || [];
+    const exists = list.some(t => t.name.toLowerCase() === name.toLowerCase());
+    if (exists) {
+      setFormError('This tag already exists for this Edition.');
+      return;
+    }
+    const updated = [...list, { name, usageCount: 0 }];
+    store[selectedEditionId] = updated;
+    writeTagsStore(store);
+    const edition = getCurrentEdition();
+    setToast(`Tag ‘${name}’ added to ${edition ? edition.name : 'selection'}.`);
+    setShowAddForm(false);
+    setNewTagName('');
+    setFormError('');
+    // auto hide toast
+    setTimeout(() => setToast(''), 2500);
+  };
+
+  const resetAddForm = () => {
+    setShowAddForm(false);
+    setNewTagName('');
+    setFormError('');
+  };
+
+  const tags = currentTags();
+
+  return (
+    <div className="admin-templates">
+      <header className="admin-content-header">
+        <h1 className="admin-page-title">Tag Management</h1>
+        <div className="admin-header-actions">
+          <div className="admin-search-container" style={{ width: 320 }}>
+            <i className="fa-solid fa-search admin-search-icon"></i>
+            <input
+              className="admin-search-input"
+              placeholder="Search tags…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <button
+            className="admin-btn admin-btn--primary"
+            onClick={() => { setShowAddForm(true); setFormError(''); }}
+            disabled={!selectedEditionId}
+            title={!selectedEditionId ? 'Select an Edition/Collection first' : 'Add Tag'}
+          >
+            Add Tag
+          </button>
+        </div>
+      </header>
+
+      <section className="admin-filters-section">
+        <div className="admin-filters">
+          <select
+            className="admin-select"
+            value={selectedEditionId}
+            onChange={(e) => { setSelectedEditionId(e.target.value); setSearchQuery(''); resetAddForm(); }}
+          >
+            <option value="">Select Edition or Collection</option>
+            {editions.map(ed => (
+              <option key={ed.id} value={ed.id}>{ed.name}</option>
+            ))}
+          </select>
+
+          <div className="admin-sort-controls">
+            <span className="admin-sort-label">Sort:</span>
+            <button
+              className="admin-btn admin-btn--secondary"
+              onClick={() => setIsAsc(!isAsc)}
+              disabled={!selectedEditionId}
+              title="Toggle A–Z / Z–A"
+            >
+              {isAsc ? 'A–Z' : 'Z–A'}
+            </button>
+          </div>
+        </div>
+        {!selectedEditionId && (
+          <div className="admin-inline-help">Select an Edition or Collection to view and manage its system tags.</div>
+        )}
+      </section>
+
+      {showAddForm && selectedEditionId && (
+        <section className="admin-results-section">
+          <form className="admin-inline-form" onSubmit={onAddTag}>
+            <div className="admin-inline-form-row">
+              <label className="admin-inline-label">Tag Name</label>
+              <input
+                className="admin-input"
+                placeholder="Enter tag name"
+                value={newTagName}
+                onChange={(e) => { setNewTagName(e.target.value); if (formError) setFormError(''); }}
+                autoFocus
+              />
+            </div>
+            {formError && <div className="admin-inline-error">{formError}</div>}
+            <div className="admin-inline-actions">
+              <button type="button" className="admin-btn admin-btn--secondary" onClick={resetAddForm}>Cancel</button>
+              <button type="submit" className="admin-btn admin-btn--primary">Save</button>
+            </div>
+          </form>
+        </section>
+      )}
+
+      <section className="admin-results-section">
+        {selectedEditionId && (
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '70%' }}>
+                    Tag Name
+                    <button
+                      className="admin-table-sort"
+                      onClick={() => setIsAsc(!isAsc)}
+                      title="Toggle sort"
+                      style={{ marginLeft: 8 }}
+                    >
+                      {isAsc ? '▲' : '▼'}
+                    </button>
+                  </th>
+                  <th style={{ width: '30%' }}>Usage Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tags.length === 0 ? (
+                  <tr>
+                    <td colSpan={2}>
+                      <div className="admin-empty-state">
+                        <i className="fa-solid fa-folder-open admin-empty-icon"></i>
+                        <h3 className="admin-empty-title">No Tags Found</h3>
+                        <p className="admin-empty-description">{searchQuery ? 'No tags match your search.' : 'Add tags to make them available for content tagging in this scope.'}</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  tags.map((t, i) => (
+                    <tr key={`${t.name}-${i}`}>
+                      <td>{t.name}</td>
+                      <td>{t.usageCount}</td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {toast && (
+        <div className="admin-toast admin-toast--success" role="status">{toast}</div>
+      )}
+    </div>
+  );
+};
 const AdminSettings = () => <div className="admin-placeholder">Settings - Coming Soon</div>;
 
 export default AdminTool;

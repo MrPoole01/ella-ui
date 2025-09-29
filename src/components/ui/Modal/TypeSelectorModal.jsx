@@ -10,14 +10,19 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
   const [isTransitioning, setIsTransitioning] = useState(false);
   const modalRef = useRef(null);
   const firstOptionRef = useRef(null);
+  const [importedFiles, setImportedFiles] = useState([]); // { name, status, count }
+
+  const handleRemoveUploadedFile = (index) => {
+    setImportedFiles(prev => prev.filter((_, i) => i !== index));
+  };
 
   const typeOptions = [
-    {
-      id: 'template',
-      title: 'Template',
-      description: 'A single, reusable prompt.',
-      icon: '📄'
-    },
+    // {
+    //   id: 'template',
+    //   title: 'Template',
+    //   description: 'A single, reusable prompt.',
+    //   icon: '📄'
+    // },
     {
       id: 'playbook',
       title: 'Playbook',
@@ -197,12 +202,13 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
     // Close import modal
     setShowImportModal(false);
     
-    // Close type selector modal and notify parent
-    setIsTypeSelectorOpen(false);
-    onClose();
-    
-    // You could also call a callback to refresh the templates list
-    // if (onImportComplete) onImportComplete(importedItems, type);
+    // Keep Type Selector open and show uploaded files list
+    const normalized = (importedItems || []).map((item, idx) => ({
+      name: item?.name || `Imported Item ${idx + 1}`,
+      status: item?.status || 'success',
+      count: Array.isArray(item?.rows) ? item.rows.length : (item?.count || 0)
+    }));
+    setImportedFiles(prev => [...prev, ...normalized]);
   };
 
   const handleBackdropClick = (e) => {
@@ -291,10 +297,7 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
         <div className="type-selector-content">
           {shouldRenderContent ? (
             <>
-              <div 
-                id="type-selector-description" 
-                className="type-selector-description"
-              >
+              <div id="type-selector-description" className="type-selector-description">
                 Choose the type of content you want to create:
               </div>
 
@@ -339,6 +342,36 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
                   </button>
                 ))}
               </div>
+
+              {/* Uploaded files section */}
+              {importedFiles.length > 0 && (
+                <div className="type-selector-uploaded">
+                  <h3 className="type-selector-uploaded-title">Uploaded Files</h3>
+                  <div className="type-selector-uploaded-list" role="status" aria-live="polite">
+                    {importedFiles.map((f, i) => (
+                      <div key={`${f.name}_${i}`} className={`ts-uploaded-row ${f.status}`}>
+                        <div className="ts-up-left">
+                          <span className="ts-up-name" title={f.name}>{f.name}</span>
+                          {typeof f.count === 'number' && <span className="ts-up-count">{f.count} items</span>}
+                        </div>
+                        <div className="ts-up-right">
+                          <span className="ts-up-status">{f.status === 'success' ? 'Ready' : f.status}</span>
+                          {f.status === 'success' && (
+                            <button
+                              type="button"
+                              className="ts-up-remove"
+                              aria-label={`Remove ${f.name}`}
+                              onClick={() => handleRemoveUploadedFile(i)}
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="type-selector-loading">
