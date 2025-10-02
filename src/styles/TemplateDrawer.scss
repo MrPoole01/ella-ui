@@ -349,6 +349,10 @@
     font-weight: 500;
     line-height: 17px;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 175px;
   }
 
   &__card-info-container {
@@ -534,8 +538,14 @@
       background: var(--theme-orange-subtle);
     }
 
+    &--events {
+      border-color: var(--theme-primary);
+      color: var(--theme-primary-bright);
+      background: var(--theme-orange-subtle);
+    }
+
     // Default styling for other tags
-    &:not(&--marketing):not(&--social) {
+    &:not(&--marketing):not(&--social):not(&--events) {
       background: var(--theme-bg-tertiary);
       color: var(--theme-text-primary);
       border: 1px solid var(--theme-border-secondary);

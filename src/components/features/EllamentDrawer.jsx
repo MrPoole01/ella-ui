@@ -122,13 +122,6 @@ const mockEllaments = [
     status: 'approved',
     lastUpdated: '2024-04-10',
     category: 'persona'
-  },
-  {
-    id: 18,
-    title: 'Product Summary',
-    status: 'approved',
-    lastUpdated: '2024-04-09',
-    category: 'special_edition'
   }
 ];
 

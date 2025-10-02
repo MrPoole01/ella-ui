@@ -12,6 +12,17 @@ const MailIcon = () => (
   </svg>
 );
 
+const EventIcon = () => (
+  <svg className="template-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+    <rect x="2.5" y="4.5" width="15" height="12.5" rx="2" ry="2" stroke="currentColor" fill="none" strokeWidth="1.25"/>
+    <path d="M2.5 7.5H17.5" stroke="currentColor" strokeWidth="1.25"/>
+    <path d="M6.25 2.5V5.5M13.75 2.5V5.5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round"/>
+    <rect x="5.25" y="9.5" width="2.5" height="2.5" rx="0.5" fill="currentColor"/>
+    <rect x="9" y="9.5" width="2.5" height="2.5" rx="0.5" fill="currentColor"/>
+    <rect x="12.75" y="9.5" width="2.5" height="2.5" rx="0.5" fill="currentColor"/>
+  </svg>
+);
+
 const ChatIcon = () => (
   <svg className="template-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
     <path d="M0.939481 12.8049Q0.926329 12.8533 0.929669 12.8887Q0.929299 12.8848 0.923386 12.8659Q0.901333 12.7957 0.845744 12.6985Q0.836954 12.684 0.820996 12.6601Q0.805025 12.6362 0.787867 12.6132L0.777176 12.5988L0.767324 12.5839Q0.0861384 11.5508 -0.269433 10.3656Q-0.625004 9.18037 -0.624961 7.94295Q-0.6304 6.19981 0.0564682 4.60485Q0.719058 3.06627 1.93095 1.88047Q3.14126 0.696229 4.71247 0.0468677Q6.33815 -0.625 8.1184 -0.625Q9.67173 -0.625 11.119 -0.107762Q12.5178 0.392182 13.6733 1.32202Q14.8199 2.24473 15.5927 3.48215Q16.382 4.74616 16.6888 6.19258Q16.7814 6.62446 16.8281 7.06502Q16.8749 7.50561 16.875 7.94861Q16.875 9.69564 16.2106 11.2922Q15.565 12.8435 14.3846 14.0374Q13.1973 15.2384 11.6479 15.8959Q10.0387 16.5789 8.25824 16.5789Q7.71241 16.5789 6.98594 16.4628Q6.36616 16.3638 5.88393 16.2288Q5.25771 16.0536 4.64012 15.8151Q4.59056 15.796 4.53741 15.7861Q4.48427 15.7762 4.4302 15.7762Q4.37025 15.7759 4.31311 15.7874Q4.25598 15.7989 4.20231 15.8216L4.18672 15.8282L1.52119 16.7902L1.30902 16.2023L1.55642 16.7763Q1.46933 16.8138 1.37759 16.8378Q1.28585 16.8618 1.19155 16.8716L1.15823 16.8751L1.12472 16.875Q0.707105 16.8737 0.414428 16.5759Q0.121747 16.278 0.12784 15.8604L0.128114 15.8416L0.129515 15.8229Q0.134425 15.7573 0.146234 15.6925Q0.158041 15.6278 0.176615 15.5646L0.940213 12.8022L0.939481 12.8049ZM2.14502 13.1353L1.37581 15.9174Q1.37589 15.9171 1.37595 15.9168Q1.37601 15.9165 1.37603 15.9162L0.752773 15.8695L1.37771 15.8787Q1.37923 15.7743 1.30606 15.6998Q1.23289 15.6253 1.12849 15.625L1.1266 16.25L1.06165 15.6284L1.06165 15.6284Q1.06163 15.6284 1.06163 15.6284L1.07903 15.6209L3.74646 14.6582L3.95863 15.2461L3.71496 14.6706Q3.88537 14.5984 4.0668 14.5619Q4.24822 14.5255 4.4316 14.5262Q4.60031 14.5264 4.76617 14.5572Q4.93204 14.5881 5.09042 14.649Q5.6522 14.8659 6.22083 15.0251Q6.6341 15.1407 7.18318 15.2285Q7.81165 15.3289 8.25824 15.3289Q9.78441 15.3289 11.1596 14.7453Q12.4818 14.1841 13.4957 13.1586Q14.5047 12.1381 15.0566 10.8119Q15.625 9.44592 15.625 7.94904Q15.6249 7.57197 15.5851 7.19696Q15.5453 6.82198 15.466 6.45195Q15.2049 5.22122 14.5324 4.14423Q13.8716 3.08607 12.8896 2.29585Q11.8985 1.49827 10.6983 1.06932Q9.45507 0.625 8.1184 0.625Q6.58627 0.625 5.18991 1.2021Q3.84243 1.75899 2.80516 2.77392Q1.76957 3.78722 1.20453 5.09926Q0.620404 6.45566 0.625039 7.94299Q0.625002 8.99693 0.927849 10.0064Q1.2307 11.0159 1.81088 11.8958L1.2891 12.2398L1.79034 11.8665Q1.82654 11.9151 1.86021 11.9655Q1.89388 12.0158 1.9309 12.0781Q2.27076 12.6725 2.14575 13.1326L2.14502 13.1353Z" fillRule="nonzero" transform="matrix(1 0 0 1 1.87496 1.875)" fill="currentColor"/>
@@ -145,6 +156,7 @@ const TemplateDrawer = ({
     linkedin: 'LinkedIn',
     facebook: 'Facebook',
     twitter: 'Twitter',
+    events: 'Events',
     newsletter: 'Newsletter'
   };
 
@@ -161,7 +173,8 @@ const TemplateDrawer = ({
     social_post: 'social',
     linkedin: 'social',
     facebook: 'social',
-    twitter: 'social'
+    twitter: 'social',
+    events: 'social'
   };
 
   // Predefined tags for the tag management modal (matching template tag values)
@@ -179,6 +192,7 @@ const TemplateDrawer = ({
     { value: 'facebook', label: 'Facebook' },
     { value: 'twitter', label: 'Twitter' },
     { value: 'newsletter', label: 'Newsletter' },
+    { value: 'events', label: 'Events' }, 
     { value: 'other', label: 'Other...' }
   ];
 
@@ -393,10 +407,10 @@ const TemplateDrawer = ({
   const [digitalAssets, setDigitalAssets] = useState([
     {
       id: 1,
-      icon: <MailIcon />,
-      title: 'Email Campaign',
-      description: 'Plan for next email campaign and outreach',
-      tags: ['Marketing', 'Social']
+      icon: <EventIcon />,
+      title: 'Post-Event Networking Follow-Up Series',
+      description: 'Create a multi-channel follow-up sequence after meeting contacts at an event',
+      tags: ['Marketing', 'Social', 'Events']
     },
     {
       id: 2,
@@ -552,7 +566,32 @@ const TemplateDrawer = ({
   }, [isOpen, onClose]);
 
   const renderTemplateCard = (template) => (
-    <div key={template.id} className="template-drawer__card">
+    <div 
+      key={template.id} 
+      className="template-drawer__card"
+      onClick={() => {
+        if (template.id === 1) {
+          onTemplateSelected && onTemplateSelected({
+            kind: 'open_document',
+            document: {
+              id: `event-${Date.now()}`,
+              title: 'LinkedIn Connection Message: Post-Event Follow-Up',
+              project: 'Craft a concise LinkedIn invite referencing your event connection',
+              type: 'ellament',
+              tags: ['LinkedIn', 'Social Outreach', 'Networking', 'Sales Enablement'],
+              status: 'draft',
+              lastUpdated: new Date().toISOString().slice(0, 10)
+            },
+            playbookCardTitles: [
+              'Write a Personal Hook That Anchors to the Event',
+              'State a Light CTA That Signals Value',
+              'Assemble & Format the Complete Output'
+            ]
+          });
+          onClose && onClose();
+        }
+      }}
+    >
       <div className="template-drawer__card-left-edge"></div>
       <div className="template-drawer__card-content">
         <div className="template-drawer__card-header">
@@ -707,15 +746,36 @@ const TemplateDrawer = ({
 
             {activeTab === 'special-additions' && (
               <div className="template-drawer__section">
-                <h2 className="template-drawer__section-title">Special Edition Templates</h2>
+                <h2 className="template-drawer__section-title">Special Edition Playbooks</h2>
                 <div className="template-drawer__grid">
                   {digitalAssets.slice(0, 6).map((template) => (
-                    <div 
+                  <div 
                       key={template.id} 
                       className="template-drawer__card"
                       onClick={() => { 
-                        if (onTemplateSelected) onTemplateSelected(template.prompt || template.title); 
-                        if (onClose) onClose(); 
+                        if (template.id === 1) {
+                          onTemplateSelected && onTemplateSelected({
+                            kind: 'open_document',
+                            document: {
+                              id: `event-${Date.now()}`,
+                              title: 'LinkedIn Connection Message: Post-Event Follow-Up',
+                              project: 'Craft a concise LinkedIn invite referencing your event connection',
+                              type: 'ellament',
+                              tags: ['LinkedIn', 'Social Outreach', 'Networking', 'Sales Enablement'],
+                              status: 'draft',
+                              lastUpdated: new Date().toISOString().slice(0, 10)
+                            },
+                            playbookCardTitles: [
+                              'Write a Personal Hook That Anchors to the Event',
+                              'State a Light CTA That Signals Value',
+                              'Assemble & Format the Complete Output'
+                            ]
+                          });
+                          onClose && onClose();
+                        } else {
+                          if (onTemplateSelected) onTemplateSelected(template.prompt || template.title);
+                          if (onClose) onClose();
+                        }
                       }}
                     >
                       <div className="template-drawer__card-left-edge"></div>
@@ -789,7 +849,7 @@ const TemplateDrawer = ({
 
             {activeTab === 'saved-templates' && (
               <div className="template-drawer__section">
-                <h2 className="template-drawer__section-title">Saved Templates</h2>
+                <h2 className="template-drawer__section-title">Saved Playbooks</h2>
                 <div className="template-drawer__grid">
                   {savedTemplates
                     .filter(t =>
@@ -875,7 +935,7 @@ const TemplateDrawer = ({
                       </div>
                     ))}
                   {savedTemplates.length === 0 && (
-                    <div className="template-drawer__empty">No custom templates yet.</div>
+                    <div className="template-drawer__empty">No custom playbooks yet.</div>
                   )}
                 </div>
               </div>

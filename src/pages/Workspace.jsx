@@ -3,6 +3,7 @@ import Header from '../components/layout/Header';
 import Sidebar from '../components/layout/Sidebar';
 import MainContent from '../components/layout/MainContent';
 import TemplateDrawer from '../components/features/TemplateDrawer';
+import DocumentDrawer from '../components/features/DocumentDrawer';
 import EllamentDrawer from '../components/features/EllamentDrawer';
 import SavedWorkDrawer from '../components/features/SavedWorkDrawer';
 import UploadedFilesDrawer from '../components/features/UploadedFilesDrawer';
@@ -100,8 +101,27 @@ const Workspace = () => {
     setIsTemplateDrawerOpen(false);
   };
 
-  const handleTemplateSelected = (prompt) => {
-    setExternalPrompt(prompt || '');
+  const [isDocumentDrawerOpen, setIsDocumentDrawerOpen] = React.useState(false);
+  const [documentDrawerData, setDocumentDrawerData] = React.useState(null);
+
+  const handleTemplateSelected = (payload) => {
+    // Backward compatibility: if a string is passed, treat as prompt
+    if (typeof payload === 'string') {
+      setExternalPrompt(payload || '');
+      setIsTemplateDrawerOpen(false);
+      return;
+    }
+
+    // If payload instructs to open document drawer
+    if (payload && payload.kind === 'open_document') {
+      setDocumentDrawerData(payload);
+      setIsDocumentDrawerOpen(true);
+      setIsTemplateDrawerOpen(false);
+      return;
+    }
+
+    // Default behavior
+    setExternalPrompt('');
     setIsTemplateDrawerOpen(false);
   };
 
@@ -1213,6 +1233,15 @@ const Workspace = () => {
         canManageCustomTemplates={canManageCustomTemplates}
         brandBotId={brandBotId}
         currentUserId={currentUserId}
+      />
+
+      {/* Document Drawer opened via Template selection */}
+      <DocumentDrawer
+        isOpen={isDocumentDrawerOpen}
+        onClose={() => { setIsDocumentDrawerOpen(false); setDocumentDrawerData(null); }}
+        document={documentDrawerData?.document || null}
+        playbookCardTitles={documentDrawerData?.playbookCardTitles || null}
+        onEdit={() => {}}
       />
 
       {/* Ellament Drawer */}
