@@ -30,10 +30,11 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
   const [showVersionDropdown, setShowVersionDropdown] = useState(false);
   const [tagManagementModal, setTagManagementModal] = useState({ isOpen: false, document: null });
   const [currentDocument, setCurrentDocument] = useState(document || { tags: [] });
+  const [activePlaybookIndex, setActivePlaybookIndex] = useState(null);
+  const [activeStep, setActiveStep] = useState(1);
 
-  const resolvedCardTitles = Array.isArray(playbookCardTitles) && playbookCardTitles.length >= 3
-    ? playbookCardTitles
-    : ['Marketing Roadmap', 'Retargeting Plan', 'Content Strategy'];
+  const isPlaybookContext = Array.isArray(playbookCardTitles) && playbookCardTitles.length > 0;
+  const resolvedCardTitles = isPlaybookContext ? playbookCardTitles : [];
 
   // Update currentDocument when document prop changes
   React.useEffect(() => {
@@ -81,6 +82,10 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
   if (!isOpen || !document) return null;
 
   const handleEdit = () => {
+    if (isPlaybookContext) {
+      setActivePlaybookIndex(0);
+      setActiveStep(1);
+    }
     setIsEditMode(true);
     if (onEdit) {
       onEdit(document);
@@ -116,6 +121,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
   const handleBack = () => {
     if (isEditMode) {
       setIsEditMode(false);
+      setActivePlaybookIndex(null);
     } else {
       onClose();
     }
@@ -185,68 +191,32 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
           </div>
 
           {/* Playbook Cards */}
-          <div className="document-drawer__playbook-cards">
-            <div className="document-drawer__playbook-card">
-              <div className="document-drawer__playbook-card-header">
-                <h3 className="document-drawer__playbook-card-title">{resolvedCardTitles[0]}</h3>
-                <button className="document-drawer__playbook-card-info" title="More information">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div className="document-drawer__playbook-card-tags">
-                <span className="document-drawer__playbook-tag">Planning</span>
-                <span className="document-drawer__playbook-tag">Strategy</span>
-                <button className="document-drawer__playbook-save-icon" title="Save">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
+          {isPlaybookContext && (
+            <div className="document-drawer__playbook-cards">
+              {resolvedCardTitles.slice(0, 3).map((title, idx) => (
+                <div key={idx} className={`document-drawer__playbook-card ${activePlaybookIndex === idx && isEditMode ? 'document-drawer__playbook-card--active' : ''}`}>
+                  <div className="document-drawer__playbook-card-header">
+                    <h3 className="document-drawer__playbook-card-title">{title}</h3>
+                    <button className="document-drawer__playbook-card-info" title="More information">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                        <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="document-drawer__playbook-card-tags">
+                    <span className="document-drawer__playbook-tag">Planning</span>
+                    <span className="document-drawer__playbook-tag">Strategy</span>
+                    <button className="document-drawer__playbook-save-icon" title="Save">
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-
-            <div className="document-drawer__playbook-card">
-              <div className="document-drawer__playbook-card-header">
-                <h3 className="document-drawer__playbook-card-title">{resolvedCardTitles[1]}</h3>
-                <button className="document-drawer__playbook-card-info" title="More information">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div className="document-drawer__playbook-card-tags">
-                <span className="document-drawer__playbook-tag">Campaign</span>
-                <button className="document-drawer__playbook-save-icon" title="Save">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="document-drawer__playbook-card">
-              <div className="document-drawer__playbook-card-header">
-                <h3 className="document-drawer__playbook-card-title">{resolvedCardTitles[2]}</h3>
-                <button className="document-drawer__playbook-card-info" title="More information">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  </svg>
-                </button>
-              </div>
-              <div className="document-drawer__playbook-card-tags">
-                <span className="document-drawer__playbook-tag">Content</span>
-                <button className="document-drawer__playbook-save-icon" title="Save">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
+          )}
 
           <div className="document-drawer__header-row">
             <div className="document-drawer__header-left">
@@ -324,7 +294,10 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
         <div className="document-drawer__content">
           {isEditMode ? (
             /* Edit Mode - Split Layout */
-            <div className="document-drawer__edit-layout">
+            <div 
+              className="document-drawer__edit-layout"
+              style={{ height: isPlaybookContext ? 'calc(100vh - 401px)' : 'calc(100vh - 281px)' }}
+            >
               {/* Document Content */}
               <div className="document-drawer__document-panel">
                 <div className="document-drawer__document-content">
@@ -358,6 +331,30 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
 
               {/* Ella Chat Panel */}
               <div className="document-drawer__chat-panel">
+                {isPlaybookContext && (
+                  <div className="document-drawer__stepper">
+                    {[1,2,3,4,5].map((step, idx) => {
+                      const isCompleted = step < activeStep;
+                      const isCurrent = step === activeStep;
+                      return (
+                        <div key={step} className="document-drawer__stepper-item">
+                          <div className={`document-drawer__stepper-circle ${isCompleted ? 'document-drawer__stepper-circle--completed' : ''} ${isCurrent ? 'document-drawer__stepper-circle--current' : ''}`}>
+                            {isCompleted ? (
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M13.3333 4.66675L6.33325 11.6667L3.33325 8.66675" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            ) : (
+                              <span>{step}</span>
+                            )}
+                          </div>
+                          {idx < 4 && (
+                            <div className={`document-drawer__stepper-connector ${step < activeStep ? 'document-drawer__stepper-connector--active' : ''}`}></div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
                 <div className="document-drawer__chat-header">
                   <div className="document-drawer__ella-avatar">
                     <span>E</span>
@@ -496,7 +493,10 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
 
                 <div className="document-drawer__document-section">
                   <div className="document-drawer__section-label">Sample Content:</div>
-                  <div className="document-drawer__section-content document-drawer__sample-content">
+                  <div 
+                    className="document-drawer__section-content document-drawer__sample-content"
+                    style={{ height: isPlaybookContext ? 'calc(100vh - 711px)' : 'calc(100vh - 554px)' }}
+                  >
                     This is where the actual document content would be displayed. 
                     In a real implementation, this would show the full document content 
                     with proper formatting, images, and other media elements.
@@ -549,10 +549,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
             <>
               <div className="document-drawer__footer-left">
                 <button className="document-drawer__btn document-drawer__btn--primary" onClick={handleEdit}>
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M10.5 1.5L12.5 3.5L4.5 11.5L1.5 12.5L2.5 9.5L10.5 1.5Z" stroke="currentColor" strokeWidth="1.5"/>
-                  </svg>
-                  Edit
+                  {isPlaybookContext ? 'Run' : 'Edit'}
                 </button>
                 <button className="document-drawer__btn document-drawer__btn--secondary" onClick={handleSaveAsDraft}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none">

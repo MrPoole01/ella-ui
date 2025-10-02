@@ -583,9 +583,9 @@ const TemplateDrawer = ({
               lastUpdated: new Date().toISOString().slice(0, 10)
             },
             playbookCardTitles: [
-              'Write a Personal Hook That Anchors to the Event',
-              'State a Light CTA That Signals Value',
-              'Assemble & Format the Complete Output'
+              'Voicemail Script',
+              'Follow-Up Email',
+              'LinkedIn Message'
             ]
           });
           onClose && onClose();
@@ -766,9 +766,9 @@ const TemplateDrawer = ({
                               lastUpdated: new Date().toISOString().slice(0, 10)
                             },
                             playbookCardTitles: [
-                              'Write a Personal Hook That Anchors to the Event',
-                              'State a Light CTA That Signals Value',
-                              'Assemble & Format the Complete Output'
+                              'Voicemail Script',
+                              'Follow-Up Email',
+                              'LinkedIn Message'
                             ]
                           });
                           onClose && onClose();
