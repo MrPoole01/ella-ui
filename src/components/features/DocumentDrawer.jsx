@@ -165,13 +165,105 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
       <div className={`document-drawer ${isOpen ? 'document-drawer--open' : ''} ${isEditMode ? 'document-drawer--edit-mode' : ''}`}>
         {/* Header */}
         <div className="document-drawer__header">
-          <div className="document-drawer__breadcrumb">
-            <span className="document-drawer__crumb">{workspaceName}</span>
-            <span className="document-drawer__crumb-sep">/</span>
-            <span className="document-drawer__crumb">{document?.project || 'Project'}</span>
-            <span className="document-drawer__crumb-sep">/</span>
-            <span className="document-drawer__crumb document-drawer__crumb--current">{document?.title || 'Untitled'}</span>
+          <div className="document-drawer__breadcrumb-row">
+            <div className="document-drawer__breadcrumb">
+              <span className="document-drawer__crumb">{workspaceName}</span>
+              <span className="document-drawer__crumb-sep">/</span>
+              <span className="document-drawer__crumb">{document?.project || 'Project'}</span>
+              <span className="document-drawer__crumb-sep">/</span>
+              <span className="document-drawer__crumb document-drawer__crumb--current">{document?.title || 'Untitled'}</span>
+            </div>
+            
+            {/* Close Button */}
+            <button className="document-drawer__close" onClick={onClose}>
+              ×
+            </button>
           </div>
+
+          {/* Playbook Cards */}
+          <div className="document-drawer__playbook-cards">
+            <div className="document-drawer__playbook-card">
+              <div className="document-drawer__playbook-card-header">
+                <h3 className="document-drawer__playbook-card-title">Marketing Roadmap</h3>
+                <button className="document-drawer__playbook-card-info" title="More information">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="document-drawer__playbook-card-tags">
+                <span className="document-drawer__playbook-tag">Planning</span>
+                <span className="document-drawer__playbook-tag">Strategy</span>
+                <button className="document-drawer__playbook-save-icon" title="Save">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="document-drawer__playbook-card">
+              <div className="document-drawer__playbook-card-header">
+                <h3 className="document-drawer__playbook-card-title">Retargeting Plan</h3>
+                <button className="document-drawer__playbook-card-info" title="More information">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="document-drawer__playbook-card-tags">
+                <span className="document-drawer__playbook-tag">Campaign</span>
+                <button className="document-drawer__playbook-save-icon" title="Save">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="document-drawer__playbook-card">
+              <div className="document-drawer__playbook-card-header">
+                <h3 className="document-drawer__playbook-card-title">Content Strategy</h3>
+                <button className="document-drawer__playbook-card-info" title="More information">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="document-drawer__playbook-card-tags">
+                <span className="document-drawer__playbook-tag">Content</span>
+                <button className="document-drawer__playbook-save-icon" title="Save">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="document-drawer__playbook-card">
+              <div className="document-drawer__playbook-card-header">
+                <h3 className="document-drawer__playbook-card-title">Lead Gen Playbook</h3>
+                <button className="document-drawer__playbook-card-info" title="More information">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                    <path d="M10 9V14M10 6V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="document-drawer__playbook-card-tags">
+                <span className="document-drawer__playbook-tag">Growth</span>
+                <button className="document-drawer__playbook-save-icon" title="Save">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 2L10 6L14.5 6.5L11 10L12 14.5L8 12L4 14.5L5 10L1.5 6.5L6 6L8 2Z" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="document-drawer__header-row">
             <div className="document-drawer__header-left">
             <div className="document-drawer__title">
@@ -233,11 +325,6 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
                 )}
               </div>
             )}
-
-            {/* Close Button */}
-            <button className="document-drawer__close" onClick={onClose}>
-              ×
-            </button>
             </div>
           </div>
         </div>

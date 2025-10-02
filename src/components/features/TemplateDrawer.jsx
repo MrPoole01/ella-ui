@@ -634,19 +634,19 @@ const TemplateDrawer = ({
                 className={`template-drawer__tab ${activeTab === 'ella-templates' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('ella-templates')}
               >
-                All Templates
+                All Playbooks
               </button>
               <button 
                 className={`template-drawer__tab ${activeTab === 'special-additions' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('special-additions')}
               >
-                Special Edition Templates
+                Special Edition Playbooks
               </button>
               <button 
                 className={`template-drawer__tab ${activeTab === 'saved-templates' ? 'template-drawer__tab--active' : ''}`}
                 onClick={() => setActiveTab('saved-templates')}
               >
-                Custom Templates
+                Custom Playbooks
               </button>
             </div>
           </div>

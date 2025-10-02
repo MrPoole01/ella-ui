@@ -2130,7 +2130,7 @@ const Sidebar = ({ selectedProject, onProjectSelect, onNewChat, onOpenTemplateDr
                 }, 10);
               }}
             >
-              Template Library
+              Playbook Library
             </button>
             <button 
               className="workspace-menu__action-btn"

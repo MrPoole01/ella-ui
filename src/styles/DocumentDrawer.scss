@@ -44,18 +44,201 @@
     gap: 8px;
   }
 
+  &__breadcrumb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
   &__breadcrumb {
     display: flex;
     align-items: center;
     gap: 8px;
     color: var(--theme-text-muted);
     font-size: 12px;
-    margin-bottom: 10px;
+    flex: 1;
   }
 
   &__crumb { color: var(--theme-text-secondary); }
   &__crumb--current { color: var(--theme-text-primary); font-weight: 600; }
   &__crumb-sep { color: var(--theme-border-secondary); }
+
+  &__close {
+    background: none;
+    border: none;
+    color: var(--theme-text-secondary);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+  }
+
+  // Playbook Cards
+  &__playbook-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 16px 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+
+    &::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--theme-bg-secondary);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--theme-border-primary);
+      border-radius: 3px;
+    }
+  }
+
+  &__playbook-card {
+    flex: 0 0 auto;
+    min-width: 310px;
+    background: var(--theme-tertiary);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    padding: 1px 1px 15px 1px;
+    transition: all 0.2s ease;
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+
+    // &:hover {
+    //   border-color: var(--theme-border-secondary);
+    //   box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.1);
+    // }
+  }
+
+  &__playbook-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 16px 19px 16px;
+    border-bottom: 1px solid var(--theme-border-light);
+    background: rgba(0, 0, 0, 0.00);
+  }
+
+  &__playbook-card-title {
+    color: var(--theme-text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    flex: 1;
+    margin: 0;
+    margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__playbook-card-info {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: var(--theme-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--theme-text-primary);
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__playbook-card-tags {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+    padding: 12px 15px 0 15px;
+  }
+
+  &__playbook-tag {
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+
+  &__playbook-add-tag {
+    background: var(--theme-gradient-orange);
+    border: 2px solid var(--theme-gradient-orange);
+    color: var(--theme-bg-primary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
+
+    &:hover {
+      background: var(--theme-bg-secondary);
+      border-color: var(--theme-interactive-primary);
+      color: var(--theme-interactive-primary);
+    }
+  }
+
+  &__playbook-save-icon {
+    background: none;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    color: var(--theme-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--theme-text-primary);
+      
+      svg {
+        fill: var(--theme-primary-bright);
+      }
+    }
+
+    svg {
+      width: 16px;
+      height: 16px;
+      transition: fill 0.2s ease;
+    }
+  }
 
   &__header-row {
     display: flex;
@@ -451,7 +634,7 @@
     gap: 9px;
     display: flex;
     flex-direction: column;
-    height: calc(100% - 140px);
+    height: calc(100% - 90px);
   }
 
   &__execution-info {
@@ -469,7 +652,7 @@
     .document-drawer__document-section {
       flex: 1;
       margin-bottom: 0;
-      height: 128px
+      height: max-content;
     }
   }
 
@@ -513,7 +696,7 @@
     border-radius: 6px;
     padding: 16px;
     border: 1px solid var(--theme-border-light);
-    height: calc(100vh - 581px);
+    height: calc(100vh - 721px);
     overflow-y: auto;
     margin: 10px 0 0 0;
   }

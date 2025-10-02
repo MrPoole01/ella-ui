@@ -747,7 +747,7 @@ const Workspace = () => {
                     setIsWorkspaceSlideMenuOpen(false);
                   }}
                 >
-                  Template Library
+                  Playbook Library
                 </button>
                 <button 
                   className="workspace-menu__action-btn"
