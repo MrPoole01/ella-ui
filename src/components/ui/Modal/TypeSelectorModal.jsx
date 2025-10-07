@@ -384,19 +384,6 @@ const TypeSelectorModal = ({ isOpen, onClose, onContinue, onCancel, initialSelec
         <div className="type-selector-footer">
           {shouldRenderContent ? (
             <>
-              <div className="type-selector-footer-left">
-                {selectedType && (
-                  <button
-                    className="type-selector-btn type-selector-btn--import"
-                    onClick={handleImportClick}
-                    disabled={isLoading}
-                  >
-                    <span className="type-selector-excel-icon">📊</span>
-                    Import from Excel
-                  </button>
-                )}
-              </div>
-              
               <div className="type-selector-footer-right">
                 <button
                   className="type-selector-btn type-selector-btn--secondary"

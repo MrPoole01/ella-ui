@@ -3160,14 +3160,24 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               <>
                 <button className="create-drawer-btn" onClick={handleManualSave}>Save Draft</button>
                 <button className="create-drawer-btn" onClick={handleDuplicate}>Duplicate</button>
-                {isAdmin && (
-                  <>
-                    <button className="create-drawer-btn create-drawer-btn--primary" onClick={handlePublish}>Publish</button>
-                    <button className="create-drawer-btn create-drawer-btn--danger" onClick={handleDelete}>Delete</button>
-                  </>
-                )}
               </>
             )}
+            
+            {currentStep === 'authoring' && (
+              <button
+                className="create-drawer-btn"
+                onClick={() => {
+                  // Autosave before preview
+                  saveTemplateDraft();
+                  setShowPreviewModal(true);
+                  if (type === 'playbook') logTelemetryEvent('playbook_preview_opened', { draft_id: draft?.id });
+                  recomputeValidation();
+                }}
+              >
+                {type === 'playbook' ? 'Preview' : 'Preview'}
+              </button>
+            )}
+            
             <button
               className="create-drawer-btn create-drawer-btn--secondary"
               onClick={handleClose}
@@ -3185,19 +3195,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               </button>
             ) : (
               <>
-                <button
-                  className="create-drawer-btn create-drawer-btn--ghost"
-                  onClick={() => {
-                    // Autosave before preview
-                    saveTemplateDraft();
-                    setShowPreviewModal(true);
-                    if (type === 'playbook') logTelemetryEvent('playbook_preview_opened', { draft_id: draft?.id });
-                    recomputeValidation();
-                  }}
-                >
-                  <span className="create-drawer-btn-icon">👁️</span>
-                  {type === 'playbook' ? 'Preview Playbook' : 'Preview'}
-                </button>
+                {currentStep === 'authoring' && isAdmin && (
+                  <button className="create-drawer-btn create-drawer-btn--primary" onClick={handlePublish}>Publish</button>
+                )}
                 <button
                   className="create-drawer-btn create-drawer-btn--primary"
                   disabled={type === 'template' ? !isTemplateFormValid() : type === 'playbook' ? validation.errors.length > 0 : !isSeriesValid()}
