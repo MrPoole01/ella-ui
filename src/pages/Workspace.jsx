@@ -8,6 +8,7 @@ import EllamentDrawer from '../components/features/EllamentDrawer';
 import SavedWorkDrawer from '../components/features/SavedWorkDrawer';
 import UploadedFilesDrawer from '../components/features/UploadedFilesDrawer';
 import ManageTagsDrawer from '../components/features/ManageTagsDrawer';
+import PlaybookRunDrawer from '../components/features/PlaybookRunDrawer';
 import { 
   FolderIcon, 
   PlusIcon, 
@@ -103,6 +104,8 @@ const Workspace = () => {
 
   const [isDocumentDrawerOpen, setIsDocumentDrawerOpen] = React.useState(false);
   const [documentDrawerData, setDocumentDrawerData] = React.useState(null);
+  const [isPlaybookRunDrawerOpen, setIsPlaybookRunDrawerOpen] = React.useState(false);
+  const [playbookRunData, setPlaybookRunData] = React.useState(null);
 
   const handleTemplateSelected = (payload) => {
     // Backward compatibility: if a string is passed, treat as prompt
@@ -123,6 +126,18 @@ const Workspace = () => {
     // Default behavior
     setExternalPrompt('');
     setIsTemplateDrawerOpen(false);
+  };
+
+  const handleRunPlaybook = (documentData) => {
+    // Close the document drawer and open the playbook run drawer
+    setIsDocumentDrawerOpen(false);
+    setPlaybookRunData(documentData);
+    setIsPlaybookRunDrawerOpen(true);
+  };
+
+  const handleClosePlaybookRunDrawer = () => {
+    setIsPlaybookRunDrawerOpen(false);
+    setPlaybookRunData(null);
   };
 
   const handleWorkspaceSlideMenuToggle = () => {
@@ -1242,6 +1257,15 @@ const Workspace = () => {
         document={documentDrawerData?.document || null}
         playbookCardTitles={documentDrawerData?.playbookCardTitles || null}
         onEdit={() => {}}
+        onRunPlaybook={handleRunPlaybook}
+      />
+
+      {/* Playbook Run Drawer */}
+      <PlaybookRunDrawer
+        isOpen={isPlaybookRunDrawerOpen}
+        onClose={handleClosePlaybookRunDrawer}
+        playbook={playbookRunData?.playbook || null}
+        inputPanelData={playbookRunData?.inputPanelData || null}
       />
 
       {/* Ellament Drawer */}

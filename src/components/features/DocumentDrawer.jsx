@@ -24,7 +24,7 @@ const predefinedTags = [
   { value: 'other', label: 'Other' }
 ];
 
-const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Workspace', playbookCardTitles = null }) => {
+const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Workspace', playbookCardTitles = null, onRunPlaybook }) => {
   const [selectedVersion, setSelectedVersion] = useState('Version 1');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showVersionDropdown, setShowVersionDropdown] = useState(false);
@@ -83,6 +83,10 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
 
   const handleEdit = () => {
     if (isPlaybookContext) {
+      // For playbooks, trigger the Run Drawer
+      if (onRunPlaybook) {
+        onRunPlaybook(document);
+      }
       setActivePlaybookIndex(0);
       setActiveStep(1);
     }
@@ -218,77 +222,113 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
             </div>
           )}
 
-          <div className="document-drawer__header-row">
-            <div className="document-drawer__header-left">
-            <div className="document-drawer__title">
-              {isEditMode ? 'Edit Document' : 'Review Document'}
-            </div>
-            {(!isEditMode || document?.status !== 'approved') && document && (
-              <div 
-                className="document-drawer__status"
-                style={{ color: getStatusColor(document.status) }}
-              >
-                {getStatusLabel(document.status)}
+          {!isPlaybookContext && (
+            <div className="document-drawer__header-row">
+              <div className="document-drawer__header-left">
+              <div className="document-drawer__title">
+                {isEditMode ? 'Edit Document' : 'Review Document'}
               </div>
-            )}
-            </div>
-
-            <div className="document-drawer__header-right">
-            {/* Version Dropdown - Only show when NOT in edit mode */}
-            {!isEditMode && (
-              <div className="document-drawer__version-selector">
-                <button
-                  className="document-drawer__version-button"
-                  onClick={() => setShowVersionDropdown(!showVersionDropdown)}
+              {(!isEditMode || document?.status !== 'approved') && document && (
+                <div 
+                  className="document-drawer__status"
+                  style={{ color: getStatusColor(document.status) }}
                 >
-                  <span>{selectedVersion}</span>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5"/>
-                  </svg>
-                </button>
-
-                {/* Version Dropdown Panel */}
-                {showVersionDropdown && (
-                  <div className="document-drawer__version-dropdown">
-                    {mockVersions.map((version) => (
-                      <div
-                        key={version.id}
-                        className={`document-drawer__version-item ${version.isActive ? 'document-drawer__version-item--active' : ''}`}
-                        onClick={() => {
-                          setSelectedVersion(version.version);
-                          setShowVersionDropdown(false);
-                        }}
-                      >
-                        <div className="document-drawer__version-info">
-                          <div className="document-drawer__version-name">
-                            {version.version}
-                          </div>
-                          <div className="document-drawer__version-date">
-                            Updated: {formatDate(version.updatedDate)}
-                          </div>
-                        </div>
-                        <div
-                          className="document-drawer__version-status"
-                          style={{ color: getStatusColor(version.status) }}
-                        >
-                          {getStatusLabel(version.status)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                  {getStatusLabel(document.status)}
+                </div>
+              )}
               </div>
-            )}
+
+              <div className="document-drawer__header-right">
+              {/* Version Dropdown - Only show when NOT in edit mode */}
+              {!isEditMode && (
+                <div className="document-drawer__version-selector">
+                  <button
+                    className="document-drawer__version-button"
+                    onClick={() => setShowVersionDropdown(!showVersionDropdown)}
+                  >
+                    <span>{selectedVersion}</span>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5"/>
+                    </svg>
+                  </button>
+
+                  {/* Version Dropdown Panel */}
+                  {showVersionDropdown && (
+                    <div className="document-drawer__version-dropdown">
+                      {mockVersions.map((version) => (
+                        <div
+                          key={version.id}
+                          className={`document-drawer__version-item ${version.isActive ? 'document-drawer__version-item--active' : ''}`}
+                          onClick={() => {
+                            setSelectedVersion(version.version);
+                            setShowVersionDropdown(false);
+                          }}
+                        >
+                          <div className="document-drawer__version-info">
+                            <div className="document-drawer__version-name">
+                              {version.version}
+                            </div>
+                            <div className="document-drawer__version-date">
+                              Updated: {formatDate(version.updatedDate)}
+                            </div>
+                          </div>
+                          <div
+                            className="document-drawer__version-status"
+                            style={{ color: getStatusColor(version.status) }}
+                          >
+                            {getStatusLabel(version.status)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {!isPlaybookContext && (
+          <div className="document-drawer__subtitle">
+            {isEditMode 
+              ? 'Make changes to your document. Ella is here to help.'
+              : `Review and approve your ${document?.title || 'document'}. Let us know if you'd like refinements or have additional input.`
+            }
+          </div>
+        )}
+
+        {isPlaybookContext && isEditMode && (
+          <div className="document-drawer__info">
+            <div className="document-drawer__info-container">
+              <div className="document-drawer__info-left"></div>
+              <div className="document-drawer__info-right">
+                <div className="document-drawer__stepper">
+                  {[1,2,3,4,5].map((step, idx) => {
+                    const isCompleted = step < activeStep;
+                    const isCurrent = step === activeStep;
+                    return (
+                      <div key={step} className="document-drawer__stepper-item">
+                        <div className={`document-drawer__stepper-circle ${isCompleted ? 'document-drawer__stepper-circle--completed' : ''} ${isCurrent ? 'document-drawer__stepper-circle--current' : ''}`}>
+                          {isCompleted ? (
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                              <path d="M13.3333 4.66675L6.33325 11.6667L3.33325 8.66675" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          ) : (
+                            <span>{step}</span>
+                          )}
+                        </div>
+                        {idx < 4 && (
+                          <div className={`document-drawer__stepper-connector ${step < activeStep ? 'document-drawer__stepper-connector--active' : ''}`}></div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="document-drawer__subtitle">
-          {isEditMode 
-            ? 'Make changes to your document. Ella is here to help.'
-            : `Review and approve your ${document?.title || 'document'}. Let us know if you'd like refinements or have additional input.`
-          }
-        </div>
+        )}
 
         {/* Content */}
         <div className="document-drawer__content">
@@ -331,30 +371,6 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
 
               {/* Ella Chat Panel */}
               <div className="document-drawer__chat-panel">
-                {isPlaybookContext && (
-                  <div className="document-drawer__stepper">
-                    {[1,2,3,4,5].map((step, idx) => {
-                      const isCompleted = step < activeStep;
-                      const isCurrent = step === activeStep;
-                      return (
-                        <div key={step} className="document-drawer__stepper-item">
-                          <div className={`document-drawer__stepper-circle ${isCompleted ? 'document-drawer__stepper-circle--completed' : ''} ${isCurrent ? 'document-drawer__stepper-circle--current' : ''}`}>
-                            {isCompleted ? (
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M13.3333 4.66675L6.33325 11.6667L3.33325 8.66675" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                            ) : (
-                              <span>{step}</span>
-                            )}
-                          </div>
-                          {idx < 4 && (
-                            <div className={`document-drawer__stepper-connector ${step < activeStep ? 'document-drawer__stepper-connector--active' : ''}`}></div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
                 <div className="document-drawer__chat-header">
                   <div className="document-drawer__ella-avatar">
                     <span>E</span>
@@ -495,7 +511,7 @@ const DocumentDrawer = ({ isOpen, onClose, document, onEdit, workspaceName = 'Wo
                   <div className="document-drawer__section-label">Sample Content:</div>
                   <div 
                     className="document-drawer__section-content document-drawer__sample-content"
-                    style={{ height: isPlaybookContext ? 'calc(100vh - 711px)' : 'calc(100vh - 554px)' }}
+                    style={{ height: isPlaybookContext ? 'calc(100vh - 588px)' : 'calc(100vh - 554px)' }}
                   >
                     This is where the actual document content would be displayed. 
                     In a real implementation, this would show the full document content 

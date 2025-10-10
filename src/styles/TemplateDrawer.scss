@@ -321,7 +321,7 @@
 
   &__card-title-section {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 9px;
     flex: 1;
   }
@@ -349,10 +349,11 @@
     font-weight: 500;
     line-height: 17px;
     margin: 0;
-    white-space: nowrap;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 175px;
+    height: 34px
   }
 
   &__card-info-container {
@@ -558,6 +559,11 @@
     line-height: 15px;
     margin: 0 0 auto 5px;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 205px;
+    align-content: center;
   }
 
   &__card-footer {

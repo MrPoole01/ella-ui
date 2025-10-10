@@ -10,3 +10,4 @@ export { default as UploadedFilesDrawer } from './UploadedFilesDrawer';
 export { default as TagSelector } from './TagSelector';
 export { default as WorkspaceFilter } from './WorkspaceFilter';
 export { default as CreateDrawer } from './CreateDrawer';
+export { default as PlaybookRunDrawer } from './PlaybookRunDrawer';
