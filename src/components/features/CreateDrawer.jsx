@@ -2121,62 +2121,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
             </div>
           </div>
 
-          {/* Builder Preview & Validation */}
-          <div className="builder-preview-validation">
-            <div className="builder-preview">
-              <h4 className="builder-section-title">Preview Playbook</h4>
-              <div className="preview-playbook">
-                <h5>{playbook.title || 'Untitled Playbook'}</h5>
-                <div className="preview-sub">{playbook.preview || ''}</div>
-                {playbook.description && <div className="preview-desc">{playbook.description}</div>}
-                <div className="preview-instr"><strong>Instructions:</strong> {playbook.instructions || '—'}</div>
-                {(playbook.knowledgeFiles||[]).length>0 && (
-                  <div className="preview-files"><strong>Files:</strong> {(playbook.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>
-                )}
-                <div className="preview-plays">
-                  {(playbook.plays||[]).map((p, pi)=> (
-                    <div key={p.id} className="preview-play">
-                      <div className="preview-play-head"><div className="preview-step-index">{pi+1}</div><div className="preview-play-title">{p.title}</div></div>
-                      <div className="preview-play-sub">{p.preview}</div>
-                      {p.description && <div className="preview-play-desc">{p.description}</div>}
-                      <div className="preview-play-instr"><strong>Instructions:</strong> {p.instructions}</div>
-                      {(p.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Files:</strong> {(p.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
-                      <div className="preview-steps">
-                        {(p.steps||[]).map((s, si)=> (
-                          <div key={s.id} className="preview-step">
-                            <div className="preview-step-head"><div className="preview-step-index">{si+1}</div><div className="preview-step-title">{s.title}</div></div>
-                            <div className="preview-step-sub">{s.prompt}</div>
-                            {(s.inputs||[]).length>0 && (
-                              <div className="preview-intake">
-                                {(s.inputs||[]).map((inp,ii)=> <div key={ii} className="preview-intake-field"><div className="preview-label">{inp.label}{inp.required && <span className="create-drawer-required">*</span>}</div></div>)}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="builder-validation" ref={validationRef}>
-              <h4 className="builder-section-title">Validation</h4>
-              {validation.errors.length === 0 && validation.warnings.length === 0 ? (
-                <div className="validation-clear">No issues found</div>
-              ) : (
-                <ul className="validation-list">
-                  {validation.errors.map(v => (
-                    <li key={v.id} className="validation-item validation-item--error"><span className="validation-badge">Error</span><span className="validation-msg">{v.msg}</span></li>
-                  ))}
-                  {validation.warnings.map(v => (
-                    <li key={v.id} className="validation-item validation-item--warning"><span className="validation-badge validation-badge--warning">Warning</span><span className="validation-msg">{v.msg}</span></li>
-                  ))}
-                </ul>
-              )}
-              <button className="create-drawer-btn" onClick={recomputeValidation}>Re-check</button>
-            </div>
-          </div>
-
           {/* Add Play Modal (inline) */}
           {showAddPlayModal && (
             <div className="playbook-modal-backdrop" role="dialog" aria-modal="true">
@@ -3026,7 +2970,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           
       {/* Full-screen Preview Overlay */}
       {showPreviewModal && (type === 'playbook' || type === 'group') && (
-        <div className="preview-overlay" role="dialog" aria-modal="true" aria-labelledby="pb-preview-title">
+        <>
+          <div className="preview-overlay__backdrop" onClick={() => setShowPreviewModal(false)} />
+          <div className={`preview-overlay ${showPreviewModal ? 'preview-overlay--open' : ''}`} role="dialog" aria-modal="true" aria-labelledby="pb-preview-title">
           <div className="preview-header">
             <div className="preview-header-left">
               <h2 id="pb-preview-title">{type === 'playbook' ? (playbook.title || 'Untitled Playbook') : (series.title || 'Untitled Series')}</h2>
@@ -3152,7 +3098,8 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               </section>
             )}
           </div>
-        </div>
+          </div>
+        </>
       )}
 
           <div className="create-drawer-footer-right">
