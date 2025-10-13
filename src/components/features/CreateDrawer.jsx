@@ -13,7 +13,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
   const [selectedBrandBot, setSelectedBrandBot] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
-  const [selectedTags, setSelectedTags] = useState([]);
   const [selectedDrawer, setSelectedDrawer] = useState('playbooks'); // 'playbooks' | 'ellaments'
   const [elementSubtype, setElementSubtype] = useState(''); // company | customer | brand | special_edition
   const [selectedICPs, setSelectedICPs] = useState([]); // when elementSubtype === 'customer'
@@ -86,9 +85,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   const [showWorkspaceDropdown, setShowWorkspaceDropdown] = useState(false);
   const [showBrandBotDropdown, setShowBrandBotDropdown] = useState(false);
-  const [tagInput, setTagInput] = useState('');
-  const [availableTags, setAvailableTags] = useState([]);
-  const [filteredTags, setFilteredTags] = useState([]);
   
   // Refs for dropdowns
   const versionRef = useRef(null);
@@ -159,19 +155,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     { id: 'icp_agency', name: 'Agency' }
   ];
 
-  const mockTags = [
-    // Ella tags (system, non-editable)
-    { id: 'ella_marketing', name: 'Marketing', type: 'ella', editable: false },
-    { id: 'ella_sales', name: 'Sales', type: 'ella', editable: false },
-    { id: 'ella_support', name: 'Support', type: 'ella', editable: false },
-    // Workspace tags
-    { id: 'ws_creative', name: 'Creative', type: 'workspace', editable: true },
-    { id: 'ws_campaign', name: 'Campaign', type: 'workspace', editable: true },
-    // Global tags
-    { id: 'global_urgent', name: 'Urgent', type: 'global', editable: true },
-    { id: 'global_draft', name: 'Draft', type: 'global', editable: true }
-  ];
-
   // Mock templates for playbook step selection
   const mockTemplates = [
     { 
@@ -226,10 +209,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         draft_id: draft.id 
       });
 
-      // Initialize available tags
-      setAvailableTags(mockTags);
-      setFilteredTags(mockTags);
-
       // Restore draft state if it exists
       if (draft.scope) {
         setSelectedVersion(draft.scope.version || '');
@@ -238,7 +217,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         setSelectedWorkspace(draft.scope.workspace || '');
         setSelectedBrandBot(draft.scope.brandbot || '');
         setSelectedSection(draft.scope.section || '');
-        setSelectedTags(draft.scope.tags || []);
         setSelectedDrawer(draft.scope.drawer || 'playbooks');
         setElementSubtype(draft.scope.element_subtype || '');
         setSelectedICPs(draft.scope.icp_ids || []);
@@ -250,7 +228,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         setSelectedWorkspace(draft.workspace_id || '');
         setSelectedBrandBot(draft.brandbot_id || '');
         setSelectedSection(draft.section_id || '');
-        setSelectedTags(draft.tags || []);
       }
       
       // Restore template form state
@@ -424,8 +401,7 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         organization: selectedOrganization,
         workspace: selectedWorkspace,
         brandbot: selectedBrandBot,
-        section: selectedSection,
-        tags: selectedTags
+        section: selectedSection
       },
       current_step: currentStep,
       last_modified: new Date().toISOString()
@@ -582,34 +558,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     autosaveScope({ section_id: sectionId || null });
   };
 
-  const handleTagAdd = (tag) => {
-    if (!selectedTags.find(t => t.id === tag.id)) {
-      setSelectedTags(prev => [...prev, tag]);
-      setTagInput('');
-      setFilteredTags(availableTags);
-      autosaveScope({ tags: [...selectedTags, tag] });
-    }
-  };
-
-  const handleTagRemove = (tagId) => {
-    const updated = selectedTags.filter(t => t.id !== tagId);
-    setSelectedTags(updated);
-    autosaveScope({ tags: updated });
-  };
-
-  const handleTagInputChange = (value) => {
-    setTagInput(value);
-    if (value) {
-      const filtered = availableTags.filter(tag => 
-        tag.name.toLowerCase().includes(value.toLowerCase()) &&
-        !selectedTags.find(t => t.id === tag.id)
-      );
-      setFilteredTags(filtered);
-    } else {
-      setFilteredTags(availableTags);
-    }
-  };
-
   // Generate slug from label
   const generateSlug = (label) => {
     return label
@@ -622,19 +570,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const getVersionLabel = () => {
     const selected = versionOptions.find(v => v.id === selectedVersion);
     return selected ? selected.label : 'Select version...';
-  };
-
-  const getTagTypeIcon = (tagType) => {
-    switch (tagType) {
-      case 'ella':
-        return { icon: '⭐', color: '#FFC700', tooltip: 'Ella System Tag' };
-      case 'workspace':
-        return { icon: '🏢', color: '#3B82F6', tooltip: 'Workspace Tag' };
-      case 'global':
-        return { icon: '🌐', color: '#10B981', tooltip: 'Global Tag' };
-      default:
-        return { icon: '🏷️', color: '#6B7280', tooltip: 'Tag' };
-    }
   };
 
   const getSectionCatalog = () => {
@@ -658,7 +593,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           workspace: selectedWorkspace,
           brandbot: selectedBrandBot,
           section: selectedSection,
-          tags: selectedTags,
           drawer: selectedDrawer,
           element_subtype: elementSubtype,
           icp_ids: selectedICPs,
@@ -668,7 +602,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         version_id: partial?.version_id || current.version_id,
         drawer: selectedDrawer,
         section_id: (partial?.section_id ?? selectedSection) || null,
-        tags: selectedTags,
         progress_step: 'scoping',
         last_modified_at: new Date().toISOString()
       };
@@ -1099,74 +1032,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           )}
         </div>
       </div>
-
-      {/* Tags Section */}
-      {selectedVersion && (
-        <div className="create-drawer-field">
-          <label className="create-drawer-label">Tags</label>
-          
-          {selectedTags.length > 0 && (
-            <div className="create-drawer-tags-selected">
-              {selectedTags.map((tag) => {
-                const typeInfo = getTagTypeIcon(tag.type);
-                return (
-                  <div key={tag.id} className="create-drawer-tag-chip">
-                    <span 
-                      className="create-drawer-tag-icon"
-                      style={{ color: typeInfo.color }}
-                      title={typeInfo.tooltip}
-                    >
-                      {typeInfo.icon}
-                    </span>
-                    <span>{tag.name}</span>
-                    {tag.editable && (
-                      <button
-                        className="create-drawer-tag-remove"
-                        onClick={() => handleTagRemove(tag.id)}
-                        aria-label={`Remove ${tag.name} tag`}
-                      >
-                        <span className="create-drawer-tag-remove-icon">✕</span>
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="create-drawer-tag-input">
-            <input
-              type="text"
-              placeholder="Search and add tags..."
-              value={tagInput}
-              onChange={(e) => handleTagInputChange(e.target.value)}
-              className="create-drawer-input"
-            />
-            
-            {tagInput && filteredTags.length > 0 && (
-              <div className="create-drawer-tag-suggestions">
-                {filteredTags.slice(0, 5).map((tag) => {
-                  const typeInfo = getTagTypeIcon(tag.type);
-                  return (
-                    <button
-                      key={tag.id}
-                      className="create-drawer-tag-suggestion"
-                      onClick={() => handleTagAdd(tag)}
-                    >
-                      <i 
-                        className={typeInfo.icon} 
-                        style={{ color: typeInfo.color }}
-                      ></i>
-                      <span>{tag.name}</span>
-                      <span className="create-drawer-tag-type">({tag.type})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
       {autosaveError && (
         <div className="create-drawer-inline-toast create-drawer-inline-toast--error" role="status">{autosaveError}</div>
       )}
@@ -1718,34 +1583,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           </button>
         </div>
       </div>
-
-      {/* Tags Display (Read-only) */}
-      <div className="template-form-tags-display">
-        <h4>Tags (from Scope step)</h4>
-        <div className="template-form-tags-readonly">
-          {selectedTags.length > 0 ? (
-            selectedTags.map((tag) => {
-              const typeInfo = getTagTypeIcon(tag.type);
-              return (
-                <div key={tag.id} className="template-form-tag-chip">
-                  <span 
-                    className="template-form-tag-chip-icon"
-                    style={{ color: typeInfo.color }}
-                  >
-                    {typeInfo.icon}
-                  </span>
-                  <span>{tag.name}</span>
-                </div>
-              );
-            })
-          ) : (
-            <span className="template-form-no-tags">No tags selected</span>
-          )}
-        </div>
-        <p className="template-form-tags-note">
-          To edit tags, go back to the Scope step.
-        </p>
-      </div>
     </div>
   );
 
@@ -1877,11 +1714,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
               <div className="preview-template-card">
                 <div className="preview-title">{templateForm.title || 'Untitled Template'}</div>
                 <div className="preview-sub">{templateForm.preview || 'Preview goes here...'}</div>
-                {selectedTags?.length > 0 && (
-                  <div className="preview-tags">
-                    {selectedTags.map(t => <span key={t.id} className="preview-tag">{t.name}</span>)}
-                  </div>
-                )}
               </div>
               <div className="preview-intake">
                 <div className="preview-intake-title">Simulated Intake</div>
@@ -2157,9 +1989,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           <div className="create-drawer-field"><label className="create-drawer-label">Estimated Time (minutes) <span className="create-drawer-optional">(optional)</span></label><input type="number" min={0} className="create-drawer-input" value={series.estMinutes} onChange={(e)=> { setSeries(prev=>({ ...prev, estMinutes: e.target.value })); saveTemplateDraft(); }} />
             <div className="create-drawer-field-hint">Calculated Estimate: {(series.items||[]).reduce((sum,i)=> sum + (Number(i.estMinutes)||0), 0)} minutes</div>
           </div>
-          {selectedTags?.length>0 && (
-            <div className="create-drawer-field"><label className="create-drawer-label">Tags (from Scoping)</label><div className="preview-tags">{selectedTags.map(t=> <span key={t.id} className="preview-tag">{t.name}</span>)}</div></div>
-          )}
 
           {/* Composer Section */}
           <div className="series-composer">
@@ -2175,7 +2004,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
                     <div className="sr-meta">
                       <div className="sr-title">{p.name}</div>
                       <div className="sr-sub">{p.preview}</div>
-                      <div className="sr-tags">{(p.tags||[]).map(t=> <span key={t} className="preview-tag">{t}</span>)}</div>
                     </div>
                     <div className="sr-actions">
                       <button className="create-drawer-btn" disabled={already} onClick={()=> addPlaybookToSeries(p)}>{already ? 'Already added' : 'Add to Series'}</button>
@@ -3031,7 +2859,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
                 <div>
                   <div className="preview-field"><strong>Placement</strong><div>{selectedDrawer === 'ellaments' ? 'Ella-ments' : 'Playbooks'} → {selectedSection ? (getSectionCatalog().find(s => s.id === selectedSection)?.name || 'Section') : 'Unassigned'}</div></div>
                   <div className="preview-field"><strong>Version</strong><div>{getVersionLabel()}</div></div>
-                  {selectedTags?.length>0 && (<div className="preview-field"><strong>Tags</strong><div className="preview-tags">{selectedTags.map(t => <span key={t.id} className="preview-tag">{t.name}</span>)}</div></div>)}
                 </div>
               </div>
               {isAdmin && <button className="create-drawer-btn create-drawer-btn--secondary" onClick={() => { setShowPreviewModal(false); setCurrentStep('authoring'); }}>{type === 'playbook' ? 'Edit Playbook' : 'Edit Series'}</button>}
@@ -3082,19 +2909,9 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
                       </div>
                       <div className="preview-step-sub">{pb.preview || ''} • {pb.estMinutes || 0} min</div>
                       {(pb.knowledgeFiles||[]).length>0 && (<div className="preview-files"><strong>Files:</strong> {(pb.knowledgeFiles||[]).map((f,i)=> <span key={i} className="preview-file">{f.name}</span>)}</div>)}
-                      {(pb.tags||[]).length>0 && (<div className="preview-tags">{(pb.tags||[]).map(t=> <span key={t} className="preview-tag">{t}</span>)}</div>)}
                     </div>
                   ))}
                 </div>
-                {/* Aggregated child tags */}
-                {type === 'group' && (series.items||[]).length > 0 && (
-                  <div className="preview-field" style={{ marginTop: 16 }}>
-                    <strong>Aggregated Tags (from Playbooks)</strong>
-                    <div className="preview-tags">
-                      {Array.from(new Set((series.items||[]).flatMap(i => i.tags||[]))).map(t=> <span key={t} className="preview-tag preview-tag--aggregated">{t}</span>)}
-                    </div>
-                  </div>
-                )}
               </section>
             )}
           </div>

@@ -12,7 +12,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [selectedWorkspace, setSelectedWorkspace] = useState('');
   const [selectedBrandBot, setSelectedBrandBot] = useState('');
   const [selectedSection, setSelectedSection] = useState('');
-  const [selectedTags, setSelectedTags] = useState([]);
   
   // Template authoring form state
   const [templateForm, setTemplateForm] = useState({
@@ -37,9 +36,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const [showOrgDropdown, setShowOrgDropdown] = useState(false);
   const [showWorkspaceDropdown, setShowWorkspaceDropdown] = useState(false);
   const [showBrandBotDropdown, setShowBrandBotDropdown] = useState(false);
-  const [tagInput, setTagInput] = useState('');
-  const [availableTags, setAvailableTags] = useState([]);
-  const [filteredTags, setFilteredTags] = useState([]);
   
   // Refs for dropdowns
   const versionRef = useRef(null);
@@ -83,19 +79,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     { id: 'technical_writer', name: 'Technical Writer Bot', workspaceId: 'development' }
   ];
 
-  const mockTags = [
-    // Ella tags (system, non-editable)
-    { id: 'ella_marketing', name: 'Marketing', type: 'ella', editable: false },
-    { id: 'ella_sales', name: 'Sales', type: 'ella', editable: false },
-    { id: 'ella_support', name: 'Support', type: 'ella', editable: false },
-    // Workspace tags
-    { id: 'ws_creative', name: 'Creative', type: 'workspace', editable: true },
-    { id: 'ws_campaign', name: 'Campaign', type: 'workspace', editable: true },
-    // Global tags
-    { id: 'global_urgent', name: 'Urgent', type: 'global', editable: true },
-    { id: 'global_draft', name: 'Draft', type: 'global', editable: true }
-  ];
-
   useEffect(() => {
     if (isOpen && draft) {
       // Log telemetry event when drawer opens
@@ -103,10 +86,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         value: type,
         draft_id: draft.id 
       });
-
-      // Initialize available tags
-      setAvailableTags(mockTags);
-      setFilteredTags(mockTags);
 
       // Restore draft state if it exists
       if (draft.scope) {
@@ -116,7 +95,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         setSelectedWorkspace(draft.scope.workspace || '');
         setSelectedBrandBot(draft.scope.brandbot || '');
         setSelectedSection(draft.scope.section || '');
-        setSelectedTags(draft.scope.tags || []);
       } else if (draft.version_type) {
         // Fallback to old format
         setSelectedVersion(draft.version_type);
@@ -125,7 +103,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         setSelectedWorkspace(draft.workspace_id || '');
         setSelectedBrandBot(draft.brandbot_id || '');
         setSelectedSection(draft.section_id || '');
-        setSelectedTags(draft.tags || []);
       }
       
       // Restore template form state
@@ -236,8 +213,7 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         organization: selectedOrganization,
         workspace: selectedWorkspace,
         brandbot: selectedBrandBot,
-        section: selectedSection,
-        tags: selectedTags
+        section: selectedSection
       },
       current_step: currentStep,
       last_modified: new Date().toISOString()
@@ -338,33 +314,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
     saveDraft();
   };
 
-  const handleTagAdd = (tag) => {
-    if (!selectedTags.find(t => t.id === tag.id)) {
-      setSelectedTags(prev => [...prev, tag]);
-      setTagInput('');
-      setFilteredTags(availableTags);
-      saveDraft();
-    }
-  };
-
-  const handleTagRemove = (tagId) => {
-    setSelectedTags(prev => prev.filter(t => t.id !== tagId));
-    saveDraft();
-  };
-
-  const handleTagInputChange = (value) => {
-    setTagInput(value);
-    if (value) {
-      const filtered = availableTags.filter(tag => 
-        tag.name.toLowerCase().includes(value.toLowerCase()) &&
-        !selectedTags.find(t => t.id === tag.id)
-      );
-      setFilteredTags(filtered);
-    } else {
-      setFilteredTags(availableTags);
-    }
-  };
-
   // Generate slug from label
   const generateSlug = (label) => {
     return label
@@ -377,19 +326,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
   const getVersionLabel = () => {
     const selected = versionOptions.find(v => v.id === selectedVersion);
     return selected ? selected.label : 'Select version...';
-  };
-
-  const getTagTypeIcon = (tagType) => {
-    switch (tagType) {
-      case 'ella':
-        return { icon: 'fa-solid fa-star', color: '#FFC700', tooltip: 'Ella System Tag' };
-      case 'workspace':
-        return { icon: 'fa-solid fa-building', color: '#3B82F6', tooltip: 'Workspace Tag' };
-      case 'global':
-        return { icon: 'fa-solid fa-globe', color: '#10B981', tooltip: 'Global Tag' };
-      default:
-        return { icon: 'fa-solid fa-tag', color: '#6B7280', tooltip: 'Tag' };
-    }
   };
 
   const getTypeInfo = () => {
@@ -520,72 +456,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
           </div>
         </div>
       )}
-
-      {/* Tags Section */}
-      {selectedVersion && (
-        <div className="create-drawer-field">
-          <label className="create-drawer-label">Tags</label>
-          
-          {selectedTags.length > 0 && (
-            <div className="create-drawer-tags-selected">
-              {selectedTags.map((tag) => {
-                const typeInfo = getTagTypeIcon(tag.type);
-                return (
-                  <div key={tag.id} className="create-drawer-tag-chip">
-                    <i 
-                      className={typeInfo.icon} 
-                      style={{ color: typeInfo.color }}
-                      title={typeInfo.tooltip}
-                    ></i>
-                    <span>{tag.name}</span>
-                    {tag.editable && (
-                      <button
-                        className="create-drawer-tag-remove"
-                        onClick={() => handleTagRemove(tag.id)}
-                        aria-label={`Remove ${tag.name} tag`}
-                      >
-                        <i className="fa-solid fa-times"></i>
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          <div className="create-drawer-tag-input">
-            <input
-              type="text"
-              placeholder="Search and add tags..."
-              value={tagInput}
-              onChange={(e) => handleTagInputChange(e.target.value)}
-              className="create-drawer-input"
-            />
-            
-            {tagInput && filteredTags.length > 0 && (
-              <div className="create-drawer-tag-suggestions">
-                {filteredTags.slice(0, 5).map((tag) => {
-                  const typeInfo = getTagTypeIcon(tag.type);
-                  return (
-                    <button
-                      key={tag.id}
-                      className="create-drawer-tag-suggestion"
-                      onClick={() => handleTagAdd(tag)}
-                    >
-                      <i 
-                        className={typeInfo.icon} 
-                        style={{ color: typeInfo.color }}
-                      ></i>
-                      <span>{tag.name}</span>
-                      <span className="create-drawer-tag-type">({tag.type})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -614,7 +484,6 @@ const CreateDrawer = ({ isOpen, onClose, type, draft, onChangeType }) => {
         <h3>Template Authoring Form</h3>
         <p>This is where the template authoring form will be implemented.</p>
         <p>Selected scope: {getVersionLabel()}</p>
-        <p>Tags: {selectedTags.map(t => t.name).join(', ')}</p>
       </div>
     </div>
   );
