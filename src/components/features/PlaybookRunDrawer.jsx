@@ -26,7 +26,7 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
   const chatContainerRef = useRef(null);
 
   // Mock playbook with steps
-  const currentPlaybook = playbook || {
+  const mockPlaybook = {
     id: 1,
     title: 'Post-Event Networking Follow-Up Series',
     plays: [
@@ -104,6 +104,16 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
     ]
   };
 
+  // Prefer provided playbook only if it contains valid plays with steps
+  const hasValidProvidedPlaybook = (
+    playbook &&
+    Array.isArray(playbook.plays) &&
+    playbook.plays.length > 0 &&
+    playbook.plays.every(p => Array.isArray(p.steps) && p.steps.length > 0)
+  );
+
+  const currentPlaybook = hasValidProvidedPlaybook ? playbook : mockPlaybook;
+
   const currentPlay = currentPlaybook.plays[currentPlayIndex];
   const currentStep = currentPlay?.steps[currentStepIndex];
   const isLastStep = currentStepIndex === (currentPlay?.steps.length - 1);
@@ -112,14 +122,12 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
   const hasCompletedCurrentStep = completedSteps.has(stepKey);
 
   // Calculate progress
-  const totalSteps = currentPlaybook.plays.reduce((sum, play) => sum + play.steps.length, 0);
+  const totalSteps = currentPlaybook.plays.reduce((sum, play) => sum + ((play.steps || []).length), 0);
   const completedStepsCount = completedSteps.size;
   const progressPercent = totalSteps > 0 ? (completedStepsCount / totalSteps) * 100 : 0;
 
   // Has the current play been run at least once?
-  const hasRunCurrentPlay = currentPlay?.steps.some(step => 
-    completedSteps.has(`${currentPlay.id}-${step.id}`)
-  );
+  const hasRunCurrentPlay = (currentPlay?.steps || []).some(step => completedSteps.has(`${currentPlay.id}-${step.id}`));
 
   // Telemetry logging
   const logTelemetry = (event, data = {}) => {

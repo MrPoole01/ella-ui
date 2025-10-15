@@ -9,6 +9,8 @@ import SavedWorkDrawer from '../components/features/SavedWorkDrawer';
 import UploadedFilesDrawer from '../components/features/UploadedFilesDrawer';
 import ManageTagsDrawer from '../components/features/ManageTagsDrawer';
 import PlaybookRunDrawer from '../components/features/PlaybookRunDrawer';
+import PlaybookRunnerDrawer from '../components/features/PlaybookRunnerDrawer';
+import PlaybookPreviewDrawer from '../components/features/PlaybookPreviewDrawer';
 import { 
   FolderIcon, 
   PlusIcon, 
@@ -104,8 +106,12 @@ const Workspace = () => {
 
   const [isDocumentDrawerOpen, setIsDocumentDrawerOpen] = React.useState(false);
   const [documentDrawerData, setDocumentDrawerData] = React.useState(null);
+  const [isPlaybookPreviewOpen, setIsPlaybookPreviewOpen] = React.useState(false);
+  const [playbookPreviewData, setPlaybookPreviewData] = React.useState(null);
   const [isPlaybookRunDrawerOpen, setIsPlaybookRunDrawerOpen] = React.useState(false);
   const [playbookRunData, setPlaybookRunData] = React.useState(null);
+  const [isPlaybookRunnerDrawerOpen, setIsPlaybookRunnerDrawerOpen] = React.useState(false);
+  const [playbookRunnerData, setPlaybookRunnerData] = React.useState(null);
 
   const handleTemplateSelected = (payload) => {
     // Backward compatibility: if a string is passed, treat as prompt
@@ -116,9 +122,25 @@ const Workspace = () => {
     }
 
     // If payload instructs to open document drawer
-    if (payload && payload.kind === 'open_document') {
-      setDocumentDrawerData(payload);
-      setIsDocumentDrawerOpen(true);
+    if (payload && (payload.kind === 'open_document' || payload.kind === 'open_playbook_preview')) {
+      // Open Playbook Preview drawer instead of the legacy document drawer
+      const playbook = {
+        id: 'pb1',
+        title: payload?.document?.title || 'Playbook',
+        preview: payload?.document?.preview || 'A brief preview of this playbook',
+        description: 'What it does and what\'s inside.',
+        estimatedTime: '6–12 min',
+        tags: ['Planning', 'Strategy'],
+        plays: (payload?.playbookCardTitles || []).map((t, i) => ({ id: `p${i+1}`, name: t, blurb: `About ${t}` }))
+      };
+      setPlaybookPreviewData({
+        documentContext: {
+          project: payload?.document?.project,
+          title: payload?.document?.title
+        },
+        playbook
+      });
+      setIsPlaybookPreviewOpen(true);
       setIsTemplateDrawerOpen(false);
       return;
     }
@@ -129,15 +151,34 @@ const Workspace = () => {
   };
 
   const handleRunPlaybook = (documentData) => {
-    // Close the document drawer and open the playbook run drawer
     setIsDocumentDrawerOpen(false);
     setPlaybookRunData(documentData);
     setIsPlaybookRunDrawerOpen(true);
   };
 
+  const handleStartFromPreview = (mode, context) => {
+    setIsPlaybookPreviewOpen(false);
+    const runPayload = {
+      playbook: playbookPreviewData?.playbook,
+      inputPanelData: context
+    };
+    if (mode === 'auto-run') {
+      setPlaybookRunnerData(runPayload);
+      setIsPlaybookRunnerDrawerOpen(true);
+    } else {
+      setPlaybookRunData(runPayload);
+      setIsPlaybookRunDrawerOpen(true);
+    }
+  };
+
   const handleClosePlaybookRunDrawer = () => {
     setIsPlaybookRunDrawerOpen(false);
     setPlaybookRunData(null);
+  };
+
+  const handleClosePlaybookRunnerDrawer = () => {
+    setIsPlaybookRunnerDrawerOpen(false);
+    setPlaybookRunnerData(null);
   };
 
   const handleWorkspaceSlideMenuToggle = () => {
@@ -1250,7 +1291,7 @@ const Workspace = () => {
         currentUserId={currentUserId}
       />
 
-      {/* Document Drawer opened via Template selection */}
+      {/* Document Drawer (legacy) opened via Template selection */}
       <DocumentDrawer
         isOpen={isDocumentDrawerOpen}
         onClose={() => { setIsDocumentDrawerOpen(false); setDocumentDrawerData(null); }}
@@ -1260,12 +1301,30 @@ const Workspace = () => {
         onRunPlaybook={handleRunPlaybook}
       />
 
+      {/* Playbook Preview Drawer */}
+      <PlaybookPreviewDrawer
+        isOpen={isPlaybookPreviewOpen}
+        onClose={() => { setIsPlaybookPreviewOpen(false); setPlaybookPreviewData(null); }}
+        workspaceName={typeof document !== 'undefined' ? (document.querySelector('.header__workspace-text')?.textContent || 'Workspace') : 'Workspace'}
+        documentContext={playbookPreviewData?.documentContext || null}
+        playbook={playbookPreviewData?.playbook || null}
+        onStart={(mode, context) => handleStartFromPreview(mode, context)}
+      />
+
       {/* Playbook Run Drawer */}
       <PlaybookRunDrawer
         isOpen={isPlaybookRunDrawerOpen}
         onClose={handleClosePlaybookRunDrawer}
         playbook={playbookRunData?.playbook || null}
         inputPanelData={playbookRunData?.inputPanelData || null}
+      />
+
+      {/* Variable-based (Auto-run) Runner */}
+      <PlaybookRunnerDrawer
+        isOpen={isPlaybookRunnerDrawerOpen}
+        onClose={handleClosePlaybookRunnerDrawer}
+        playbook={playbookRunnerData?.playbook || null}
+        inputPanelData={playbookRunnerData?.inputPanelData || null}
       />
 
       {/* Ellament Drawer */}

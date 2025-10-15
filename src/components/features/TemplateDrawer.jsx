@@ -601,7 +601,7 @@ const TemplateDrawer = ({
           </div>
           <h3 className="template-drawer__card-title">{template.title}</h3>
         </div>
-          <div className="template-drawer__card-info-container">
+          <div className="template-drawer__card-info-container" onClick={(e) => e.stopPropagation()}>
             <svg 
               className="template-drawer__card-info-icon"
               xmlns="http://www.w3.org/2000/svg" 
@@ -787,7 +787,7 @@ const TemplateDrawer = ({
                             </div>
                             <h3 className="template-drawer__card-title">{template.title}</h3>
                           </div>
-                          <div className="template-drawer__card-info-container">
+                          <div className="template-drawer__card-info-container" onClick={(e) => e.stopPropagation()}>
                             <svg 
                               className="template-drawer__card-info-icon"
                               xmlns="http://www.w3.org/2000/svg" 

@@ -8,7 +8,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  z-index: 10004;
   backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease-out;
 }
@@ -26,8 +26,8 @@
   width: 90%;
   max-width: 480px;
   max-height: 90vh;
-  z-index: 9999;
-  animation: slideIn 0.3s ease-out;
+  z-index: 10005;
+ 
   
   // Theme-specific adjustments
   .theme-electric-dark & {

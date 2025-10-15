@@ -13,3 +13,4 @@ export { default as CreateDrawer } from './CreateDrawer';
 export { default as PlaybookRunDrawer } from './PlaybookRunDrawer';
 export { default as PlaybookInputPanel } from './PlaybookInputPanel';
 export { default as PlaybookRunnerDrawer } from './PlaybookRunnerDrawer';
+export { default as PlaybookPreviewDrawer } from './PlaybookPreviewDrawer';
