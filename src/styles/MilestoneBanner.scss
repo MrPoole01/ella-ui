@@ -1,0 +1,251 @@
+// Milestone Banner - Celebration screen between playbook sections
+.milestone-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--theme-bg-primary) 0%, var(--theme-bg-secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+
+  &--visible {
+    opacity: 1;
+  }
+
+  &__content {
+    max-width: 600px;
+    padding: 48px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 24px;
+    color: var(--theme-success-text, #10b981);
+    animation: milestone-icon-pulse 2s ease-in-out infinite;
+  }
+
+  &__title {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--theme-text-primary);
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  &__summary {
+    font-size: 18px;
+    color: var(--theme-text-secondary);
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+
+  &__outcomes {
+    background: var(--theme-bg-tertiary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 0 0 32px 0;
+    text-align: left;
+  }
+
+  &__outcomes-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+    margin: 0 0 16px 0;
+  }
+
+  &__outcomes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__outcome-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 15px;
+    color: var(--theme-text-primary);
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  &__continue-btn {
+    background: var(--theme-interactive-primary);
+    color: var(--theme-text-on-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 32px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: var(--theme-interactive-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__auto-advance {
+    font-size: 14px;
+    color: var(--theme-text-tertiary);
+    font-style: italic;
+  }
+
+  // Confetti animation
+  &__confetti {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  &__confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    animation: confetti-fall 3s linear forwards;
+  }
+
+  // Sparkle animation
+  &__sparkles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__sparkle {
+    position: absolute;
+    font-size: 24px;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+  }
+
+  // Magic wand animation
+  &__magic-wand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  &__wand {
+    position: absolute;
+    font-size: 48px;
+    animation: wand-wave 1.5s ease-in-out infinite;
+  }
+
+  &__magic-trail {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(138, 43, 226, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: magic-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+// Animations
+@keyframes milestone-icon-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes wand-wave {
+  0%, 100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+}
+
+@keyframes magic-pulse {
+  0%, 100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .milestone-banner {
+    &__content {
+      padding: 24px;
+      max-width: 90%;
+    }
+
+    &__title {
+      font-size: 28px;
+    }
+
+    &__summary {
+      font-size: 16px;
+    }
+
+    &__outcomes {
+      padding: 16px;
+    }
+  }
+}
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShareModal } from '../ui/Modal';
 import '../../styles/EllamentDrawer.scss';
+import BrandBotPreviewDrawer from './BrandBotPreviewDrawer';
 
 // Mock data for ellaments
 const mockEllaments = [
@@ -144,6 +145,47 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedEllamentForShare, setSelectedEllamentForShare] = useState(null);
   const [isMobileTabsDropdownOpen, setIsMobileTabsDropdownOpen] = useState(false);
+
+  // Brand Bot Playbook series progress (persistent)
+  const [brandBotProgress, setBrandBotProgress] = useState(() => {
+    try {
+      const raw = localStorage.getItem('brandbot-series-progress');
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (parsed) {
+        // Backward compatibility for old shape { inProgress }
+        if (!parsed.status) {
+          parsed.status = parsed.inProgress ? 'running' : 'idle';
+        }
+        delete parsed.inProgress;
+        return { status: parsed.status, currentPlayIndex: parsed.currentPlayIndex || 0, totalPlays: parsed.totalPlays || 3 };
+      }
+      return { status: 'idle', currentPlayIndex: 0, totalPlays: 3 };
+    } catch (_) {
+      return { status: 'idle', currentPlayIndex: 0, totalPlays: 3 };
+    }
+  });
+
+  const persistBrandBot = (next) => {
+    setBrandBotProgress(next);
+    try { localStorage.setItem('brandbot-series-progress', JSON.stringify(next)); } catch (_) {}
+  };
+
+  const [showBrandBotPreview, setShowBrandBotPreview] = useState(false);
+  const handleBrandBotToggle = () => { setShowBrandBotPreview(true); };
+
+  const handleRunBrandBotFromPreview = (selectedMode, data) => {
+    const updated = { ...brandBotProgress, status: 'running', lastMode: selectedMode };
+    persistBrandBot(updated);
+    if (brandBotProgress.status === 'paused') {
+      window.dispatchEvent(new CustomEvent('brandbot:series_resumed', { detail: updated }));
+    } else if (brandBotProgress.status === 'idle') {
+      window.dispatchEvent(new CustomEvent('brandbot:series_started', { detail: updated }));
+    }
+    setShowBrandBotPreview(false);
+  };
+
+  // Brand Bot tags (single source of truth for both inline and tooltip)
+  const brandBotTags = ['Persistent', 'Company', 'Customers', 'Brand'];
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -425,25 +467,102 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
       
       {/* Drawer */}
       <div className={`ellament-drawer ${isOpen ? 'ellament-drawer--open' : ''}`}>
-        {/* Header */}
+        {/* Header (grid: left = title+subtitle, middle = brandbot card, right = close) */}
         <div className="ellament-drawer__header">
           <div className="ellament-drawer__header-left">
             <div className="ellament-drawer__title">Ella-ments</div>
+            <div className="ellament-drawer__subtitle">
+              Select from the Ella-ments below to ...
+            </div>
+          </div>
+
+          <div className="ellament-drawer__header-middle">
+            <div className="ellament-drawer__brandbot-card">
+              <div className="ellament-drawer__brandbot-card-content">
+                <div className="ellament-drawer__brandbot-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 9 }}>
+                  <div className="ellament-drawer__brandbot-left">
+                    <div className="ellament-drawer__brandbot-title">Brand Bot Playbook</div>
+                    <div className="ellament-drawer__brandbot-subtitle">Company → Customers → Brand</div>
+                  </div>
+                  <div className="ellament-drawer__card-info-container" onClick={(e) => e.stopPropagation()}>
+                    <svg 
+                      className="ellament-drawer__card-info-icon"
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="15" 
+                      height="15" 
+                      viewBox="0 0 90 90"
+                    >
+                      <g>
+                        <path d="M 37.267 41.251 c -0.249 1.047 0.268 2.116 1.233 2.594 c 1.543 0.765 2.511 2.474 2.213 4.305 l -2.516 15.471 c -0.306 1.88 0.97 3.652 2.85 3.958 h 0 c 2.783 0.453 5.627 0.25 8.308 -0.583 c 0.771 -0.24 1.354 -0.879 1.541 -1.664 l 0.427 -1.801 c 0.249 -1.047 -0.268 -2.116 -1.233 -2.594 c -1.543 -0.765 -2.511 -2.474 -2.213 -4.305 l 2.516 -15.471 c 0.306 -1.88 -0.97 -3.652 -2.85 -3.958 h 0 c -2.783 -0.453 -5.627 -0.25 -8.308 0.583 c -0.771 -0.24 -1.354 -0.879 -1.541 -1.664 L 37.267 41.251 z"/>
+                        <circle cx="47.093" cy="27.893" r="5.703"/>
+                        <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 7.098 C 24.101 7.098 7.098 24.101 7.098 45 S 24.101 82.902 45 82.902 S 82.902 65.899 82.902 45 S 65.899 7.098 45 7.098 z"/>
+                      </g>
+                    </svg>
+                    <div className="ellament-drawer__card-tooltip">
+                      <div className="ellament-drawer__card-tooltip-content">
+                        <h4>Brand Bot Playbook</h4>
+                        <p>Launches a persistent series: Company → Customers → Brand. Resume anytime.</p>
+                        <div className="ellament-drawer__card-tooltip-tags">
+                          {brandBotTags.map(t => (
+                            <span key={t} className="ellament-drawer__card-tooltip-tag">{t}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {(() => {
+                  const visible = brandBotTags.slice(0, 2);
+                  const hiddenCount = brandBotTags.length - visible.length;
+                  return (
+                    <div className="ellament-drawer__card-tags" style={{ marginTop: 6 }}>
+                      <button className="ellament-drawer__add-tag" title="Manage Tags" onClick={(e) => e.stopPropagation()}>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path d="M6 1V11M1 6H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+                        </svg>
+                      </button>
+                      {visible.map((t) => (
+                        <span key={t} className="ellament-drawer__tag-chip">{t}</span>
+                      ))}
+                      {hiddenCount > 0 && (
+                        <span className="ellament-drawer__tag-more" title={`${hiddenCount} more`}>+{hiddenCount} More</span>
+                      )}
+                <div className="ellament-drawer__brandbot-actions">
+                  <button 
+                    className="ellament-drawer__brandbot-action"
+                    onClick={handleBrandBotToggle}
+                    title={brandBotProgress.status === 'running' ? 'Pause Brand Bot Playbook' : (brandBotProgress.status === 'idle' ? 'Run Brand Bot Playbook' : 'Resume Brand Bot Playbook')}
+                    aria-label={brandBotProgress.status === 'running' ? 'Pause Brand Bot Playbook' : (brandBotProgress.status === 'idle' ? 'Run Brand Bot Playbook' : 'Resume Brand Bot Playbook')}
+                  >
+                    {brandBotProgress.status === 'running' ? (
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3.5 4.5H6.5V11.5H3.5V4.5Z" stroke="currentColor" strokeWidth="1.5"/>
+                        <path d="M9.5 4.5H12.5V11.5H9.5V4.5Z" stroke="currentColor" strokeWidth="1.5"/>
+                      </svg>
+                    ) : (
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 2.5L13 8L3 13.5V2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
+                    </div>
+                  );
+                })()}
+
+               
+              </div>
+            </div>
           </div>
 
           <div className="ellament-drawer__header-right">
-
-            {/* Close Button */}
             <button className="ellament-drawer__close" onClick={onClose}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
           </div>
-        </div>
-
-        <div className="ellament-drawer__subtitle">
-          Select form the Ella-ments below to ...
         </div>
 
 
@@ -787,6 +906,14 @@ const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
         currentPermissions={selectedEllamentForShare ? getCurrentPermissions(selectedEllamentForShare.id) : []}
         organizationMembers={organizationMembers}
         inheritedFrom={{ type: 'project', name: 'Marketing Campaign', id: 'project-1' }}
+      />
+
+      {/* Brand Bot Preview Drawer */}
+      <BrandBotPreviewDrawer
+        isOpen={showBrandBotPreview}
+        onClose={() => setShowBrandBotPreview(false)}
+        onRun={handleRunBrandBotFromPreview}
+        defaultMode={brandBotProgress?.lastMode || null}
       />
     </>
   );

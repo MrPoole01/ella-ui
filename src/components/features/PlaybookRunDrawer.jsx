@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/PlaybookRunDrawer.scss';
+import MilestoneBanner from './MilestoneBanner';
+import { getMilestones, getNextAfterMilestone, acknowledgeMilestone, isMilestoneAcknowledged } from '../../utils/milestones';
 
 // Step-by-Step ("Play with Ella") Playbook Runner
 // Guides user through each Play → Step with conversational interface
@@ -22,6 +24,11 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
   // Play card UI state
   const [expandedFilesCard, setExpandedFilesCard] = useState(null);
   const [showInfoPopover, setShowInfoPopover] = useState(null);
+
+  // Milestone state
+  const [showMilestone, setShowMilestone] = useState(false);
+  const [currentMilestone, setCurrentMilestone] = useState(null);
+  const [userProgress, setUserProgress] = useState({ acknowledgedMilestones: [] });
 
   const chatContainerRef = useRef(null);
 
@@ -372,9 +379,57 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
     }
   };
 
+  const handleMilestoneAcknowledge = (milestoneId) => {
+    const updated = acknowledgeMilestone(milestoneId, userProgress);
+    setUserProgress(updated);
+    logTelemetry('milestone_acknowledged', { milestoneId });
+    
+    // Persist to localStorage
+    try {
+      localStorage.setItem(`playbook-${currentPlaybook.id}-progress`, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to save milestone progress:', e);
+    }
+  };
+
+  const handleMilestoneContinue = () => {
+    setShowMilestone(false);
+    setCurrentMilestone(null);
+    
+    // Advance to next play
+    setCurrentPlayIndex(prev => prev + 1);
+    setCurrentStepIndex(0);
+    
+    const nextPlay = currentPlaybook.plays[currentPlayIndex + 1];
+    setChatMessages(prev => [...prev, {
+      id: Date.now(),
+      sender: 'ella',
+      text: `Excellent! Now let's work on ${nextPlay.name}. ${nextPlay.steps[0].description}`,
+      timestamp: new Date()
+    }]);
+  };
+
   const handleFinishPlay = () => {
     if (currentPlayIndex < currentPlaybook.plays.length - 1) {
-      // Move to first step of next play
+      // Check if there's a milestone after the current play
+      const timeline = currentPlaybook.timeline || currentPlaybook.plays;
+      const currentPlayInTimeline = timeline.findIndex(item => 
+        item.type !== 'milestone' && item.id === currentPlay.id
+      );
+      
+      // Look for milestone immediately after current play
+      if (currentPlayInTimeline >= 0 && currentPlayInTimeline < timeline.length - 1) {
+        const nextItem = timeline[currentPlayInTimeline + 1];
+        if (nextItem.type === 'milestone' && !isMilestoneAcknowledged(nextItem.id, userProgress)) {
+          // Show milestone banner
+          setCurrentMilestone(nextItem);
+          setShowMilestone(true);
+          logTelemetry('milestone_shown', { milestoneId: nextItem.id, milestoneTitle: nextItem.title });
+          return; // Don't advance yet, wait for milestone acknowledgement
+        }
+      }
+      
+      // No milestone, proceed to next play
       setCurrentPlayIndex(prev => prev + 1);
       setCurrentStepIndex(0);
       
@@ -958,6 +1013,15 @@ const PlaybookRunDrawer = ({ isOpen, onClose, playbook, inputPanelData }) => {
           </div>
         )}
       </div>
+
+      {/* Milestone Banner */}
+      {showMilestone && currentMilestone && (
+        <MilestoneBanner
+          milestone={currentMilestone}
+          onContinue={handleMilestoneContinue}
+          onAcknowledge={handleMilestoneAcknowledge}
+        />
+      )}
     </>
   );
 };

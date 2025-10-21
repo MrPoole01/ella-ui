@@ -3,9 +3,9 @@
 // Ellament Drawer - Right-to-left sliding drawer
 .ellament-drawer {
   position: fixed;
-  top: 0;
+  top: 50px;
   right: 0;
-  height: 100vh;
+  height: calc(100vh - 50px);
   width: 1156px;
   max-width: 90vw;
   background: var(--theme-bg-primary);
@@ -37,23 +37,24 @@
 
   // Header
   &__header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 64px 39px 0 25px;
-    border-bottom: none;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: .5fr 1fr .1fr;
+    align-items: start;
+    padding: 32px 25px 0px 25px;
+    border-bottom: 1px solid var(--theme-border-primary);
+    gap: 16px;
   }
 
   &__header-left {
     display: flex;
-    align-items: center;
-    gap: 7px;
+    flex-direction: column;
+    gap: 6px;
     white-space: nowrap;
   }
 
   &__header-right {
     display: flex;
+    justify-content: flex-end;
     align-items: center;
     gap: 20px;
   }
@@ -89,8 +90,172 @@
     color: var(--theme-text-secondary);
     font-size: 14px;
     line-height: 20px;
-    padding: 1px 25px 2px 25px;
-    margin-bottom: 20px;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__header-middle {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+  }
+
+  &__brandbot-card {
+    position: relative;
+    width: calc(100% - 20%);
+    height: 134px;
+    transition: all 0.2s ease;
+
+    // Left accent edge
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 12px;
+      height: 114px;
+      background: var(--theme-interactive-primary);
+      border-radius: 9px 0 0 9px;
+    }
+  }
+
+  &__brandbot-card-content {
+    position: absolute;
+    top: 0;
+    left: 8px;
+    width: 100%;
+    height: 114px;
+    background: linear-gradient(135deg, var(--theme-bg-secondary) 25%, var(--theme-bg-tertiary) 75%);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 0 6px 6px 0;
+    padding: 11px 9px 11px 14px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+  }
+
+  &__brandbot-left { display: flex; flex-direction: column; gap: 4px; }
+  &__brandbot-title { color: var(--theme-text-primary); font-size: 14px; font-weight: 500; line-height: 17px; margin: 0; }
+  &__brandbot-subtitle { color: var(--theme-text-secondary); font-size: 12px; line-height: 18px; }
+
+  &__brandbot-actions { margin-top: auto; display: flex; gap: 8px; align-items: center; margin-left: auto; }
+  &__brandbot-action {
+    background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-primary);
+    color: var(--theme-text-primary);
+    border-radius: 8px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover { background: var(--theme-bg-secondary); border-color: var(--theme-border-secondary); }
+    &:active { transform: translateY(0.5px); }
+
+    svg { display: block; }
+  }
+
+  // Localized tag styles copied from TemplateDrawer to keep styling contained
+  &__card-tags {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+    overflow: visible !important;
+    width: 100% !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    box-sizing: border-box !important;
+  }
+
+  &__tag-chip {
+    background: var(--theme-orange-subtle);
+    border-color: var(--theme-primary);
+    color: var(--theme-primary-bright);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  &__tag-more {
+    color: var(--theme-accent-primary);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  &__add-tag {
+    background: var(--theme-orange-subtle);
+    color: var(--theme-primary-bright);
+    border: none !important;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: capitalize;
+    letter-spacing: 0.3px;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 24px;
+    height: 22px;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+
+    &:hover {
+      background: var(--theme-primary);
+      color: var(--theme-bg-primary);
+      border: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+  }
+
+  // Hover effect to match template card behavior
+  &__brandbot-card:hover .ellament-drawer__brandbot-card-content {
+    background: linear-gradient(135deg, var(--theme-bg-tertiary) 15%, var(--theme-bg-elevated) 85%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: var(--theme-border-primary);
+  }
+
+  // Info icon and tooltip (localized copy of TemplateDrawer styles)
+  &__card-info-container { position: relative; flex-shrink: 0; }
+  &__card-info-icon {
+    width: 15px; height: 15px; cursor: pointer; transition: all 0.2s ease; fill: var(--theme-primary);
+  }
+  &__card-tooltip {
+    position: absolute; top: -10px; right: 25px; background: var(--theme-bg-primary);
+    border: 1px solid var(--theme-border-secondary); border-radius: 8px; padding: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); opacity: 0; visibility: hidden; transform: translateY(-10px);
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease; z-index: 1000; width: max-content;
+  }
+  &__card-tooltip-content { display: flex; flex-direction: column; gap: 8px; }
+  &__card-tooltip-content h4 { color: #ffffff; margin: 0; padding-bottom: 5px; }
+  &__card-tooltip-content p { color: #ffffff; margin: 0; padding-bottom: 5px; }
+  &__card-tooltip-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  &__card-tooltip-tag { background: var(--theme-orange-subtle); color: var(--theme-primary-bright); border-radius: 6px; padding: 2px 6px; font-size: 11px; }
+  &__card-info-container:hover + &__card-tooltip,
+  &__card-info-container:hover &__card-tooltip,
+  &__card-info-container:focus-within &__card-tooltip {
+    opacity: 1; visibility: visible; transform: translateY(0);
   }
 
 
@@ -105,7 +270,7 @@
     display: flex;
     gap: 11px;
     padding: 0 25px;
-    margin-bottom: 18px;
+    margin: 18px 0px;
     align-items: stretch;
   }
 
@@ -454,6 +619,7 @@
   &__content {
     flex: 1;
     padding: 0 27px;
+    height: 100%;
     margin-bottom: 20px;
   }
 
@@ -506,7 +672,7 @@
     display: flex;
     flex-direction: column;
     width: 262px;
-    height: 134px;
+    // height: 134px;
 
     &:hover {
       border-color: var(--theme-border-secondary);
@@ -517,7 +683,7 @@
   &__card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: start;
     padding: 18px 10px 19px 16px;
     border-bottom: 1px solid var(--theme-border-light);
     background: rgba(0, 0, 0, 0.00);
@@ -525,6 +691,7 @@
 
   &__card-title {
     color: var(--theme-text-primary);
+    height: 48px;
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;

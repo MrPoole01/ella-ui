@@ -103,6 +103,46 @@
   &__play-title { color: var(--theme-text-primary); font-size: 14px; font-weight: 500; }
   &__play-info { color: var(--theme-text-secondary); display: flex; align-items: center; }
 
+  // Milestones preview section
+  &__milestones {
+    background: var(--theme-gradient-card);
+    border: 1px solid var(--theme-border-primary);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+
+  &__milestone-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  &__milestone-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    background: var(--theme-bg-secondary);
+    border: 1px solid var(--theme-border-secondary);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+
+    span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--theme-text-primary);
+    }
+
+    &:hover {
+      background: var(--theme-bg-tertiary);
+      border-color: var(--theme-border-primary);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  }
+
   &__input { display: grid; gap: 14px; }
   &__input-row { display: grid; gap: 6px; padding-bottom: 20px; border-bottom: 1px solid var(--theme-secondary); }
   &__input-row:last-child { padding-bottom: 0; border-bottom: none; }
@@ -125,7 +165,7 @@
     color: var(--theme-text-primary);
     border-radius: 8px;
     min-width: 280px;
-    max-width: 420px;
+    // max-width: 420px;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &:focus { outline: none; border-color: var(--theme-interactive-primary); box-shadow: 0 0 0 3px rgba(255, 174, 22, 0.2); }
