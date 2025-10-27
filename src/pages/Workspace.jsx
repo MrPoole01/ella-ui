@@ -345,6 +345,44 @@ const Workspace = () => {
     };
   }, [isMobileProjectMenuEllipsisOpen, showMicMenu]);
 
+  const handleRunBrandBotPlaybook = (mode, data) => {
+    // Create a Brand Bot playbook object and open the run drawer directly
+    const brandBotPlaybook = {
+      id: 'brandbot-1',
+      title: 'Brand Bot Playbook',
+      description: 'Build or refine your brand through guided plays',
+      plays: [
+        { id: 'company', name: 'Company', description: 'Define your company' },
+        { id: 'customers', name: 'Customers', description: 'Understand your customers' },
+        { id: 'brand', name: 'Brand', description: 'Build your brand' }
+      ]
+    };
+    setPlaybookRunData({
+      playbook: brandBotPlaybook,
+      inputPanelData: {
+        workspace: { id: 'ws-current', name: 'Workspace' },
+        project: { id: 'proj-current', name: 'Brand Bot' },
+        audience: { type: 'all' },
+        specialInstructions: '',
+        fileIds: [],
+        brandBotMode: mode,
+        brandBotData: data
+      }
+    });
+    setIsPlaybookRunDrawerOpen(true);
+    setIsEllamentDrawerOpen(false);
+  };
+
+  // Listen for brandbot:run-playbook event
+  useEffect(() => {
+    const handleBrandBotRunPlaybook = (event) => {
+      handleRunBrandBotPlaybook(event.detail.mode, event.detail);
+    };
+    
+    window.addEventListener('brandbot:run-playbook', handleBrandBotRunPlaybook);
+    return () => window.removeEventListener('brandbot:run-playbook', handleBrandBotRunPlaybook);
+  }, []);
+
   return (
     <div className="workspace clips-content">
       {/* Header */}

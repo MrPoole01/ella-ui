@@ -288,6 +288,39 @@
     height: 134px;
     background: var(--theme-interactive-primary);
     border-radius: 9px 0px 0px 9px;
+
+    // Special Edition cards with dtm_logo inspired gradient
+    &--special-edition {
+      background: linear-gradient(
+        180deg,
+        #0f3e65 0%,      // Dark blue (dtm_logo cls-2)
+        #0f3e65 25%,     // Hold dark blue
+        #00bae3 50%,     // Cyan transition (dtm_logo cls-3)
+        #00bae3 75%,     // Hold cyan
+        #0f3e65 100%     // Return to dark blue
+      );
+      position: relative;
+      box-shadow: 
+        inset 0 0 8px rgba(0, 186, 227, 0.3),
+        0 0 8px rgba(0, 186, 227, 0.2);
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(251, 252, 252, 0.15) 50%,  // Light accent (dtm_logo cls-1)
+          transparent 100%
+        );
+        border-radius: 9px 0px 0px 9px;
+        pointer-events: none;
+      }
+    }
   }
 
   &__card-content {
@@ -695,7 +728,7 @@
   &__card-rating {
     svg {
       width: 40px;
-      height: 23px;
+      height: 17px;
       margin-right: -8px;
     }
   }

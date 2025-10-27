@@ -126,7 +126,11 @@ const mockEllaments = [
   }
 ];
 
-const EllamentDrawer = ({ isOpen, onClose, onEllamentSelect }) => {
+const EllamentDrawer = ({
+  isOpen,
+  onClose,
+  onEllamentSelect
+}) => {
   // Persona dropdown options as state to support dynamic creation
   const [personaOptions, setPersonaOptions] = useState([
     { value: 'all', label: 'Select All' },

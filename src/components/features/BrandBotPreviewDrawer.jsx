@@ -8,7 +8,8 @@ const BrandBotPreviewDrawer = ({
   onClose,
   onRun, // (mode: 'auto-run' | 'guided', data: { files, websiteUrl, competitorUrls })
   defaultMode = null,
-  persistedStateKey = 'brandbot-preview-state'
+  persistedStateKey = 'brandbot-preview-state',
+  onRunPlaybook // new prop: callback to open playbook-run-drawer directly
 }) => {
   const [mode, setMode] = useState(defaultMode);
   const [files, setFiles] = useState([]); // {id,name,sizeLabel,type,status,progress,error}
@@ -206,11 +207,24 @@ const BrandBotPreviewDrawer = ({
           <button className="playbook-preview-drawer__close" onClick={onClose}>Cancel</button>
           <div className="playbook-preview-drawer__actions">
             <button
-              className="playbook-preview-drawer__btn playbook-preview-drawer__btn--primary"
+              className="playbook-preview-drawer__btn bb_playbook_btn playbook-preview-drawer__btn--primary"
               aria-disabled={!canRun}
+              disabled={false}
               onClick={() => {
-                if (!mode) return;
+                if (!mode) {
+                  return;
+                }
                 onRun && onRun(mode, { files, websiteUrl, competitorUrls });
+                
+                // Dispatch event to open playbook-run-drawer
+                window.dispatchEvent(new CustomEvent('brandbot:run-playbook', {
+                  detail: {
+                    mode,
+                    files,
+                    websiteUrl,
+                    competitorUrls
+                  }
+                }));
               }}
             >
               Run Playbook

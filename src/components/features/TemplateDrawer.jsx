@@ -3,6 +3,7 @@ import { PlusIcon } from '../icons';
 import '../../styles/TemplateDrawer.scss';
 import { CustomTemplateModal } from '../ui';
 import TagManagementModal from '../ui/Modal/TagManagementModal';
+import { ReactComponent as DtmLogo } from '../icons/dtm_logo.svg';
 
 // Template Icon Components
 const MailIcon = () => (
@@ -143,6 +144,29 @@ const TemplateDrawer = ({
   // Tag management state
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [tagModalTemplate, setTagModalTemplate] = useState(null);
+
+  // Ellipsis menu state (match EllamentDrawer behavior/styling)
+  const [activeTemplateMenu, setActiveTemplateMenu] = useState(null);
+  const handleTemplateMenuClick = (templateId, e) => {
+    e.stopPropagation();
+    setActiveTemplateMenu(prev => prev === templateId ? null : templateId);
+  };
+  const handleTemplateAction = (action, template, e) => {
+    if (e) e.stopPropagation();
+    // TODO: Wire up real actions if needed
+    setActiveTemplateMenu(null);
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeTemplateMenu && !event.target.closest('.ellament-drawer__card-menu-container')) {
+        setActiveTemplateMenu(null);
+      }
+    };
+    if (activeTemplateMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [activeTemplateMenu]);
 
   // Tag label and variant mappings for consistent styling/colors
   const tagValueToLabel = {
@@ -595,13 +619,69 @@ const TemplateDrawer = ({
       <div className="template-drawer__card-left-edge"></div>
       <div className="template-drawer__card-content">
         <div className="template-drawer__card-header">
-                  <div className="template-drawer__card-title-section">
-          <div className="template-drawer__card-icon">
-            {template.icon}
+          <div className="template-drawer__card-title-section">
+            {/* Move rating logo SVG to left of title to replace icon, keeping size */}
+            <div className="template-drawer__card-icon">
+              <svg height="24" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id={`ellaLogoGradient-title-${template.id}`} x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stopColor="#fed830"/>
+                    <stop offset="1" stopColor="#fbaf17"/>
+                  </linearGradient>
+                </defs>
+                <path d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z" fill={`url(#ellaLogoGradient-title-${template.id})`} />
+              </svg>
+            </div>
+            <h3 className="template-drawer__card-title">{template.title}</h3>
           </div>
-          <h3 className="template-drawer__card-title">{template.title}</h3>
+          {/* Info container now holds ellipsis menu (reusing Ellament styles) */}
+          <div className="template-drawer__card-info-container ellament-drawer__card-menu-container" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="ellament-drawer__card-menu"
+              onClick={(e) => handleTemplateMenuClick(template.id, e)}
+              title="More"
+              aria-label="More actions"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="4" r="2" fill="currentColor"></circle>
+                <circle cx="10" cy="10" r="2" fill="currentColor"></circle>
+                <circle cx="10" cy="16" r="2" fill="currentColor"></circle>
+              </svg>
+            </button>
+            {activeTemplateMenu === template.id && (
+              <div className="ellament-drawer__document-dropdown">
+                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('edit', template, e)}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Edit
+                </button>
+                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('share', template, e)}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Share
+                </button>
+                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('archive', template, e)}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Archive
+                </button>
+                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('move', template, e)}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Move
+                </button>
+                <hr className="ellament-drawer__document-dropdown-divider" />
+                <button className="ellament-drawer__document-dropdown-option ellament-drawer__document-dropdown-option--danger" onClick={(e) => handleTemplateAction('delete', template, e)}>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-          <div className="template-drawer__card-info-container" onClick={(e) => e.stopPropagation()}>
+        <p className="template-drawer__card-description">{template.description}</p>
+        <div className="template-drawer__card-footer">
+          <TemplateDynamicTags 
+            template={template} 
+            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
+          />
+          <div className="template-drawer__card-rating">
             <svg 
               className="template-drawer__card-info-icon"
               xmlns="http://www.w3.org/2000/svg" 
@@ -629,24 +709,6 @@ const TemplateDrawer = ({
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <p className="template-drawer__card-description">{template.description}</p>
-        <div className="template-drawer__card-footer">
-          <TemplateDynamicTags 
-            template={template} 
-            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
-          />
-          <div className="template-drawer__card-rating">
-            <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id={`ellaLogoGradient-${template.id}`} x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
-                  <stop offset="0" stopColor="#fed830"/>
-                  <stop offset="1" stopColor="#fbaf17"/>
-                </linearGradient>
-              </defs>
-              <path d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z" fill={`url(#ellaLogoGradient-${template.id})`} />
-            </svg>
           </div>
         </div>
       </div>
@@ -778,16 +840,64 @@ const TemplateDrawer = ({
                         }
                       }}
                     >
-                      <div className="template-drawer__card-left-edge"></div>
+                      <div className="template-drawer__card-left-edge template-drawer__card-left-edge--special-edition"></div>
                       <div className="template-drawer__card-content">
                         <div className="template-drawer__card-header">
                           <div className="template-drawer__card-title-section">
+                            {/* Move rating logo SVG to left of title to replace icon, keeping size */}
                             <div className="template-drawer__card-icon">
-                              {template.icon}
+                              <DtmLogo style={{ height: '24px' }} />
                             </div>
                             <h3 className="template-drawer__card-title">{template.title}</h3>
                           </div>
-                          <div className="template-drawer__card-info-container" onClick={(e) => e.stopPropagation()}>
+                          {/* Info container now holds ellipsis menu (reusing Ellament styles) */}
+                          <div className="template-drawer__card-info-container ellament-drawer__card-menu-container" onClick={(e) => e.stopPropagation()}>
+                            <button 
+                              className="ellament-drawer__card-menu"
+                              onClick={(e) => handleTemplateMenuClick(template.id, e)}
+                              title="More"
+                              aria-label="More actions"
+                            >
+                              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="4" r="2" fill="currentColor"></circle>
+                                <circle cx="10" cy="10" r="2" fill="currentColor"></circle>
+                                <circle cx="10" cy="16" r="2" fill="currentColor"></circle>
+                              </svg>
+                            </button>
+                            {activeTemplateMenu === template.id && (
+                              <div className="ellament-drawer__document-dropdown">
+                                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('edit', template, e)}>
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M6.36 2.68L2.5 6.54L2.5 8.96L4.92 8.96L8.78 5.1L6.36 2.68ZM8.78 1.46L9.82 2.5L8.78 3.54L7.74 2.5L8.78 1.46ZM1.5 5.54L8.78 -1.74C9.17 -2.13 9.81 -2.13 10.2 -1.74L11.24 -0.7C11.63 -0.31 11.63 0.33 11.24 0.72L3.96 7.96L1.5 8.96L1.5 5.54Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Edit
+                                </button>
+                                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('share', template, e)}>
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M11 9.5C10.59 9.5 10.22 9.65 9.93 9.88L4.69 7.26C4.73 7.09 4.75 6.91 4.75 6.75C4.75 6.59 4.73 6.41 4.69 6.24L9.93 3.62C10.22 3.85 10.59 4 11 4C12.1 4 13 3.1 13 2C13 0.9 12.1 0 11 0C9.9 0 9 0.9 9 2C9 2.16 9.02 2.34 9.06 2.51L3.82 5.13C3.53 4.9 3.16 4.75 2.75 4.75C1.65 4.75 0.75 5.65 0.75 6.75C0.75 7.85 1.65 8.75 2.75 8.75C3.16 8.75 3.53 8.6 3.82 8.37L9.06 10.99C9.02 11.16 9 11.34 9 11.5C9 12.6 9.9 13.5 11 13.5C12.1 13.5 13 12.6 13 11.5C13 10.4 12.1 9.5 11 9.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Share
+                                </button>
+                                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('archive', template, e)}>
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12.25 3.5L1.75 3.5L1.75 11.25C1.75 11.8 2.2 12.25 2.75 12.25L11.25 12.25C11.8 12.25 12.25 11.8 12.25 11.25L12.25 3.5ZM5.25 7L8.75 7M0.5 1.75L13.5 1.75C13.78 1.75 14 1.97 14 2.25L14 3.5L0 3.5L0 2.25C0 1.97 0.22 1.75 0.5 1.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Archive
+                                </button>
+                                <button className="ellament-drawer__document-dropdown-option" onClick={(e) => handleTemplateAction('move', template, e)}>
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 1.75L11.5 1.75C12.05 1.75 12.5 2.2 12.5 2.75L12.5 4.75M1.5 5.75L10.5 5.75C11.05 5.75 11.5 6.2 11.5 6.75L11.5 11.25C11.5 11.8 11.05 12.25 10.5 12.25L1.5 12.25C0.95 12.25 0.5 11.8 0.5 11.25L0.5 6.75C0.5 6.2 0.95 5.75 1.5 5.75Z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Move
+                                </button>
+                                <hr className="ellament-drawer__document-dropdown-divider" />
+                                <button className="ellament-drawer__document-dropdown-option ellament-drawer__document-dropdown-option--danger" onClick={(e) => handleTemplateAction('delete', template, e)}>
+                                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.75 3.5L12.25 3.5M5.25 3.5L5.25 2.25C5.25 1.7 5.7 1.25 6.25 1.25L7.75 1.25C8.3 1.25 8.75 1.7 8.75 2.25L8.75 3.5M10.5 3.5L10.5 11.25C10.5 11.8 10.05 12.25 9.5 12.25L4.5 12.25C3.95 12.25 3.5 11.8 3.5 11.25L3.5 3.5M5.75 6.25L5.75 9.5M8.25 6.25L8.25 9.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <p className="template-drawer__card-description">{template.description}</p>
+                        <div className="template-drawer__card-footer">
+                          <TemplateDynamicTags 
+                            template={template} 
+                            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
+                          />
+                          <div className="template-drawer__card-rating">
                             <svg 
                               className="template-drawer__card-info-icon"
                               xmlns="http://www.w3.org/2000/svg" 
@@ -815,29 +925,6 @@ const TemplateDrawer = ({
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                        <p className="template-drawer__card-description">{template.description}</p>
-                        <div className="template-drawer__card-footer">
-                          <TemplateDynamicTags 
-                            template={template} 
-                            onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
-                          />
-                          <div className="template-drawer__card-rating">
-                            <svg height="14" viewBox="0 0 90.44 90.68" xmlns="http://www.w3.org/2000/svg">
-                              <defs>
-                                <style>
-                                  {`.cls-1{fill:#fbfcfc;}.cls-2{fill:#0f3e65;}.cls-3{fill:#00bae3;}`}
-                                </style>
-                              </defs>
-                              <g id="IZHrlL.tif">
-                                <path className="cls-2" d="M85.5,3.96v67.23c-.65,7.82-6.85,14.03-14.68,14.67H3.6s0-68.12,0-68.12c.42-1.27.63-2.61,1.12-3.86,1.78-4.5,5.7-7.98,10.34-9.31l2.46-.61h67.98ZM14.25,36.11c-.12.73,0,2.06,0,2.87,0,.01.19.2.2.2h8.05c.95,0,2.48,1.1,3.07,1.85,2.01,2.55,1.51,7.02-1.37,8.72-.29.17-1.3.63-1.56.63h-8.19s-.2.19-.2.2v2.87c0,.58.84,1.37,1.43,1.44,2.03.24,7.13.13,9.08-.34,9.81-2.4,9.82-17.08,0-19.52-1.94-.48-7.06-.58-9.08-.34-.66.08-1.32.79-1.43,1.44ZM49.46,34.68h-15.08c-.72,0-1.84,1.42-1.84,2.12v2.12h15.36c.35,0,1.57-1.22,1.57-1.57v-2.66ZM58.68,34.68h-6.07v20.34h2.66c.53,0,1.62-.77,1.9-1.24.05-.09.35-.83.35-.88v-10.99l4.2,9.93c.91,1.5,2.83,1.73,3.96.36l4.25-9.87v12.7h2.53c.35,0,1.38-.52,1.64-.81.21-.23.74-1.31.74-1.58v-17.95h-5.94c-.34,0-1.07.74-1.26,1.06l-3.79,9.18-3.84-9.13c-.18-.45-.89-1.03-1.35-1.11ZM38.54,55.15h3.21c.72,0,1.84-1.42,1.84-2.12v-12.01s-.19-.2-.2-.2h-3.14c-.62,0-1.71.95-1.71,1.57v12.76Z"/>
-                                <path className="cls-3" d="M58.68,34.68c.46.08,1.16.66,1.35,1.11l3.84,9.13,3.79-9.18c.19-.32.92-1.06,1.26-1.06h5.94v17.95c0,.26-.53,1.34-.74,1.58-.27.29-1.29.81-1.64.81h-2.53v-12.7l-4.25,9.87c-1.14,1.37-3.06,1.14-3.96-.36l-4.2-9.93v10.99s-.3.79-.35.88c-.28.47-1.37,1.24-1.9,1.24h-2.66v-20.34h6.07Z"/>
-                                <path className="cls-1" d="M14.25,36.11c.11-.65.77-1.36,1.43-1.44,2.02-.24,7.14-.14,9.08.34,9.82,2.44,9.81,17.13,0,19.52-1.95.48-7.05.58-9.08.34-.59-.07-1.43-.86-1.43-1.44v-2.87s.19-.2.2-.2h8.19c.26,0,1.27-.46,1.56-.63,2.89-1.7,3.38-6.17,1.37-8.72-.59-.75-2.12-1.85-3.07-1.85h-8.05s-.2-.19-.2-.2c0-.81-.12-2.14,0-2.87Z"/>
-                                <path className="cls-1" d="M38.54,55.15v-12.76c0-.62,1.08-1.57,1.71-1.57h3.14s.2.19.2.2v12.01c0,.69-1.13,2.12-1.84,2.12h-3.21Z"/>
-                                <path className="cls-1" d="M49.46,34.68v2.66c0,.35-1.22,1.57-1.57,1.57h-15.36v-2.12c0-.69,1.13-2.12,1.84-2.12h15.08Z"/>
-                              </g>
-                            </svg>
                           </div>
                         </div>
                       </div>
@@ -920,14 +1007,19 @@ const TemplateDrawer = ({
                               onClick={(e) => { e.stopPropagation(); handleOpenTagModal(template); }}
                             />
                             <div className="template-drawer__card-rating">
-                              <svg height="14" viewBox="0 0 90.44 109.83" xmlns="http://www.w3.org/2000/svg">
-                                <defs>
-                                  <linearGradient id={`ellaLogoGradient-custom-${template.id}`} x1="45.22" y1="-20.72" x2="45.22" y2="71.87" gradientTransform="translate(0 82.04) scale(1 -1)" gradientUnits="userSpaceOnUse">
-                                    <stop offset="0" stopColor="#fed830"/>
-                                    <stop offset="1" stopColor="#fbaf17"/>
-                                  </linearGradient>
-                                </defs>
-                                <path d="M70.97,10.16H19.47c-6.05,0-10.93,4.9-10.93,10.93v51.5c0,6.05,4.9,10.93,10.93,10.93v18.76c0,.42.51.64.8.33l19.08-19.08h31.62c6.05,0,10.93-4.9,10.93-10.93V21.09c0-6.05-4.9-10.93-10.93-10.93ZM49.93,66.65l-3.28-8.07h-14.8l-3.17,8.07h-9.26l16.49-38.13h6.94l16.58,38.13h-9.48s-.02,0-.02,0ZM70.4,66.65h-8.07v-26.17h8.07v26.17ZM69.66,35.54c-.91.91-2.03,1.37-3.32,1.37s-2.4-.46-3.32-1.37-1.37-2.03-1.37-3.32.46-2.4,1.37-3.32,2.03-1.37,3.32-1.37,2.4.46,3.32,1.37,1.37,2.03,1.37,3.32-.46,2.4-1.37,3.32Z" fill={`url(#ellaLogoGradient-custom-${template.id})`} />
+                              <svg 
+                                className="template-drawer__card-info-icon"
+                                xmlns="http://www.w3.org/2000/svg" 
+                                width="15" 
+                                height="15" 
+                                viewBox="0 0 90 90"
+                                style={{ fill: 'var(--theme-primary-deep, #E6A429)' }}
+                              >
+                                <g>
+                                  <path d="M 37.267 41.251 c -0.249 1.047 0.268 2.116 1.233 2.594 c 1.543 0.765 2.511 2.474 2.213 4.305 l -2.516 15.471 c -0.306 1.88 0.97 3.652 2.85 3.958 h 0 c 2.783 0.453 5.627 0.25 8.308 -0.583 c 0.771 -0.24 1.354 -0.879 1.541 -1.664 l 0.427 -1.801 c 0.249 -1.047 -0.268 -2.116 -1.233 -2.594 c -1.543 -0.765 -2.511 -2.474 -2.213 -4.305 l 2.516 -15.471 c 0.306 -1.88 -0.97 -3.652 -2.85 -3.958 h 0 c -2.783 -0.453 -5.627 -0.25 -8.308 0.583 c -0.771 0.24 -1.354 0.879 -1.541 1.664 L 37.267 41.251 z"/>
+                                  <circle cx="47.093" cy="27.893" r="5.703"/>
+                                  <path d="M 45 90 C 20.187 90 0 69.813 0 45 C 0 20.187 20.187 0 45 0 c 24.813 0 45 20.187 45 45 C 90 69.813 69.813 90 45 90 z M 45 7.098 C 24.101 7.098 7.098 24.101 7.098 45 S 24.101 82.902 45 82.902 S 82.902 65.899 82.902 45 S 65.899 7.098 45 7.098 z"/>
+                                </g>
                               </svg>
                             </div>
                           </div>
