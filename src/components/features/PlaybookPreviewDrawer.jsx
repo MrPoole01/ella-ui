@@ -440,7 +440,7 @@ const PlaybookPreviewDrawer = ({
                 title="Guide me step-by-step and chat per step."
                 onClick={() => { setRunMode('step-by-step'); setIsInputStep(true); }}
               >
-                Collaborate with Ella
+                Run Playbook
               </button>
               <button
                 className="playbook-preview-drawer__btn playbook-preview-drawer__btn--secondary"
