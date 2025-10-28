@@ -138,7 +138,9 @@ const Workspace = () => {
           project: payload?.document?.project,
           title: payload?.document?.title
         },
-        playbook
+        playbook,
+        isSpecialEdition: payload?.isSpecialEdition || false,
+        templateData: payload?.templateData || null
       });
       setIsPlaybookPreviewOpen(true);
       setIsTemplateDrawerOpen(false);
@@ -1347,6 +1349,8 @@ const Workspace = () => {
         documentContext={playbookPreviewData?.documentContext || null}
         playbook={playbookPreviewData?.playbook || null}
         onStart={(mode, context) => handleStartFromPreview(mode, context)}
+        isSpecialEdition={playbookPreviewData?.isSpecialEdition || false}
+        templateData={playbookPreviewData?.templateData || null}
       />
 
       {/* Playbook Run Drawer */}

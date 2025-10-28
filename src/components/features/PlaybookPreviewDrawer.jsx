@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import '../../styles/PlaybookPreviewDrawer.scss';
 import ProjectCreateModal from '../ui/Modal/ProjectCreateModal';
+import { ReactComponent as DtmLogo } from '../icons/dtm_logo.svg';
 
 const PlaybookPreviewDrawer = ({
   isOpen,
@@ -9,7 +10,9 @@ const PlaybookPreviewDrawer = ({
   documentContext, // { project, title }
   playbook, // { id, title, preview, description, plays: [{ id, name, blurb }], estimatedTime, tags }
   onStart, // (mode: 'step-by-step'|'auto-run', context)
-  showICPs = true
+  showICPs = true,
+  isSpecialEdition = false,
+  templateData = null
 }) => {
   const [isInputStep, setIsInputStep] = useState(false);
   const [runMode, setRunMode] = useState('step-by-step'); // 'step-by-step' | 'auto-run'
@@ -224,6 +227,17 @@ const PlaybookPreviewDrawer = ({
         </div>
 
         <div className="playbook-preview-drawer__content">
+          {isSpecialEdition && templateData && (
+            <div className="playbook-preview-drawer__special-edition-header">
+              <div className="playbook-preview-drawer__special-edition-icon">
+                <DtmLogo style={{ height: '50px' }} />
+              </div>
+              <div className="playbook-preview-drawer__special-edition-info">
+                <h3 className="playbook-preview-drawer__special-edition-title">{templateData?.title}</h3>
+                <p className="playbook-preview-drawer__special-edition-description">{templateData?.description}</p>
+              </div>
+            </div>
+          )}
           {!isInputStep ? (
             <div className="playbook-preview-drawer__preview">
               <div className="playbook-preview-drawer__summary">

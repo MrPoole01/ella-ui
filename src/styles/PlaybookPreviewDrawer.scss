@@ -59,6 +59,50 @@
     min-height: 0;
   }
 
+  &__special-edition-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    background: var(--theme-gradient-card);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    background-image: linear-gradient(var(--theme-gradient-card), var(--theme-gradient-card)), 
+                      linear-gradient(180deg, #0f3e65 0%, #0f3e65 25%, #00bae3 50%, #00bae3 75%, #0f3e65 100%);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+  }
+
+  &__special-edition-icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__special-edition-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__special-edition-title {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-text-primary);
+  }
+
+  &__special-edition-description {
+    margin: 0;
+    font-size: 12px;
+    color: var(--theme-text-secondary);
+    line-height: 1.4;
+  }
+
   &__preview {
     display: flex;
     flex-direction: column;

@@ -831,9 +831,10 @@ const TemplateDrawer = ({
                               'Voicemail Script',
                               'Follow-Up Email',
                               'LinkedIn Message'
-                            ]
+                            ],
+                            isSpecialEdition: true,
+                            templateData: template
                           });
-                          onClose && onClose();
                         } else {
                           if (onTemplateSelected) onTemplateSelected(template.prompt || template.title);
                           if (onClose) onClose();
