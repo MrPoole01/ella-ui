@@ -444,6 +444,32 @@ const EllamentDrawer = ({
     }).toLowerCase();
   };
 
+  // Calculate Ella-ment progress percentage
+  const calculateEllamentProgress = () => {
+    // Core Ella-ments: first 9 product category items
+    const coreEllaments = mockEllaments.filter(e => e.category === 'product').slice(0, 9);
+    // Secondary Ella-ments: all persona category items (up to 13)
+    const secondaryEllaments = mockEllaments.filter(e => e.category === 'persona');
+
+    // Count completed Ella-ments (status === 'approved')
+    const completedCore = coreEllaments.filter(e => e.status === 'approved').length;
+    const completedSecondary = secondaryEllaments.filter(e => e.status === 'approved').length;
+
+    // Calculate percentage: 9 Core = 90%, 13 Secondary = 10%
+    const corePercentage = (completedCore / 9) * 90;
+    const secondaryPercentage = Math.min(completedSecondary / 13, 1) * 10; // Cap at 10%
+
+    const totalPercentage = Math.min(corePercentage + secondaryPercentage, 100);
+
+    return {
+      percentage: Math.round(totalPercentage),
+      completedCore,
+      completedSecondary,
+      isCoreComplete: completedCore === 9,
+      isFullyComplete: totalPercentage >= 100
+    };
+  };
+
   const filteredEllaments = mockEllaments.filter(ellament => {
     if (activeTab === 'all') return true;
     return ellament.category === activeTab;
@@ -561,6 +587,27 @@ const EllamentDrawer = ({
           </div>
 
           <div className="ellament-drawer__header-right">
+            {(() => {
+              const progress = calculateEllamentProgress();
+              return (
+                <div className="ellament-drawer__progress-container" title={`${progress.completedCore} of 9 Core Ella-ments complete\n${progress.completedSecondary} of 13 Secondary Ella-ments complete`}>
+                  <div className="MuiBox-root css-mjha5m">
+                    <span
+                      role="progressbar"
+                      aria-valuenow={progress.percentage}
+                      className={`MuiCircularProgress-root MuiCircularProgress-determinate MuiCircularProgress-colorPrimary MuiCircularProgress-variantSoft MuiCircularProgress-sizeMd css-rocgce-JoyCircularProgress-root ${progress.isCoreComplete ? 'ellament-drawer__progress--complete' : ''}`}
+                      style={{"--CircularProgress-percent": progress.percentage}}
+                    >
+                      <svg className="MuiCircularProgress-svg css-qw6zo9-JoyCircularProgress-svg">
+                        <circle className="MuiCircularProgress-track css-zitgxn-JoyCircularProgress-track"></circle>
+                        <circle className="MuiCircularProgress-progress css-1hs7rf2-JoyCircularProgress-progress"></circle>
+                      </svg>
+                      {progress.percentage}%
+                    </span>
+                  </div>
+                </div>
+              );
+            })()}
             <button className="ellament-drawer__close" onClick={onClose}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
