@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShareModal } from '../ui/Modal';
 import '../../styles/EllamentDrawer.scss';
-import BrandBotPreviewDrawer from './BrandBotPreviewDrawer';
+import BrandBotSetupModal from './BrandBotSetupModal';
 
 // Mock data for ellaments
 const mockEllaments = [
@@ -177,14 +177,27 @@ const EllamentDrawer = ({
   const [showBrandBotPreview, setShowBrandBotPreview] = useState(false);
   const handleBrandBotToggle = () => { setShowBrandBotPreview(true); };
 
-  const handleRunBrandBotFromPreview = (selectedMode, data) => {
-    const updated = { ...brandBotProgress, status: 'running', lastMode: selectedMode };
+  const handleBrandBotSetupComplete = (data) => {
+    // Handle the completed setup data
+    console.log('Brand Bot setup complete:', data);
+    
+    const updated = {
+      ...brandBotProgress,
+      status: 'running',
+      mode: data.mode,
+      websiteUrl: data.websiteUrl,
+      competitorUrls: data.competitorUrls,
+      files: data.files,
+      notes: data.notes
+    };
     persistBrandBot(updated);
+    
     if (brandBotProgress.status === 'paused') {
       window.dispatchEvent(new CustomEvent('brandbot:series_resumed', { detail: updated }));
     } else if (brandBotProgress.status === 'idle') {
       window.dispatchEvent(new CustomEvent('brandbot:series_started', { detail: updated }));
     }
+    
     setShowBrandBotPreview(false);
   };
 
@@ -959,12 +972,11 @@ const EllamentDrawer = ({
         inheritedFrom={{ type: 'project', name: 'Marketing Campaign', id: 'project-1' }}
       />
 
-      {/* Brand Bot Preview Drawer */}
-      <BrandBotPreviewDrawer
+      {/* Brand Bot Setup Modal */}
+      <BrandBotSetupModal
         isOpen={showBrandBotPreview}
         onClose={() => setShowBrandBotPreview(false)}
-        onRun={handleRunBrandBotFromPreview}
-        defaultMode={brandBotProgress?.lastMode || null}
+        onComplete={handleBrandBotSetupComplete}
       />
     </>
   );
