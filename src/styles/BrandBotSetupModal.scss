@@ -167,6 +167,7 @@
 .brandbot-setup-modal__features {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
   margin-top: 8px;
 }
@@ -174,6 +175,7 @@
 .brandbot-setup-modal__feature {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   font-size: 14px;
   color: var(--theme-text-secondary);
@@ -655,6 +657,14 @@
     justify-content: flex-end;
     flex-wrap: wrap;
   }
+}
+
+// Footer actions wrapper - keeps buttons on the right
+.brandbot-setup-modal__footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
 }
 
 // Buttons

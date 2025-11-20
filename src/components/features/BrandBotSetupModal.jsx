@@ -246,9 +246,7 @@ const BrandBotSetupModal = ({
       mode: 'new',
       websiteUrl,
       files: files.filter(f => f.status === 'completed'),
-      companyDescription,
-      targetAudience,
-      brandFeel
+      notes
     };
 
     console.log('Starting Guided Interview with data:', guidedData);
@@ -314,15 +312,12 @@ const BrandBotSetupModal = ({
               </p>
               <div className="brandbot-setup-modal__features">
                 <div className="brandbot-setup-modal__feature">
-                  <div className="brandbot-setup-modal__feature-icon">✓</div>
                   <span>Auto-crawl your website</span>
                 </div>
                 <div className="brandbot-setup-modal__feature">
-                  <div className="brandbot-setup-modal__feature-icon">✓</div>
                   <span>Analyze competitors</span>
                 </div>
                 <div className="brandbot-setup-modal__feature">
-                  <div className="brandbot-setup-modal__feature-icon">✓</div>
                   <span>Learn from your materials</span>
                 </div>
               </div>
@@ -347,11 +342,6 @@ const BrandBotSetupModal = ({
                   <p className="brandbot-setup-modal__mode-description">
                     You have marketing materials, existing messaging, or brand assets ready to share.
                   </p>
-                  <div className="brandbot-setup-modal__mode-features">
-                    <span>Quick setup</span>
-                    <span>Auto-run ready</span>
-                    <span>Data-driven</span>
-                  </div>
                 </button>
 
                 <button
@@ -363,11 +353,6 @@ const BrandBotSetupModal = ({
                   <p className="brandbot-setup-modal__mode-description">
                     You're starting fresh or redefining your brand. We'll guide you through discovery.
                   </p>
-                  <div className="brandbot-setup-modal__mode-features">
-                    <span>Guided interview</span>
-                    <span>Discovery flow</span>
-                    <span>Build as you go</span>
-                  </div>
                 </button>
               </div>
             </div>
@@ -645,49 +630,19 @@ const BrandBotSetupModal = ({
                 </p>
               </div>
 
-              {/* Discovery Questions */}
+              {/* Optional Notes */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">What does your company do?</label>
+                <label className="brandbot-setup-modal__label">Additional Notes (optional)</label>
                 <textarea
                   className="brandbot-setup-modal__textarea"
-                  placeholder="Describe your business, products, or services..."
-                  value={companyDescription}
-                  onChange={(e) => setCompanyDescription(e.target.value)}
-                  maxLength={500}
+                  placeholder="Share any other details about your business, market, or goals..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  maxLength={1000}
                   rows={3}
                 />
                 <p className="brandbot-setup-modal__helper-text">
-                  {companyDescription.length} / 500
-                </p>
-              </div>
-
-              <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Who are your main customers or audiences?</label>
-                <textarea
-                  className="brandbot-setup-modal__textarea"
-                  placeholder="Tell us about your target audience..."
-                  value={targetAudience}
-                  onChange={(e) => setTargetAudience(e.target.value)}
-                  maxLength={500}
-                  rows={3}
-                />
-                <p className="brandbot-setup-modal__helper-text">
-                  {targetAudience.length} / 500
-                </p>
-              </div>
-
-              <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">What do you want people to feel about your brand?</label>
-                <textarea
-                  className="brandbot-setup-modal__textarea"
-                  placeholder="Describe the emotions or perceptions you want to evoke..."
-                  value={brandFeel}
-                  onChange={(e) => setBrandFeel(e.target.value)}
-                  maxLength={500}
-                  rows={3}
-                />
-                <p className="brandbot-setup-modal__helper-text">
-                  {brandFeel.length} / 500
+                  {notes.length} / 1000
                 </p>
               </div>
             </div>
@@ -701,7 +656,7 @@ const BrandBotSetupModal = ({
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--summary">
               <h2 className="brandbot-setup-modal__step-title">Ready to Build Your Brand Bot</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                Here's what we'll use to set up your Brand Bot.
+                Ella will analyze your materials and website to understand your company, customers, and brand. This process typically takes a few minutes. Once complete, your Brand Bot will be ready to help with marketing strategies, content creation, and brand consistency.
               </p>
 
               <div className="brandbot-setup-modal__summary-box">
@@ -746,15 +701,6 @@ const BrandBotSetupModal = ({
                   </div>
                 )}
               </div>
-
-              <div className="brandbot-setup-modal__milestones">
-                <h3 className="brandbot-setup-modal__summary-header">What's Next</h3>
-                <div className="brandbot-setup-modal__milestones-list">
-                  <div className="brandbot-setup-modal__milestone">Company</div>
-                  <div className="brandbot-setup-modal__milestone">Customers</div>
-                  <div className="brandbot-setup-modal__milestone">Brand</div>
-                </div>
-              </div>
             </div>
             ) : (
             // New/Reimagined Brand Confirmation
@@ -770,10 +716,8 @@ const BrandBotSetupModal = ({
                   <p className="brandbot-setup-modal__summary-value">
                     {websiteUrl && <div>✓ Website provided</div>}
                     {completedFilesCount > 0 && <div>✓ {completedFilesCount} file{completedFilesCount !== 1 ? 's' : ''} uploaded</div>}
-                    {companyDescription && <div>✓ Company description added</div>}
-                    {targetAudience && <div>✓ Audience described</div>}
-                    {brandFeel && <div>✓ Brand feeling shared</div>}
-                    {!websiteUrl && completedFilesCount === 0 && !companyDescription && !targetAudience && !brandFeel && (
+                    {notes && <div>✓ Notes added</div>}
+                    {!websiteUrl && completedFilesCount === 0 && !notes && (
                       <p className="brandbot-setup-modal__summary-value" style={{ color: 'var(--theme-text-secondary)' }}>
                         Ready to start from scratch
                       </p>
@@ -784,14 +728,9 @@ const BrandBotSetupModal = ({
 
               <div className="brandbot-setup-modal__milestones">
                 <h3 className="brandbot-setup-modal__summary-header">Next Steps</h3>
-                <p className="brandbot-setup-modal__step-subtitle" style={{ margin: '8px 0 12px 0' }}>
-                  The Guided Interview will walk you through:
+                <p className="brandbot-setup-modal__step-subtitle" style={{ margin: '8px 0 0 0' }}>
+                  The Guided Interview will walk you through a series of questions about your company, target customers, and brand vision. Ella will use your responses to build a comprehensive understanding of your brand and help create marketing strategies tailored to your goals.
                 </p>
-                <div className="brandbot-setup-modal__milestones-list">
-                  <div className="brandbot-setup-modal__milestone">Company Discovery</div>
-                  <div className="brandbot-setup-modal__milestone">Customer Insights</div>
-                  <div className="brandbot-setup-modal__milestone">Brand Strategy</div>
-                </div>
               </div>
             </div>
             )
@@ -808,7 +747,7 @@ const BrandBotSetupModal = ({
           </button>
 
           <button
-            className="brandbot-setup-modal__btn brandbot-setup-modal__btn--secondary"
+            className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
             onClick={handleNext}
             disabled={!canProceedToNext || hasUploadingFiles}
             style={{ visibility: currentStep === 3 ? 'hidden' : 'visible' }}
@@ -816,14 +755,15 @@ const BrandBotSetupModal = ({
             Next
           </button>
 
-          <button
-            className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
-            onClick={currentStep === 3 ? (mode === 'established' ? handleComplete : handleStartGuidedInterview) : handleNext}
-            disabled={!canProceedToNext || (currentStep === 2 && hasUploadingFiles)}
-            style={{ visibility: currentStep < 3 ? 'hidden' : 'visible' }}
-          >
-            {currentStep === 3 ? (mode === 'established' ? 'Build My BrandBot' : 'Start Guided Interview') : 'Next'}
-          </button>
+          {currentStep === 3 && (
+            <button
+              className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
+              onClick={mode === 'established' ? handleComplete : handleStartGuidedInterview}
+              disabled={!canProceedToNext}
+            >
+              {mode === 'established' ? 'Build My BrandBot' : 'Start Guided Interview'}
+            </button>
+          )}
         </div>
       </div>
     </>
