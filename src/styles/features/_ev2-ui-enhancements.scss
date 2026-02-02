@@ -27,7 +27,7 @@
     }
     
     &--secondary {
-      background: var(--theme-gradient-card);
+      // background: var(--theme-gradient-card);
       border: 2px solid var(--theme-border-secondary);
       color: var(--theme-text-primary);
       transition: var(--theme-animation-smooth);
@@ -43,7 +43,7 @@
   
   // ENHANCED INPUT FIELDS 🎯
   .input {
-    background: var(--theme-gradient-card);
+    // background: var(--theme-gradient-card);
     border: 2px solid var(--theme-border-secondary);
     color: var(--theme-text-primary);
     transition: var(--theme-animation-smooth);

@@ -301,6 +301,15 @@ const Header = ({ onResetToStartingView, onOpenProjectMenu }) => {
     navigate('/admin/templates');
   };
 
+  // Onboarding handler
+  const handleOnboardingClick = (e) => {
+    e.stopPropagation();
+    setShowProfileDropdown(false);
+
+    // Dispatch custom event that workspace will listen for
+    window.dispatchEvent(new CustomEvent('workspace:show-onboarding'));
+  };
+
   // Help menu handlers
   const handleHelpClick = (e) => {
     e.stopPropagation();
@@ -1368,7 +1377,22 @@ const Header = ({ onResetToStartingView, onOpenProjectMenu }) => {
                         )}
                       </div>
                     </div>
-                    
+
+                    <button className="profile-menu-item" onClick={handleOnboardingClick}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                        <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      <span>Onboarding Modal</span>
+                    </button>
+
                     <button className="profile-menu-item" onClick={handleLogout}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path 

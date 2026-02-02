@@ -4,12 +4,15 @@ import '../../styles/BrandBotSetupModal.scss';
 const BrandBotSetupModal = ({
   isOpen,
   onClose,
-  onComplete, // (data: { mode, websiteUrl, competitorUrls, files, notes })
+  onComplete, // (data: { mode, websiteUrl, competitorUrls, files, notes, businessCategory, location, companyDescription, targetAudience, brandFeel })
   persistedStateKey = 'brandbot-setup-state'
 }) => {
-  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Path, 2: Intake, 3: Summary
+  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Brand Type, 2: Information, 3: Review, 4: Processing
   const [mode, setMode] = useState(null); // 'established' | 'new'
+  const [selectedPath, setSelectedPath] = useState(null); // 'positioning' | 'auto' | 'playbook' | 'explore'
   const [websiteUrl, setWebsiteUrl] = useState('');
+  const [businessCategory, setBusinessCategory] = useState('');
+  const [location, setLocation] = useState('');
   const [competitorUrls, setCompetitorUrls] = useState(['']);
   const [notes, setNotes] = useState('');
   const [files, setFiles] = useState([]); // {id, file, name, sizeLabel, type, progress, status, error}
@@ -21,6 +24,33 @@ const BrandBotSetupModal = ({
   const [targetAudience, setTargetAudience] = useState('');
   const [brandFeel, setBrandFeel] = useState('');
 
+  // Processing step state
+  const [processingTasks, setProcessingTasks] = useState([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const processingTimeoutRef = useRef(null);
+
+  // URL validation
+  const validateUrl = (url) => {
+    if (!url || url.trim() === '') return { isValid: true, error: null };
+    try {
+      const urlObj = new URL(url);
+      return { isValid: urlObj.protocol === 'http:' || urlObj.protocol === 'https:', error: null };
+    } catch {
+      return { isValid: false, error: 'Please provide a valid URL' };
+    }
+  };
+
+  const websiteUrlValidation = useMemo(() => validateUrl(websiteUrl), [websiteUrl]);
+  const competitorUrlsValidation = useMemo(() => 
+    competitorUrls.map(url => validateUrl(url)), 
+    [competitorUrls]
+  );
+
+  const hasInvalidUrls = useMemo(() => {
+    if (mode === 'established' && websiteUrl && !websiteUrlValidation.isValid) return true;
+    return competitorUrlsValidation.some(v => !v.isValid);
+  }, [mode, websiteUrl, websiteUrlValidation, competitorUrlsValidation]);
+
   // Restore persisted state when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -29,8 +59,26 @@ const BrandBotSetupModal = ({
         if (raw) {
           const saved = JSON.parse(raw);
           if (saved.currentStep !== undefined) setCurrentStep(saved.currentStep);
-          if (saved.mode) setMode(saved.mode);
+          if (saved.selectedPath) {
+            setSelectedPath(saved.selectedPath);
+            // Map selectedPath to mode for backward compatibility
+            if (saved.selectedPath === 'auto' || saved.selectedPath === 'playbook') {
+              setMode('established');
+            } else if (saved.selectedPath === 'positioning' || saved.selectedPath === 'explore') {
+              setMode('new');
+            }
+          } else if (saved.mode) {
+            // Backward compatibility: map old mode to default path
+            setMode(saved.mode);
+            if (saved.mode === 'established') {
+              setSelectedPath('auto');
+            } else if (saved.mode === 'new') {
+              setSelectedPath('positioning');
+            }
+          }
           if (saved.websiteUrl) setWebsiteUrl(saved.websiteUrl);
+          if (saved.businessCategory) setBusinessCategory(saved.businessCategory);
+          if (saved.location) setLocation(saved.location);
           if (Array.isArray(saved.competitorUrls)) setCompetitorUrls(saved.competitorUrls);
           if (saved.notes) setNotes(saved.notes);
           if (Array.isArray(saved.files)) setFiles(saved.files);
@@ -48,7 +96,10 @@ const BrandBotSetupModal = ({
       localStorage.setItem(persistedStateKey, JSON.stringify({
         currentStep,
         mode,
+        selectedPath,
         websiteUrl,
+        businessCategory,
+        location,
         competitorUrls,
         notes,
         files: files.map(({ file, ...rest }) => rest), // Exclude file object for storage
@@ -63,7 +114,7 @@ const BrandBotSetupModal = ({
     if (isOpen) {
       persist();
     }
-  }, [currentStep, mode, websiteUrl, competitorUrls, notes, files, isOpen, companyDescription, targetAudience, brandFeel]);
+  }, [currentStep, mode, selectedPath, websiteUrl, businessCategory, location, competitorUrls, notes, files, isOpen, companyDescription, targetAudience, brandFeel]);
 
   // File handling
   const acceptedTypes = {
@@ -193,22 +244,137 @@ const BrandBotSetupModal = ({
     setWebsiteUrl(processedValue);
   };
 
+  // Processing simulation
+  useEffect(() => {
+    if (currentStep === 4 && !isProcessing) {
+      setIsProcessing(true);
+      
+      // Initialize tasks based on mode
+      const initialTasks = mode === 'established' ? [
+        {
+          id: 'task-1',
+          title: 'Spawned 5 subtasks',
+          status: 'pending',
+          expanded: true,
+          subtasks: [
+            { id: 'sub-1', text: "Crawl the brand's official website to extract its official company name, tagline, and a 2-3 sentence description of its core offering and market position.", status: 'pending' },
+            { id: 'sub-2', text: "From the brand's official website, identify its business model (e.g., B2B subscription, Marketplace, Freemium, Enterprise licensing) and primary industry (e.g., SaaS, E-commerce, FinTech, Healthcare).", status: 'pending' },
+            { id: 'sub-3', text: "List the main products or services offered by the brand, using their actual product names, as found on its official website. Aim for at least 3 distinct products/services.", status: 'pending' },
+            { id: 'sub-4', text: "Determine the brand's primary target audience, including demographics, job roles, or company types they serve, based on information from its official website.", status: 'pending' },
+            { id: 'sub-5', text: "Identify the brand's unique value proposition (USP) and its overall brand tone and personality (e.g., 'Professional and authoritative', 'Friendly and approachable', 'Bold and innovative') from its official website.", status: 'pending' }
+          ]
+        },
+        {
+          id: 'task-2',
+          title: 'Planning research steps...',
+          status: 'pending',
+          expanded: false,
+          subtasks: []
+        }
+      ] : [
+        {
+          id: 'task-1',
+          title: 'Starting research...',
+          status: 'pending',
+          expanded: false,
+          subtasks: []
+        }
+      ];
+
+      setProcessingTasks(initialTasks);
+
+      // Simulate task progression
+      let taskIndex = 0;
+      let subtaskIndex = 0;
+      const processNext = () => {
+        if (taskIndex < initialTasks.length) {
+          const task = initialTasks[taskIndex];
+          
+          if (task.subtasks && task.subtasks.length > 0 && subtaskIndex < task.subtasks.length) {
+            // Process subtask
+            setProcessingTasks(prev => prev.map(t => {
+              if (t.id === task.id) {
+                const updatedSubtasks = [...t.subtasks];
+                updatedSubtasks[subtaskIndex] = { ...updatedSubtasks[subtaskIndex], status: 'completed' };
+                return { ...t, subtasks: updatedSubtasks, status: 'processing' };
+              }
+              return t;
+            }));
+            subtaskIndex++;
+            
+            if (subtaskIndex >= task.subtasks.length) {
+              // Mark task as completed
+              setProcessingTasks(prev => prev.map(t => {
+                if (t.id === task.id) {
+                  return { ...t, status: 'completed' };
+                }
+                return t;
+              }));
+              taskIndex++;
+              subtaskIndex = 0;
+            }
+            processingTimeoutRef.current = setTimeout(processNext, 1500);
+          } else {
+            // Mark simple task as completed
+            setProcessingTasks(prev => prev.map(t => {
+              if (t.id === task.id) {
+                return { ...t, status: 'completed' };
+              }
+              return t;
+            }));
+            taskIndex++;
+            processingTimeoutRef.current = setTimeout(processNext, 2000);
+          }
+        } else {
+          // All tasks completed, trigger completion
+          setTimeout(() => {
+            if (mode === 'established') {
+              handleComplete();
+            } else {
+              handleStartGuidedInterview();
+            }
+          }, 1000);
+        }
+      };
+
+      processingTimeoutRef.current = setTimeout(processNext, 1000);
+    }
+
+    return () => {
+      if (processingTimeoutRef.current) {
+        clearTimeout(processingTimeoutRef.current);
+      }
+    };
+  }, [currentStep, mode, isProcessing]);
+
   // Navigation helpers
   const canProceedToNext = useMemo(() => {
     if (currentStep === 0) return true; // Welcome step always allows next
-    if (currentStep === 1) return !!mode; // Path step requires mode selection
-    if (currentStep === 2 && mode === 'established') return true; // Intake allows skip
-    if (currentStep === 3) return true; // Summary allows next
+    if (currentStep === 1) return !!selectedPath; // Brand Type step requires path selection
+    if (currentStep === 2) {
+      // Information step - check URL validation
+      if (hasInvalidUrls) return false;
+      return true;
+    }
+    if (currentStep === 3) return true; // Review allows next
+    if (currentStep === 4) return false; // Processing step - no navigation
     return false;
-  }, [currentStep, mode]);
+  }, [currentStep, selectedPath, hasInvalidUrls]);
 
   const hasUploadingFiles = useMemo(() => {
     return files.some(f => f.status === 'uploading');
   }, [files]);
 
+  // Stepper helper
+  const getStepState = (stepIndex) => {
+    if (stepIndex < currentStep) return 'completed';
+    if (stepIndex === currentStep) return 'active';
+    return 'inactive';
+  };
+
   // Handlers
   const handleNext = () => {
-    if (currentStep < 3) {
+    if (currentStep < 4) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -223,6 +389,8 @@ const BrandBotSetupModal = ({
     const data = {
       mode,
       websiteUrl: mode === 'established' ? websiteUrl : null,
+      businessCategory: mode === 'established' ? businessCategory : null,
+      location: mode === 'established' ? location : null,
       competitorUrls: mode === 'established' ? competitorUrls.filter(url => url.trim() !== '') : [],
       files: files.filter(f => f.status === 'completed'),
       notes: mode === 'established' ? notes : null
@@ -234,10 +402,17 @@ const BrandBotSetupModal = ({
     } catch (_) {}
     
     onComplete?.(data);
+    onClose?.();
   };
 
-  const handleModeSelect = (selectedMode) => {
-    setMode(selectedMode);
+  const handlePathSelect = (path) => {
+    setSelectedPath(path);
+    // Map path to mode: 'auto' and 'playbook' -> 'established', 'positioning' and 'explore' -> 'new'
+    if (path === 'auto' || path === 'playbook') {
+      setMode('established');
+    } else if (path === 'positioning' || path === 'explore') {
+      setMode('new');
+    }
   };
 
   const handleStartGuidedInterview = () => {
@@ -245,8 +420,13 @@ const BrandBotSetupModal = ({
     const guidedData = {
       mode: 'new',
       websiteUrl,
+      businessCategory,
+      location,
       files: files.filter(f => f.status === 'completed'),
-      notes
+      notes,
+      companyDescription,
+      targetAudience,
+      brandFeel
     };
 
     console.log('Starting Guided Interview with data:', guidedData);
@@ -271,6 +451,14 @@ const BrandBotSetupModal = ({
   const completedFilesCount = files.filter(f => f.status === 'completed').length;
   const validCompetitorUrls = competitorUrls.filter(url => url.trim() !== '');
 
+  const steps = [
+    { id: 'welcome', label: 'Welcome' },
+    { id: 'brand-type', label: 'Brand Type' },
+    { id: 'information', label: 'Information' },
+    { id: 'review', label: 'Review' },
+    { id: 'processing', label: 'Processing' }
+  ];
+
   return (
     <>
       {/* Backdrop */}
@@ -281,22 +469,46 @@ const BrandBotSetupModal = ({
         {/* Header */}
         <div className="brandbot-setup-modal__header">
           <div className="brandbot-setup-modal__header-content">
-            <div className="brandbot-setup-modal__progress-indicator">
-              <div className="brandbot-setup-modal__step-counter">
-                {currentStep + 1} / 4
-              </div>
-              <div className="brandbot-setup-modal__progress-bar">
-                <div 
-                  className="brandbot-setup-modal__progress-fill"
-                  style={{ width: `${((currentStep + 1) / 4) * 100}%` }}
-                />
-              </div>
+            <div className="brandbot-setup-modal__title-section">
+              <svg className="brandbot-setup-modal__sparkle-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                <path d="M20 2v4"></path>
+                <path d="M22 4h-4"></path>
+                <circle cx="4" cy="20" r="2"></circle>
+              </svg>
+              <span className="brandbot-setup-modal__title">Company Strategy Ella-ments Builder</span>
             </div>
             <button className="brandbot-setup-modal__close" onClick={onClose}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
+          </div>
+          
+          {/* Stepper */}
+          <div className="brandbot-setup-modal__stepper">
+            {steps.map((step, index) => {
+              const state = getStepState(index);
+              return (
+                <React.Fragment key={step.id}>
+                  <div className={`brandbot-setup-modal__stepper-item brandbot-setup-modal__stepper-item--${state}`}>
+                    <div className="brandbot-setup-modal__stepper-indicator">
+                      {state === 'completed' ? (
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 6L9 17l-5-5"></path>
+                        </svg>
+                      ) : (
+                        <span>{index + 1}</span>
+                      )}
+                    </div>
+                    <span className="brandbot-setup-modal__stepper-label">{step.label}</span>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className={`brandbot-setup-modal__stepper-separator brandbot-setup-modal__stepper-separator--${state === 'completed' ? 'completed' : state === 'active' ? 'active' : 'inactive'}`} />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
@@ -305,125 +517,282 @@ const BrandBotSetupModal = ({
           {currentStep === 0 && (
             // Welcome Step
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--welcome">
-              <div className="brandbot-setup-modal__step-icon">🚀</div>
-              <h2 className="brandbot-setup-modal__step-title">Turn Ella into Your Marketing Genius</h2>
+              <div className="brandbot-setup-modal__step-icon-wrapper">
+                <svg className="brandbot-setup-modal__step-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                  <path d="M20 2v4"></path>
+                  <path d="M22 4h-4"></path>
+                  <circle cx="4" cy="20" r="2"></circle>
+                </svg>
+              </div>
+              <h2 className="brandbot-setup-modal__step-title">Turn Ella into your HD marketer</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                In just a few minutes, we'll set up your personal Brand Bot that knows your company, customers, and market. Start by telling us a bit about your brand.
+                In just a few steps, we'll collect information about your brand to create a personalized BrandBot that understands your unique voice, audience, and goals.
               </p>
               <div className="brandbot-setup-modal__features">
-                <div className="brandbot-setup-modal__feature">
-                  <span>Auto-crawl your website</span>
+                <div className="brandbot-setup-modal__feature-card">
+                  <div className="brandbot-setup-modal__feature-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__feature-content">
+                    <h3 className="brandbot-setup-modal__feature-title">Share your website</h3>
+                    <p className="brandbot-setup-modal__feature-description">Ella will analyze your website to understand your brand positioning</p>
+                  </div>
                 </div>
-                <div className="brandbot-setup-modal__feature">
-                  <span>Analyze competitors</span>
+                <div className="brandbot-setup-modal__feature-card">
+                  <div className="brandbot-setup-modal__feature-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                      <path d="M10 9H8"></path>
+                      <path d="M16 13H8"></path>
+                      <path d="M16 17H8"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__feature-content">
+                    <h3 className="brandbot-setup-modal__feature-title">Upload brand materials</h3>
+                    <p className="brandbot-setup-modal__feature-description">Add pitch decks, brand guides, or any marketing materials</p>
+                  </div>
                 </div>
-                <div className="brandbot-setup-modal__feature">
-                  <span>Learn from your materials</span>
+                <div className="brandbot-setup-modal__feature-card">
+                  <div className="brandbot-setup-modal__feature-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 8V4H8"></path>
+                      <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                      <path d="M2 14h2"></path>
+                      <path d="M20 14h2"></path>
+                      <path d="M15 13v2"></path>
+                      <path d="M9 13v2"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__feature-content">
+                    <h3 className="brandbot-setup-modal__feature-title">Build your BrandBot</h3>
+                    <p className="brandbot-setup-modal__feature-description">Get a personalized AI that speaks in your brand's voice</p>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {currentStep === 1 && (
-            // Path Selection Step
+            // Brand Type Step
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--path">
-              <h2 className="brandbot-setup-modal__step-title">Who Are You?</h2>
+              <h2 className="brandbot-setup-modal__step-title">What would you like to start with?</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                We'll tailor your setup based on your situation.
+                Choose the path that best fits your needs.
               </p>
               
               <div className="brandbot-setup-modal__mode-options">
                 <button
-                  className={`brandbot-setup-modal__mode-card ${mode === 'established' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handleModeSelect('established')}
+                  type="button"
+                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'positioning' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('positioning')}
                 >
-                  <div className="brandbot-setup-modal__mode-icon">📊</div>
-                  <h3 className="brandbot-setup-modal__mode-title">Established Brand</h3>
-                  <p className="brandbot-setup-modal__mode-description">
-                    You have marketing materials, existing messaging, or brand assets ready to share.
-                  </p>
+                  <div className="brandbot-setup-modal__mode-icon-wrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                      <path d="M9 18h6"></path>
+                      <path d="M10 22h4"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-content">
+                    <h3 className="brandbot-setup-modal__mode-title">Build a Positioning Statement</h3>
+                    <p className="brandbot-setup-modal__mode-description">
+                      Work through a guided interview to define your brand's positioning and messaging.
+                    </p>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-radio">
+                    {selectedPath === 'positioning' && (
+                      <div className="brandbot-setup-modal__mode-radio-check"></div>
+                    )}
+                  </div>
                 </button>
 
                 <button
-                  className={`brandbot-setup-modal__mode-card ${mode === 'new' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handleModeSelect('new')}
+                  type="button"
+                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'auto' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('auto')}
                 >
-                  <div className="brandbot-setup-modal__mode-icon">🌱</div>
-                  <h3 className="brandbot-setup-modal__mode-title">New or Reimagining</h3>
-                  <p className="brandbot-setup-modal__mode-description">
-                    You're starting fresh or redefining your brand. We'll guide you through discovery.
-                  </p>
+                  <div className="brandbot-setup-modal__mode-icon-wrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10 12h4"></path>
+                      <path d="M10 8h4"></path>
+                      <path d="M14 21v-3a2 2 0 0 0-4 0v3"></path>
+                      <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path>
+                      <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-content">
+                    <h3 className="brandbot-setup-modal__mode-title">Auto Brand Bot</h3>
+                    <p className="brandbot-setup-modal__mode-description">
+                      Use your existing website and materials so Ella can learn quickly.
+                    </p>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-radio">
+                    {selectedPath === 'auto' && (
+                      <div className="brandbot-setup-modal__mode-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'playbook' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('playbook')}
+                >
+                  <div className="brandbot-setup-modal__mode-icon-wrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                      <path d="M10 9H8"></path>
+                      <path d="M16 13H8"></path>
+                      <path d="M16 17H8"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-content">
+                    <h3 className="brandbot-setup-modal__mode-title">Construct a Playbook</h3>
+                    <p className="brandbot-setup-modal__mode-description">
+                      Turn your current brand assets into a tailored playbook and guidance.
+                    </p>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-radio">
+                    {selectedPath === 'playbook' && (
+                      <div className="brandbot-setup-modal__mode-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'explore' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('explore')}
+                >
+                  <div className="brandbot-setup-modal__mode-icon-wrapper">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                      <path d="M20 2v4"></path>
+                      <path d="M22 4h-4"></path>
+                      <circle cx="4" cy="20" r="2"></circle>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-content">
+                    <h3 className="brandbot-setup-modal__mode-title">Explore Ella</h3>
+                    <p className="brandbot-setup-modal__mode-description">
+                      Jump in and explore Ella's tools before setting up your brand.
+                    </p>
+                  </div>
+                  <div className="brandbot-setup-modal__mode-radio">
+                    {selectedPath === 'explore' && (
+                      <div className="brandbot-setup-modal__mode-radio-check"></div>
+                    )}
+                  </div>
                 </button>
               </div>
             </div>
           )}
 
           {currentStep === 2 && (
-            // Step 2: Intake (content changes based on mode)
+            // Information Step
             mode === 'established' ? (
             // Established Brand Intake
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--intake">
-              <h2 className="brandbot-setup-modal__step-title">Share Your Brand Details</h2>
+              <h2 className="brandbot-setup-modal__step-title">Tell us about your brand</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                Upload materials and add links. Ella will analyze them to understand your brand better.
+                Share materials that represent your brand.
               </p>
 
               {/* Website URL */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Company Website</label>
+                <label className="brandbot-setup-modal__label">Company website</label>
                 <input
                   type="url"
-                  className="brandbot-setup-modal__input"
+                  className={`brandbot-setup-modal__input ${websiteUrl && !websiteUrlValidation.isValid ? 'brandbot-setup-modal__input--error' : ''}`}
                   placeholder="https://example.com"
                   value={websiteUrl}
                   onChange={(e) => handleWebsiteUrlChange(e.target.value)}
                 />
+                {websiteUrl && !websiteUrlValidation.isValid && (
+                  <p className="brandbot-setup-modal__error-text">{websiteUrlValidation.error}</p>
+                )}
                 <p className="brandbot-setup-modal__helper-text">
                   Ella will auto-crawl your website in the background.
                 </p>
               </div>
 
+              {/* Business Category and Location */}
+              <div className="brandbot-setup-modal__form-row">
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">Business category</label>
+                  <input
+                    type="text"
+                    className="brandbot-setup-modal__input"
+                    placeholder="e.g., fintech, e-commerce, healthcare SaaS"
+                    value={businessCategory}
+                    onChange={(e) => setBusinessCategory(e.target.value)}
+                  />
+                </div>
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">Location</label>
+                  <input
+                    type="text"
+                    className="brandbot-setup-modal__input"
+                    placeholder="e.g., New York, London, UK"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+              </div>
+
               {/* Competitor URLs */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Competitor URLs (optional)</label>
+                <label className="brandbot-setup-modal__label">Competitor websites</label>
                 <div className="brandbot-setup-modal__competitor-urls">
                   {competitorUrls.map((url, index) => (
                     <div key={index} className="brandbot-setup-modal__competitor-url-row">
                       <input
                         type="url"
-                        className="brandbot-setup-modal__input"
-                        placeholder={`https://competitor${index + 1}.com`}
+                        className={`brandbot-setup-modal__input ${url && !competitorUrlsValidation[index]?.isValid ? 'brandbot-setup-modal__input--error' : ''}`}
+                        placeholder="https://competitor-1.com"
                         value={url}
                         onChange={(e) => updateCompetitorUrl(index, e.target.value)}
                       />
                       {competitorUrls.length > 1 && (
                         <button
+                          type="button"
                           className="brandbot-setup-modal__remove-btn"
                           onClick={() => removeCompetitorUrl(index)}
                           title="Remove"
                         >
-                          ×
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M10 11v6"></path>
+                            <path d="M14 11v6"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                            <path d="M3 6h18"></path>
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
                         </button>
                       )}
                     </div>
                   ))}
                   {competitorUrls.length < 10 && (
                     <button
+                      type="button"
                       className="brandbot-setup-modal__add-btn"
                       onClick={addCompetitorUrl}
                     >
-                      + Add another
+                      Add another
                     </button>
                   )}
                 </div>
-                <p className="brandbot-setup-modal__helper-text">
-                  Add up to 10 competitor URLs.
-                </p>
               </div>
 
               {/* File Upload */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Upload Brand Assets (optional)</label>
+                <label className="brandbot-setup-modal__label">Brand materials</label>
                 <div
                   ref={dropZoneRef}
                   className={`brandbot-setup-modal__upload-zone ${isDragging ? 'brandbot-setup-modal__upload-zone--dragging' : ''}`}
@@ -439,15 +808,15 @@ const BrandBotSetupModal = ({
                     id="brandbot-file-input"
                   />
                   <label htmlFor="brandbot-file-input" className="brandbot-setup-modal__upload-label">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <path d="M16 2V14M16 14L9 7M16 14L23 7M28 16V26C28 27.1 27.1 28 26 28H6C4.9 28 4 27.1 4 26V16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3v12"></path>
+                      <path d="m17 8-5-5-5 5"></path>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     </svg>
-                    <span className="brandbot-setup-modal__upload-text">
-                      Drag & drop files here or <strong>click to browse</strong>
-                    </span>
-                    <span className="brandbot-setup-modal__upload-hint">
-                      PDF, DOCX, PPTX, PNG, JPG, ZIP (max 50MB each)
-                    </span>
+                    <div className="brandbot-setup-modal__upload-text-group">
+                      <p className="brandbot-setup-modal__upload-text">Upload files</p>
+                      <p className="brandbot-setup-modal__upload-hint">Drag and drop or click to upload</p>
+                    </div>
                   </label>
                 </div>
 
@@ -481,6 +850,7 @@ const BrandBotSetupModal = ({
                             <>
                               <span className="brandbot-setup-modal__status-error">{f.error}</span>
                               <button
+                                type="button"
                                 className="brandbot-setup-modal__retry-btn"
                                 onClick={() => retryFile(f.id)}
                               >
@@ -489,11 +859,18 @@ const BrandBotSetupModal = ({
                             </>
                           )}
                           <button
+                            type="button"
                             className="brandbot-setup-modal__remove-file-btn"
                             onClick={() => removeFile(f.id)}
                             title="Remove file"
                           >
-                            ×
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M10 11v6"></path>
+                              <path d="M14 11v6"></path>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                              <path d="M3 6h18"></path>
+                              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
                           </button>
                         </div>
                       </div>
@@ -502,20 +879,20 @@ const BrandBotSetupModal = ({
                 )}
 
                 <p className="brandbot-setup-modal__helper-text">
-                  Drop files that describe your business, brand, or customers.
+                  Upload pitch decks, brand guides, or any marketing materials that help Ella understand your brand.
                 </p>
               </div>
 
-              {/* Optional Notes */}
+              {/* Additional Notes */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Additional Notes (optional)</label>
+                <label className="brandbot-setup-modal__label">Additional notes</label>
                 <textarea
                   className="brandbot-setup-modal__textarea"
-                  placeholder="Share any other details about your business, market, or goals..."
+                  placeholder="Share any additional context about your brand, target audience, or specific goals..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   maxLength={1000}
-                  rows={3}
+                  rows={4}
                 />
                 <p className="brandbot-setup-modal__helper-text">
                   {notes.length} / 1000
@@ -523,31 +900,58 @@ const BrandBotSetupModal = ({
               </div>
             </div>
             ) : (
-            // Guided Intake (New/Reimagined Brand)
+            // New/Reimagined Brand Intake
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--intake">
-              <h2 className="brandbot-setup-modal__step-title">Help Ella Learn About Your Company</h2>
+              <h2 className="brandbot-setup-modal__step-title">Help Ella learn about your company</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                Answer a few quick questions to get started. All fields are optional.
+                Share what you can — everything is optional. This helps Ella ask better questions in your guided interview.
               </p>
 
               {/* Website URL */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Company Website (optional)</label>
+                <label className="brandbot-setup-modal__label">Website URL</label>
                 <input
                   type="url"
-                  className="brandbot-setup-modal__input"
-                  placeholder="https://example.com"
+                  className={`brandbot-setup-modal__input ${websiteUrl && !websiteUrlValidation.isValid ? 'brandbot-setup-modal__input--error' : ''}`}
+                  placeholder="https://yourcompany.com"
                   value={websiteUrl}
                   onChange={(e) => handleWebsiteUrlChange(e.target.value)}
                 />
+                {websiteUrl && !websiteUrlValidation.isValid && (
+                  <p className="brandbot-setup-modal__error-text">{websiteUrlValidation.error}</p>
+                )}
                 <p className="brandbot-setup-modal__helper-text">
-                  Ella can learn about your company from your website.
+                  Ella will review your site to understand your brand.
                 </p>
+              </div>
+
+              {/* Business Category and Location */}
+              <div className="brandbot-setup-modal__form-row">
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">Business category</label>
+                  <input
+                    type="text"
+                    className="brandbot-setup-modal__input"
+                    placeholder="e.g., fintech, e-commerce"
+                    value={businessCategory}
+                    onChange={(e) => setBusinessCategory(e.target.value)}
+                  />
+                </div>
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">Location</label>
+                  <input
+                    type="text"
+                    className="brandbot-setup-modal__input"
+                    placeholder="e.g., New York, London"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
               </div>
 
               {/* File Upload */}
               <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Upload Materials (optional)</label>
+                <label className="brandbot-setup-modal__label">Brand materials (optional)</label>
                 <div
                   ref={dropZoneRef}
                   className={`brandbot-setup-modal__upload-zone ${isDragging ? 'brandbot-setup-modal__upload-zone--dragging' : ''}`}
@@ -563,15 +967,15 @@ const BrandBotSetupModal = ({
                     id="brandbot-guided-file-input"
                   />
                   <label htmlFor="brandbot-guided-file-input" className="brandbot-setup-modal__upload-label">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <path d="M16 2V14M16 14L9 7M16 14L23 7M28 16V26C28 27.1 27.1 28 26 28H6C4.9 28 4 27.1 4 26V16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3v12"></path>
+                      <path d="m17 8-5-5-5 5"></path>
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     </svg>
-                    <span className="brandbot-setup-modal__upload-text">
-                      Drag & drop files here or <strong>click to browse</strong>
-                    </span>
-                    <span className="brandbot-setup-modal__upload-hint">
-                      PDF, DOCX, PPTX, PNG, JPG, ZIP (max 50MB each)
-                    </span>
+                    <div className="brandbot-setup-modal__upload-text-group">
+                      <p className="brandbot-setup-modal__upload-text">Upload files</p>
+                      <p className="brandbot-setup-modal__upload-hint">Drag and drop or click to upload</p>
+                    </div>
                   </label>
                 </div>
 
@@ -605,6 +1009,7 @@ const BrandBotSetupModal = ({
                             <>
                               <span className="brandbot-setup-modal__status-error">{f.error}</span>
                               <button
+                                type="button"
                                 className="brandbot-setup-modal__retry-btn"
                                 onClick={() => retryFile(f.id)}
                               >
@@ -613,11 +1018,18 @@ const BrandBotSetupModal = ({
                             </>
                           )}
                           <button
+                            type="button"
                             className="brandbot-setup-modal__remove-file-btn"
                             onClick={() => removeFile(f.id)}
                             title="Remove file"
                           >
-                            ×
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M10 11v6"></path>
+                              <path d="M14 11v6"></path>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                              <path d="M3 6h18"></path>
+                              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
                           </button>
                         </div>
                       </div>
@@ -626,142 +1038,351 @@ const BrandBotSetupModal = ({
                 )}
 
                 <p className="brandbot-setup-modal__helper-text">
-                  Share any documents, slides, or images about your company.
+                  Upload any existing materials — pitch decks, logos, style guides.
                 </p>
               </div>
 
-              {/* Optional Notes */}
-              <div className="brandbot-setup-modal__form-group">
-                <label className="brandbot-setup-modal__label">Additional Notes (optional)</label>
-                <textarea
-                  className="brandbot-setup-modal__textarea"
-                  placeholder="Share any other details about your business, market, or goals..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  maxLength={1000}
-                  rows={3}
-                />
-                <p className="brandbot-setup-modal__helper-text">
-                  {notes.length} / 1000
-                </p>
+              {/* Quick Questions Section */}
+              <div className="brandbot-setup-modal__quick-questions">
+                <div className="brandbot-setup-modal__quick-questions-header">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
+                    <path d="M9 18h6"></path>
+                    <path d="M10 22h4"></path>
+                  </svg>
+                  <span>Quick questions</span>
+                </div>
+                
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">What does your company do?</label>
+                  <textarea
+                    className="brandbot-setup-modal__textarea"
+                    placeholder="We help small businesses manage their finances..."
+                    value={companyDescription}
+                    onChange={(e) => setCompanyDescription(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">Who are your main customers or audiences?</label>
+                  <textarea
+                    className="brandbot-setup-modal__textarea"
+                    placeholder="Small business owners, freelancers, startups..."
+                    value={targetAudience}
+                    onChange={(e) => setTargetAudience(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+                
+                <div className="brandbot-setup-modal__form-group">
+                  <label className="brandbot-setup-modal__label">What do you want people to feel about your brand?</label>
+                  <textarea
+                    className="brandbot-setup-modal__textarea"
+                    placeholder="Trustworthy, innovative, approachable..."
+                    value={brandFeel}
+                    onChange={(e) => setBrandFeel(e.target.value)}
+                    rows={3}
+                  />
+                </div>
               </div>
             </div>
             )
           )}
 
           {currentStep === 3 && (
-            // Step 3: Summary/Confirmation (content changes based on mode)
+            // Review Step
             mode === 'established' ? (
-            // Established Brand Summary
+            // Established Brand Review
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--summary">
-              <h2 className="brandbot-setup-modal__step-title">Ready to Build Your Brand Bot</h2>
+              <div className="brandbot-setup-modal__review-icon-wrapper">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <h2 className="brandbot-setup-modal__step-title">Ready to build your BrandBot</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                Ella will analyze your materials and website to understand your company, customers, and brand. This process typically takes a few minutes. Once complete, your Brand Bot will be ready to help with marketing strategies, content creation, and brand consistency.
+                Here's a summary of what you've shared. Ella will use this to create your personalized BrandBot.
               </p>
 
-              <div className="brandbot-setup-modal__summary-box">
-                <div className="brandbot-setup-modal__summary-section">
-                  <h3 className="brandbot-setup-modal__summary-header">Brand Type</h3>
-                  <p className="brandbot-setup-modal__summary-value">
-                    📊 Established Brand
-                  </p>
+              <div className="brandbot-setup-modal__summary-grid">
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Website</span>
+                    <span className="brandbot-setup-modal__summary-card-value">{websiteUrl || 'No website provided'}</span>
+                  </div>
                 </div>
 
-                {websiteUrl && (
-                  <div className="brandbot-setup-modal__summary-section">
-                    <h3 className="brandbot-setup-modal__summary-header">Website</h3>
-                    <p className="brandbot-setup-modal__summary-value">{websiteUrl}</p>
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10 12h4"></path>
+                      <path d="M10 8h4"></path>
+                      <path d="M14 21v-3a2 2 0 0 0-4 0v3"></path>
+                      <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path>
+                      <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
+                    </svg>
                   </div>
-                )}
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Category</span>
+                    <span className="brandbot-setup-modal__summary-card-value">{businessCategory || 'Not specified'}</span>
+                  </div>
+                </div>
 
-                {validCompetitorUrls.length > 0 && (
-                  <div className="brandbot-setup-modal__summary-section">
-                    <h3 className="brandbot-setup-modal__summary-header">Competitors</h3>
-                    <ul className="brandbot-setup-modal__summary-list">
-                      {validCompetitorUrls.map((url, i) => (
-                        <li key={i}>{url}</li>
-                      ))}
-                    </ul>
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
                   </div>
-                )}
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Location</span>
+                    <span className="brandbot-setup-modal__summary-card-value">{location || 'Not specified'}</span>
+                  </div>
+                </div>
 
-                {completedFilesCount > 0 && (
-                  <div className="brandbot-setup-modal__summary-section">
-                    <h3 className="brandbot-setup-modal__summary-header">Uploaded Files</h3>
-                    <p className="brandbot-setup-modal__summary-value">
-                      {completedFilesCount} file{completedFilesCount !== 1 ? 's' : ''}
-                    </p>
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                      <path d="M2 12h20"></path>
+                    </svg>
                   </div>
-                )}
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Competitors</span>
+                    <span className="brandbot-setup-modal__summary-card-value">
+                      {validCompetitorUrls.length > 0 ? `${validCompetitorUrls.length} added` : 'No competitors added'}
+                    </span>
+                  </div>
+                </div>
 
-                {notes && (
-                  <div className="brandbot-setup-modal__summary-section">
-                    <h3 className="brandbot-setup-modal__summary-header">Notes</h3>
-                    <p className="brandbot-setup-modal__summary-value">{notes}</p>
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
+                      <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
+                      <path d="M10 9H8"></path>
+                      <path d="M16 13H8"></path>
+                      <path d="M16 17H8"></path>
+                    </svg>
                   </div>
-                )}
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Brand Materials</span>
+                    <span className="brandbot-setup-modal__summary-card-value">
+                      {completedFilesCount > 0 ? `${completedFilesCount} file${completedFilesCount !== 1 ? 's' : ''}` : 'No files uploaded'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="brandbot-setup-modal__summary-card">
+                  <div className="brandbot-setup-modal__summary-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </div>
+                  <div className="brandbot-setup-modal__summary-card-content">
+                    <span className="brandbot-setup-modal__summary-card-label">Notes</span>
+                    <span className="brandbot-setup-modal__summary-card-value">{notes || 'No additional notes'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* What happens next callout */}
+              <div className="brandbot-setup-modal__callout">
+                <svg className="brandbot-setup-modal__callout-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                  <path d="M20 2v4"></path>
+                  <path d="M22 4h-4"></path>
+                  <circle cx="4" cy="20" r="2"></circle>
+                </svg>
+                <div className="brandbot-setup-modal__callout-content">
+                  <h3 className="brandbot-setup-modal__callout-title">What happens next?</h3>
+                  <p className="brandbot-setup-modal__callout-text">
+                    When you click <strong>Build my Brand Bot</strong>, Ella will analyze your materials in the background and create a personalized AI assistant that understands your brand voice, target audience, and messaging.
+                  </p>
+                </div>
               </div>
             </div>
             ) : (
-            // New/Reimagined Brand Confirmation
+            // New/Reimagined Brand Review
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--summary">
-              <h2 className="brandbot-setup-modal__step-title">You're Ready to Start</h2>
+              <div className="brandbot-setup-modal__review-icon-wrapper">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <h2 className="brandbot-setup-modal__step-title">You're ready to start your brand interview</h2>
               <p className="brandbot-setup-modal__step-subtitle">
-                Let's begin your brand interview. Ella will ask you guided questions to build out your brand story.
+                No worries — Ella will learn about your brand through the guided interview.
               </p>
 
-              <div className="brandbot-setup-modal__summary-box">
-                <div className="brandbot-setup-modal__summary-section">
-                  <h3 className="brandbot-setup-modal__summary-header">Your Input</h3>
-                  <p className="brandbot-setup-modal__summary-value">
-                    {websiteUrl && <div>✓ Website provided</div>}
-                    {completedFilesCount > 0 && <div>✓ {completedFilesCount} file{completedFilesCount !== 1 ? 's' : ''} uploaded</div>}
-                    {notes && <div>✓ Notes added</div>}
-                    {!websiteUrl && completedFilesCount === 0 && !notes && (
-                      <p className="brandbot-setup-modal__summary-value" style={{ color: 'var(--theme-text-secondary)' }}>
-                        Ready to start from scratch
-                      </p>
-                    )}
+              {/* What happens next callout */}
+              <div className="brandbot-setup-modal__callout">
+                <svg className="brandbot-setup-modal__callout-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <div className="brandbot-setup-modal__callout-content">
+                  <h3 className="brandbot-setup-modal__callout-title">What happens next?</h3>
+                  <p className="brandbot-setup-modal__callout-text">
+                    Click "Start Guided Interview" to begin a conversation with Ella. She'll ask questions to understand your brand vision, values, and voice — then create your personalized BrandBot.
                   </p>
                 </div>
               </div>
-
-              <div className="brandbot-setup-modal__milestones">
-                <h3 className="brandbot-setup-modal__summary-header">Next Steps</h3>
-                <p className="brandbot-setup-modal__step-subtitle" style={{ margin: '8px 0 0 0' }}>
-                  The Guided Interview will walk you through a series of questions about your company, target customers, and brand vision. Ella will use your responses to build a comprehensive understanding of your brand and help create marketing strategies tailored to your goals.
-                </p>
-              </div>
             </div>
             )
+          )}
+
+          {currentStep === 4 && (
+            // Processing Step
+            <div className="brandbot-setup-modal__step brandbot-setup-modal__step--processing">
+              <h2 className="brandbot-setup-modal__step-title">Researching Your Brand</h2>
+              <p className="brandbot-setup-modal__step-subtitle">
+                Ella is analyzing your brand and competitive landscape...
+              </p>
+
+              <div className="brandbot-setup-modal__processing-tasks">
+                {processingTasks.map((task) => (
+                  <div key={task.id} className="brandbot-setup-modal__processing-task">
+                    <button
+                      type="button"
+                      className="brandbot-setup-modal__processing-task-header"
+                      onClick={() => {
+                        setProcessingTasks(prev => prev.map(t => 
+                          t.id === task.id ? { ...t, expanded: !(t.expanded || false) } : t
+                        ));
+                      }}
+                    >
+                      <div className="brandbot-setup-modal__processing-task-status">
+                        {task.status === 'completed' ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="brandbot-setup-modal__processing-check">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="m9 12 2 2 4-4"></path>
+                          </svg>
+                        ) : task.status === 'processing' ? (
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="brandbot-setup-modal__processing-spinner">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                          </svg>
+                        ) : null}
+                      </div>
+                      <span className="brandbot-setup-modal__processing-task-title">{task.title}</span>
+                      {task.subtasks && task.subtasks.length > 0 && (
+                        <span className="brandbot-setup-modal__processing-task-count">
+                          ({task.subtasks.filter(st => st.status === 'completed').length}/{task.subtasks.length})
+                        </span>
+                      )}
+                      {task.status === 'completed' && (
+                        <span className="brandbot-setup-modal__processing-task-status-text">(completed)</span>
+                      )}
+                    </button>
+                    {task.expanded && task.subtasks && task.subtasks.length > 0 && (
+                      <div className="brandbot-setup-modal__processing-subtasks">
+                        {task.subtasks.map((subtask) => (
+                          <div key={subtask.id} className="brandbot-setup-modal__processing-subtask">
+                            <div className={`brandbot-setup-modal__processing-subtask-indicator brandbot-setup-modal__processing-subtask-indicator--${subtask.status}`}>
+                              {subtask.status === 'completed' ? (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="12" cy="12" r="10"></circle>
+                                  <path d="m9 12 2 2 4-4"></path>
+                                </svg>
+                              ) : (
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="brandbot-setup-modal__processing-spinner">
+                                  <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+                                </svg>
+                              )}
+                            </div>
+                            <p className="brandbot-setup-modal__processing-subtask-text">{subtask.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
         {/* Footer */}
         <div className="brandbot-setup-modal__footer">
           <button
+            type="button"
             className="brandbot-setup-modal__btn brandbot-setup-modal__btn--secondary"
             onClick={currentStep === 0 ? onClose : handleBack}
           >
-            {currentStep === 0 ? 'Close' : 'Back'}
+            {currentStep === 0 ? 'Exit' : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 19-7-7 7-7"></path>
+                  <path d="M19 12H5"></path>
+                </svg>
+                Back
+              </>
+            )}
           </button>
 
-          <button
-            className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
-            onClick={handleNext}
-            disabled={!canProceedToNext || hasUploadingFiles}
-            style={{ visibility: currentStep === 3 ? 'hidden' : 'visible' }}
-          >
-            Next
-          </button>
+          {currentStep < 3 && (
+            <button
+              type="button"
+              className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
+              onClick={handleNext}
+              disabled={!canProceedToNext || hasUploadingFiles}
+            >
+              Next
+              {currentStep < 2 && (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+              )}
+            </button>
+          )}
 
           {currentStep === 3 && (
             <button
+              type="button"
               className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
-              onClick={mode === 'established' ? handleComplete : handleStartGuidedInterview}
+              onClick={handleNext}
               disabled={!canProceedToNext}
             >
-              {mode === 'established' ? 'Build My BrandBot' : 'Start Guided Interview'}
+              {mode === 'established' ? (
+                <>
+                  Build my Brand Bot
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
+                    <path d="M20 2v4"></path>
+                    <path d="M22 4h-4"></path>
+                    <circle cx="4" cy="20" r="2"></circle>
+                  </svg>
+                </>
+              ) : (
+                <>
+                  Start Guided Interview
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                </>
+              )}
+            </button>
+          )}
+
+          {currentStep === 4 && (
+            <button
+              type="button"
+              className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary brandbot-setup-modal__btn--processing"
+              disabled
+            >
+              Processing...
             </button>
           )}
         </div>
@@ -771,4 +1392,3 @@ const BrandBotSetupModal = ({
 };
 
 export default BrandBotSetupModal;
-

@@ -11,7 +11,9 @@ import ManageTagsDrawer from '../components/features/ManageTagsDrawer';
 import PlaybookRunDrawer from '../components/features/PlaybookRunDrawer';
 import PlaybookRunnerDrawer from '../components/features/PlaybookRunnerDrawer';
 import PlaybookPreviewDrawer from '../components/features/PlaybookPreviewDrawer';
-import { 
+import QuestionnaireModal from '../components/features/QuestionnaireModal';
+import BrandBotSetupModal from '../components/features/BrandBotSetupModal';
+import {
   FolderIcon, 
   PlusIcon, 
   ChevronUpIcon, 
@@ -44,7 +46,11 @@ const Workspace = () => {
   const [isShowSavedWorkDrawer, setShowSavedWorkDrawer] = useState(false);
   const [isShowUploadedFilesDrawer, setShowUploadedFilesDrawer] = useState(false);
   const [isShowManageTagsDrawer, setShowManageTagsDrawer] = useState(false);
-  
+
+  // Onboarding modal states
+  const [showOnboardingQuestionnaire, setShowOnboardingQuestionnaire] = useState(false);
+  const [showBrandBotSetup, setShowBrandBotSetup] = useState(false);
+
   // Mic menu states for mobile
   const [showMicMenu, setShowMicMenu] = useState(false);
   const [micMenuLevel, setMicMenuLevel] = useState(1); // 1: main, 2: projects, 3: export
@@ -375,6 +381,56 @@ const Workspace = () => {
     setIsEllamentDrawerOpen(false);
   };
 
+  // Onboarding handlers
+  const handleQuestionnaireComplete = (data) => {
+    // Save all 12 fields to localStorage
+    localStorage.setItem('ella-user-type', data.userType || '');
+    localStorage.setItem('ella-user-role', data.role);
+    localStorage.setItem('ella-primary-goal', data.primaryGoal);
+    localStorage.setItem('ella-content-types', JSON.stringify(data.contentTypes));
+    localStorage.setItem('ella-team-size', data.teamSize);
+    localStorage.setItem('ella-who-will-use', JSON.stringify(data.whoWillUse));
+    localStorage.setItem('ella-biggest-challenge', data.biggestChallenge);
+    localStorage.setItem('ella-ai-familiarity', data.aiFamiliarity);
+    localStorage.setItem('ella-industry', data.industry);
+    localStorage.setItem('ella-target-audience', JSON.stringify(data.targetAudience));
+    localStorage.setItem('ella-first-action', data.firstAction);
+    localStorage.setItem('ella-referral-source', data.referralSource);
+    localStorage.setItem('ella-onboarding-complete', 'true');
+
+    // Clear the new user flag now that questionnaire is complete
+    localStorage.removeItem('ella-is-new-user');
+
+    setShowOnboardingQuestionnaire(false);
+
+    // Trigger Pendo tour if available
+    if (window.pendo) {
+      window.pendo.startTour({
+        tourId: 'ella-onboarding-tour',
+        onComplete: () => {
+          setShowBrandBotSetup(true);
+        }
+      });
+    } else {
+      // Dev environment - skip to BrandBot Setup
+      setTimeout(() => {
+        setShowBrandBotSetup(true);
+      }, 1000);
+    }
+  };
+
+  const handleBrandBotSetupComplete = (data) => {
+    console.log('BrandBot setup completed with data:', data);
+    localStorage.setItem('ella-brandbot-setup-complete', 'true');
+    setShowBrandBotSetup(false);
+    // Stay in workspace - no navigation needed
+  };
+
+  const handleBrandBotSetupClose = () => {
+    setShowBrandBotSetup(false);
+    // Stay in workspace - no navigation needed
+  };
+
   // Listen for brandbot:run-playbook event
   useEffect(() => {
     const handleBrandBotRunPlaybook = (event) => {
@@ -383,6 +439,43 @@ const Workspace = () => {
     
     window.addEventListener('brandbot:run-playbook', handleBrandBotRunPlaybook);
     return () => window.removeEventListener('brandbot:run-playbook', handleBrandBotRunPlaybook);
+  }, []);
+
+  // Initialize onboarding for new users
+  useEffect(() => {
+    // Check if user is new and hasn't completed onboarding
+    const isNewUser = localStorage.getItem('ella-is-new-user') === 'true';
+    let onboardingComplete = localStorage.getItem('ella-onboarding-complete') === 'true';
+
+    if (isNewUser && onboardingComplete) {
+      // Clear stale completion flag for new accounts in this browser
+      localStorage.removeItem('ella-onboarding-complete');
+      onboardingComplete = false;
+    }
+
+    console.log('Workspace mounted - Onboarding check:', {
+      isNewUser,
+      onboardingComplete,
+      willShowModal: isNewUser && !onboardingComplete,
+      currentState: showOnboardingQuestionnaire
+    });
+
+    if (isNewUser && !onboardingComplete) {
+      // Don't remove flag here - will be removed when questionnaire completes
+      // This prevents React StrictMode double-execution issues
+      console.log('Setting showOnboardingQuestionnaire to true');
+      setShowOnboardingQuestionnaire(true);
+    }
+  }, []); // Empty deps - only run on mount
+
+  // Listen for manual onboarding trigger from profile dropdown
+  useEffect(() => {
+    const handleShowOnboarding = () => {
+      setShowOnboardingQuestionnaire(true);
+    };
+
+    window.addEventListener('workspace:show-onboarding', handleShowOnboarding);
+    return () => window.removeEventListener('workspace:show-onboarding', handleShowOnboarding);
   }, []);
 
   return (
@@ -1601,6 +1694,24 @@ const Workspace = () => {
             </div>
           </div>
         </>
+      )}
+
+      {/* Onboarding Modals */}
+      {showOnboardingQuestionnaire && (
+        <QuestionnaireModal
+          isOpen={showOnboardingQuestionnaire}
+          onComplete={handleQuestionnaireComplete}
+          userType="primary"
+        />
+      )}
+
+      {showBrandBotSetup && (
+        <BrandBotSetupModal
+          isOpen={showBrandBotSetup}
+          onClose={handleBrandBotSetupClose}
+          onComplete={handleBrandBotSetupComplete}
+          persistedStateKey="brandbot-workspace-onboarding"
+        />
       )}
 
     </div>

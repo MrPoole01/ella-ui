@@ -1,0 +1,83 @@
+@import './themes/variables';
+
+.onboarding-container {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .onboarding-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--theme-bg-primary, #F8F5F0);
+    overflow: hidden;
+
+    .background-image {
+      width: 100%;
+      height: 100%;
+      background-image: url('https://static.motiffcontent.com/private/resource/image/197f4dd39497ffd-c3013307-ecd8-419a-8da8-c4cab0146b2c.jpeg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.15;
+    }
+  }
+
+  .onboarding-tour-placeholder {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .onboarding-tour-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px;
+    background: var(--theme-bg-primary, #FFFFFF);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+
+    p {
+      color: var(--theme-text-secondary, #6B7280);
+      font-size: 14px;
+      line-height: 20px;
+      margin: 0;
+    }
+  }
+
+  .onboarding-tour-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--theme-border-primary, #E5E7EB);
+    border-top-color: var(--theme-interactive-primary, #D4AF37);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
+
+// Dark Theme Adjustments
+.theme-dark,
+.theme-web-dark,
+.theme-electric-dark,
+.theme-modern-dark,
+.theme-citrus-grove,
+.theme-neumorphism-dark {
+  .onboarding-container .onboarding-background .background-image {
+    opacity: 0.1;
+    filter: brightness(0.5) contrast(1.1);
+  }
+}

@@ -2,28 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context';
 import { Button, Input } from '../components/ui';
-import '../styles/Login.scss';
+import '../styles/Signup.scss';
 
-const Login = () => {
+const Signup = () => {
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
+    companyName: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    password: '',
-    rememberMe: false
+    password: ''
   });
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
 
   // Apply theme to body when component mounts
   useEffect(() => {
     const applyTheme = (themeName) => {
       // Remove existing theme classes
       document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark');
-      
+
       // Add the appropriate theme class
       switch (themeName) {
         case 'UI Theme':
@@ -67,20 +67,15 @@ const Login = () => {
     // Get theme from localStorage or use current theme
     const savedTheme = localStorage.getItem('ella-ui-theme') || currentTheme;
     applyTheme(savedTheme);
-
-    // Cleanup: don't remove theme on unmount since user will navigate to main app
-    // return () => {
-    //   document.body.classList.remove('theme-ui', 'theme-light', 'theme-dark', 'theme-web-light', 'theme-web-dark', 'theme-electric-dark', 'theme-modern-dark', 'theme-modern-light', 'theme-citrus-grove', 'theme-neumorphism', 'theme-neumorphism-dark');
-    // };
   }, [currentTheme]);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     }));
-    
+
     // Clear errors when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -92,75 +87,100 @@ const Login = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
+    if (!formData.companyName.trim()) {
+      newErrors.companyName = 'Company name is required';
+    }
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email address';
     }
-    
+
     if (!formData.password.trim()) {
       newErrors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'Password must contain uppercase, lowercase, and numbers';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAuthSuccess = (authToken) => {
+  const handleSignupSuccess = (authToken) => {
     // Store authentication token
     localStorage.setItem('ella-auth-token', authToken);
 
-    // For demo purposes - set admin role for demo@example.com
-    if (formData.email === 'demo@example.com') {
-      localStorage.setItem('ella-user-role', 'admin');
-    } else {
-      localStorage.setItem('ella-user-role', 'user');
-    }
+    // Clear any stale onboarding state from prior sessions
+    localStorage.removeItem('ella-onboarding-complete');
+    localStorage.removeItem('ella-brandbot-setup-complete');
+    localStorage.removeItem('questionnaire-progress');
+    localStorage.removeItem('brandbot-onboarding-state');
+    localStorage.removeItem('brandbot-setup-state');
 
-    // Check if this is a new user (flag set during signup)
-    const isNewUser = localStorage.getItem('ella-is-new-user') === 'true';
-    const onboardingComplete = localStorage.getItem('ella-onboarding-complete') === 'true';
+    // Set new user flag for onboarding flow
+    localStorage.setItem('ella-is-new-user', 'true');
 
-    if (isNewUser && !onboardingComplete) {
-      // New user who hasn't completed onboarding - redirect to onboarding
-      localStorage.removeItem('ella-is-new-user');
-      navigate('/onboarding', { replace: true });
-    } else {
-      // Existing user or completed onboarding - go to workspace
-      navigate('/', { replace: true });
-    }
+    // Store user role (new users default to 'user' role)
+    localStorage.setItem('ella-user-role', 'user');
+
+    console.log('Signup complete - navigating to workspace with flags:', {
+      'ella-is-new-user': localStorage.getItem('ella-is-new-user'),
+      'ella-onboarding-complete': localStorage.getItem('ella-onboarding-complete')
+    });
+
+    // Navigate to workspace (onboarding modals will appear within workspace)
+    navigate('/', { replace: true });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsLoading(true);
     setErrors({});
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simulate authentication logic
+
+      // Simulate signup logic
       // In production, this would be an actual API call to your auth service
-      if (formData.email === 'demo@example.com' && formData.password === 'password') {
-        // Success - simulate receiving auth token
-        const mockAuthToken = 'mock-jwt-token-' + Date.now();
-        handleAuthSuccess(mockAuthToken);
-      } else {
-        // Failure
-        setErrors({ 
-          password: 'Invalid email or password. Please try again.' 
+      // Check if email already exists (mock)
+      const mockExistingEmails = ['demo@example.com'];
+      if (mockExistingEmails.includes(formData.email)) {
+        setErrors({
+          email: 'An account with this email already exists'
         });
+      } else {
+        // Success - simulate receiving auth token
+        const mockAuthToken = 'signup-jwt-token-' + Date.now();
+
+        // In production, this would also:
+        // 1. Create Organization entity
+        // 2. Create User entity
+        // 3. Auto-create default workspace
+        // 4. Create HubSpot records
+
+        handleSignupSuccess(mockAuthToken);
       }
     } catch (error) {
-      setErrors({ 
-        password: 'An error occurred. Please try again.' 
+      setErrors({
+        password: 'An error occurred. Please try again.'
       });
     } finally {
       setIsLoading(false);
@@ -170,69 +190,95 @@ const Login = () => {
   const handleGoogleAuth = async () => {
     // Implement Google OAuth flow
     setIsLoading(true);
-    
+
     try {
       // Simulate Google OAuth success
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // In production, this would integrate with Google OAuth and WorkOS
-      const mockAuthToken = 'google-auth-token-' + Date.now();
-      handleAuthSuccess(mockAuthToken);
+
+      // In production, this would integrate with Google OAuth
+      const mockAuthToken = 'google-signup-token-' + Date.now();
+      handleSignupSuccess(mockAuthToken);
     } catch (error) {
-      setErrors({ 
-        password: 'Google authentication failed. Please try again.' 
+      setErrors({
+        password: 'Google authentication failed. Please try again.'
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleForgotPassword = async (e) => {
-    e.preventDefault();
-    if (!forgotPasswordEmail.trim()) return;
-    
-    try {
-      // Simulate forgot password request to WorkOS
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log('Forgot password request for:', forgotPasswordEmail);
-      // In production, this would send request to WorkOS password reset endpoint
-      
-      setShowForgotPassword(false);
-      setForgotPasswordEmail('');
-      
-      // Show success message (you could add a toast notification here)
-      alert('Password reset link sent to your email!');
-    } catch (error) {
-      console.error('Failed to send password reset email:', error);
-    }
-  };
-
-  const isFormValid = formData.email.trim() && formData.password.trim();
+  const isFormValid =
+    formData.companyName.trim() &&
+    formData.firstName.trim() &&
+    formData.lastName.trim() &&
+    formData.email.trim() &&
+    formData.password.trim();
 
   return (
-    <div className="login-container">
-      <div className="login-background">
+    <div className="signup-container">
+      <div className="signup-background">
         <div className="background-image"></div>
       </div>
-      
-      <div className="login-form-container">
-        <div className="login-form-wrapper">
+
+      <div className="signup-form-container">
+        <div className="signup-form-wrapper">
           {/* Logo */}
-          <div className="login-logo">
+          <div className="signup-logo">
             <span>EA</span>
           </div>
-          
+
           {/* Title */}
-          <h1 className="login-title">Sign in to your account</h1>
-          
-          {/* Login Form */}
-          <form onSubmit={handleSubmit} className="login-form">
+          <h1 className="signup-title">Create Your Account</h1>
+          <p className="signup-subtitle">Start your free 14-day trial</p>
+
+          {/* Signup Form */}
+          <form onSubmit={handleSubmit} className="signup-form">
+            <div className="form-group">
+              <Input
+                type="text"
+                name="companyName"
+                placeholder="Company Name"
+                value={formData.companyName}
+                onChange={handleInputChange}
+                error={errors.companyName}
+                disabled={isLoading}
+                size="large"
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <Input
+                  type="text"
+                  name="firstName"
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  error={errors.firstName}
+                  disabled={isLoading}
+                  size="large"
+                />
+              </div>
+
+              <div className="form-group">
+                <Input
+                  type="text"
+                  name="lastName"
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  error={errors.lastName}
+                  disabled={isLoading}
+                  size="large"
+                />
+              </div>
+            </div>
+
             <div className="form-group">
               <Input
                 type="email"
                 name="email"
-                placeholder="Email address"
+                placeholder="Email Address"
                 value={formData.email}
                 onChange={handleInputChange}
                 error={errors.email}
@@ -240,8 +286,8 @@ const Login = () => {
                 size="large"
               />
             </div>
-            
-            <div className="form-group password-group">
+
+            <div className="form-group">
               <Input
                 type="password"
                 name="password"
@@ -249,32 +295,12 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 error={errors.password}
+                helpText="At least 8 characters with uppercase, lowercase, and numbers"
                 disabled={isLoading}
                 size="large"
               />
             </div>
-            
-            <div className="form-options">
-              <label className="remember-me">
-                <input
-                  type="checkbox"
-                  name="rememberMe"
-                  checked={formData.rememberMe}
-                  onChange={handleInputChange}
-                  disabled={isLoading}
-                />
-                <span>Remember me</span>
-              </label>
-              
-              <Button
-                variant="link"
-                onClick={() => setShowForgotPassword(true)}
-                disabled={isLoading}
-              >
-                Forgot password?
-              </Button>
-            </div>
-            
+
             <Button
               type="submit"
               variant="primary"
@@ -283,21 +309,9 @@ const Login = () => {
               loading={isLoading}
               disabled={!isFormValid || isLoading}
             >
-              {isLoading ? 'Signing in...' : 'Continue'}
+              {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
-
-          {/* Sign Up Link */}
-          <div className="signup-link">
-            Don't have an account?{' '}
-            <Button
-              variant="link"
-              onClick={() => navigate('/signup')}
-              disabled={isLoading}
-            >
-              Sign up
-            </Button>
-          </div>
 
           {/* Divider */}
           <div className="divider">
@@ -305,7 +319,7 @@ const Login = () => {
             <span className="divider-text">or</span>
             <div className="divider-line"></div>
           </div>
-          
+
           {/* Google Auth Button */}
           <Button
             variant="google"
@@ -341,68 +355,25 @@ const Login = () => {
               </svg>
             }
           >
-            Continue with Google
+            Sign up with Google
           </Button>
-          
+
           {/* Footer */}
-          <div className="login-footer">
-            By continuing, you agree to Ella's{' '}
-            <a
-              href="https://www.ellaai.com/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-link"
+          <div className="signup-footer">
+            Already have an account?{' '}
+            <button
+              type="button"
+              className="signin-link"
+              onClick={() => navigate('/login')}
+              disabled={isLoading}
             >
-              Terms of Service
-            </a>
-            {' '}and{' '}
-            <a
-              href="https://www.ellaai.com/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="footer-link"
-            >
-              Privacy Policy
-            </a>
+              Sign in
+            </button>
           </div>
         </div>
       </div>
-      
-      {/* Forgot Password Modal */}
-      {showForgotPassword && (
-        <div className="modal-overlay" onClick={() => setShowForgotPassword(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>Reset Password</h2>
-            <p>Enter your email address and we'll send you a link to reset your password.</p>
-            <form onSubmit={handleForgotPassword}>
-              <Input
-                type="email"
-                placeholder="Email address"
-                value={forgotPasswordEmail}
-                onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                required
-                size="large"
-              />
-              <div className="modal-actions">
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowForgotPassword(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="submit" 
-                  variant="primary"
-                >
-                  Send Reset Link
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
-export default Login; 
+export default Signup;

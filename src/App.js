@@ -2,9 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Workspace from './pages/Workspace';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Onboarding from './pages/Onboarding';
 import AdminTool from './pages/AdminTool';
 import { ThemeProvider } from './context';
 import { CssVarsProvider } from '@mui/joy/styles';
+import './styles/global.css';
 import './App.scss';
 
 // Simple authentication check - in production, this would connect to your auth system
@@ -41,9 +44,20 @@ function App() {
         <Router>
           <div className="App">
             <Routes>
-              {/* Login Route */}
+              {/* Public Auth Routes */}
               <Route path="/login" element={<Login />} />
-              
+              <Route path="/signup" element={<Signup />} />
+
+              {/* Onboarding Route - Protected */}
+              <Route
+                path="/onboarding"
+                element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* Admin Tool Routes - Admin Only */}
               <Route
                 path="/admin/*"

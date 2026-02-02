@@ -276,18 +276,30 @@
     }
   }
   
+  .signup-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--theme-text-secondary, #4B5563);
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    margin-top: 16px;
+  }
+
   .login-footer {
     color: var(--theme-text-secondary, #4B5563);
     font-size: 14px;
     line-height: 20px;
     text-align: center;
     margin-top: 9px;
-    
-    .trial-link {
+
+    .footer-link {
       color: var(--theme-interactive-primary, #D4AF37);
       text-decoration: none;
       transition: color 0.2s ease;
-      
+
       &:hover {
         color: var(--theme-interactive-hover, darken(#D4AF37, 10%));
         text-decoration: underline;

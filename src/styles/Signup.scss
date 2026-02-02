@@ -1,0 +1,204 @@
+@import './themes/variables';
+
+.signup-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .signup-background {
+    flex: 1;
+    background: var(--theme-bg-primary, #F8F5F0);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    min-height: 100vh;
+
+    .background-image {
+      width: 100%;
+      height: 100vh;
+      background-image: url('https://static.motiffcontent.com/private/resource/image/197f4dd39497ffd-c3013307-ecd8-419a-8da8-c4cab0146b2c.jpeg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.8;
+    }
+  }
+
+  .signup-form-container {
+    width: 604.79px;
+    background: var(--theme-bg-primary, #F8F5F0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 24px;
+    justify-content: center;
+    min-height: 100vh;
+
+    .signup-form-wrapper {
+      width: 100%;
+      max-width: 448px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+  }
+
+  .signup-logo {
+    background: var(--theme-interactive-primary, #D4AF37);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      color: #FFFFFF;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 28px;
+    }
+  }
+
+  .signup-title {
+    color: var(--theme-text-primary, #000000);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    text-align: center;
+    margin: 8px 0 0 0;
+  }
+
+  .signup-subtitle {
+    color: var(--theme-text-secondary, #6B7280);
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .signup-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+
+    .form-group {
+      flex: 1;
+    }
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 8px;
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--theme-border-secondary, #D1D5DB);
+    }
+
+    .divider-text {
+      color: var(--theme-text-muted, #6B7280);
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+
+  .signup-footer {
+    color: var(--theme-text-secondary, #4B5563);
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    margin-top: 9px;
+
+    .signin-link {
+      background: none;
+      border: none;
+      color: var(--theme-interactive-primary, #D4AF37);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: none;
+      transition: color 0.2s ease;
+
+      &:hover:not(:disabled) {
+        color: var(--theme-interactive-hover, darken(#D4AF37, 10%));
+        text-decoration: underline;
+      }
+
+      &:disabled {
+        color: var(--theme-text-muted, #9CA3AF);
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // Responsive Design
+  @media (max-width: 1024px) {
+    .signup-background {
+      display: none;
+    }
+
+    .signup-form-container {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .signup-form-container {
+      padding: 16px;
+
+      .signup-form-wrapper {
+        max-width: 100%;
+        gap: 20px;
+      }
+    }
+
+    .signup-title {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    .signup-subtitle {
+      font-size: 13px;
+    }
+
+    .form-row {
+      flex-direction: column;
+      gap: 16px;
+    }
+  }
+}
+
+// Dark Theme Adjustments
+.theme-dark,
+.theme-web-dark,
+.theme-electric-dark,
+.theme-modern-dark,
+.theme-citrus-grove,
+.theme-neumorphism-dark {
+  .signup-container .signup-background .background-image {
+    opacity: 0.3;
+    filter: brightness(0.7) contrast(1.1);
+  }
+}

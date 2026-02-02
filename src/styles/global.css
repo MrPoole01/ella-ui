@@ -1,0 +1,16 @@
+/* Global design tokens for BrandBot Setup Modal */
+:root {
+  /* Primary brand color */
+  --brand-primary: #F2B340;
+  --brand-primary-dark: #E5A830;
+  --brand-primary-foreground: #1A1A1A;
+  
+  /* Success color */
+  --color-success: #16A34A;
+  --color-success-light: rgba(22, 163, 74, 0.1);
+  
+  /* Destructive/Error color */
+  --color-destructive: #EA4444;
+  --color-destructive-light: rgba(234, 68, 68, 0.05);
+  --color-destructive-lighter: rgba(234, 68, 68, 0.1);
+}

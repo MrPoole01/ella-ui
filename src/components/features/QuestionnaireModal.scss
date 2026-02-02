@@ -1,0 +1,328 @@
+@import '../../styles/themes/variables';
+
+.questionnaire-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10010;
+  padding: 24px;
+}
+
+.questionnaire-modal {
+  background: var(--theme-bg-primary, #FFFFFF);
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 900px;
+  height: fit-content;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: slideUp 0.3s ease-out;
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  &__logo {
+    background: var(--theme-interactive-primary, #D4AF37);
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      color: #FFFFFF;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 28px;
+    }
+  }
+
+  &__title {
+    color: var(--theme-text-primary, #111827);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--theme-text-secondary, #6B7280);
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  &__question {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__label {
+    color: var(--theme-text-primary, #111827);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+  }
+
+  &__required {
+    color: var(--theme-error, #EF4444);
+    margin-left: 4px;
+  }
+
+  &__helper-text {
+    color: var(--theme-text-secondary, #6B7280);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    margin-left: 8px;
+  }
+
+  &__select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--theme-border-primary, #E5E7EB);
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--theme-text-primary, #111827);
+    background: var(--theme-bg-primary, #FFFFFF);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M10.293 3.293L6 7.586 1.707 3.293A1 1 0 00.293 4.707l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 12px;
+    padding-right: 40px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    &:hover {
+      border-color: var(--theme-interactive-primary, #D4AF37);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--theme-interactive-primary, #D4AF37);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+
+    option {
+      padding: 12px;
+      color: var(--theme-text-primary, #111827);
+
+      &:first-child {
+        color: var(--theme-text-muted, #9CA3AF);
+      }
+    }
+  }
+
+  &__input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--theme-border-primary, #E5E7EB);
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--theme-text-primary, #111827);
+    background: var(--theme-bg-primary, #FFFFFF);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-top: 12px;
+
+    &::placeholder {
+      color: var(--theme-text-muted, #9CA3AF);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--theme-interactive-primary, #D4AF37);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+    }
+  }
+
+  &__error {
+    color: var(--theme-error, #EF4444);
+    font-size: 14px;
+    line-height: 20px;
+    margin-top: 4px;
+  }
+
+  &__progress {
+    text-align: center;
+    color: var(--theme-text-secondary, #6B7280);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  &__checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  &__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    padding: 12px 16px;
+    border: 2px solid var(--theme-border-primary, #E5E7EB);
+    border-radius: 8px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--theme-interactive-primary, #D4AF37);
+      background: var(--theme-bg-secondary, #F9FAFB);
+    }
+  }
+
+  &__checkbox-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+
+    &:checked ~ .questionnaire-modal__checkbox-custom {
+      background: var(--theme-interactive-primary, #D4AF37);
+      border-color: var(--theme-interactive-primary, #D4AF37);
+
+      &::after {
+        display: block;
+      }
+    }
+  }
+
+  &__checkbox-custom {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--theme-border-primary, #E5E7EB);
+    border-radius: 4px;
+    background: var(--theme-bg-primary, #FFFFFF);
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      display: none;
+      left: 5px;
+      top: 2px;
+      width: 6px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
+  &__checkbox-text {
+    color: var(--theme-text-primary, #111827);
+    font-size: 14px;
+    line-height: 20px;
+    user-select: none;
+  }
+
+  &__navigation {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+
+    .button {
+      flex: 1;
+    }
+  }
+
+  &__footer {
+    margin-top: 8px;
+  }
+}
+
+// Responsive Design
+@media (max-width: 640px) {
+  .questionnaire-modal-overlay {
+    padding: 16px;
+  }
+
+  .questionnaire-modal {
+    padding: 32px 24px;
+    gap: 24px;
+
+    &__header {
+      gap: 12px;
+    }
+
+    &__title {
+      font-size: 20px;
+      line-height: 28px;
+    }
+
+    &__subtitle {
+      font-size: 13px;
+    }
+
+    &__form {
+      gap: 24px;
+    }
+
+    &__option {
+      padding: 14px;
+      font-size: 13px;
+    }
+
+    &__checkbox-group {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Dark Theme Support
+.theme-dark,
+.theme-web-dark,
+.theme-electric-dark,
+.theme-modern-dark,
+.theme-citrus-grove,
+.theme-neumorphism-dark {
+  .questionnaire-modal-overlay {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
