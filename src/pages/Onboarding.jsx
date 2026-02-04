@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context';
 import QuestionnaireModal from '../components/features/QuestionnaireModal';
-import BrandBotSetupModal from '../components/features/BrandBotSetupModal';
 import '../styles/Onboarding.scss';
 
 const Onboarding = () => {
   const { currentTheme } = useTheme();
   const navigate = useNavigate();
   const [showQuestionnaire, setShowQuestionnaire] = useState(true);
-  const [showBrandBotSetup, setShowBrandBotSetup] = useState(false);
 
   // Apply theme to body when component mounts
   useEffect(() => {
@@ -75,54 +73,30 @@ const Onboarding = () => {
   }, [currentTheme]);
 
   const handleQuestionnaireComplete = (data) => {
-    // Save all 12 fields to localStorage
+    // Save only the fields we collect (userType and role)
     localStorage.setItem('ella-user-type', data.userType || '');
-    localStorage.setItem('ella-user-role', data.role);
-    localStorage.setItem('ella-primary-goal', data.primaryGoal);
-    localStorage.setItem('ella-content-types', JSON.stringify(data.contentTypes));
-    localStorage.setItem('ella-team-size', data.teamSize);
-    localStorage.setItem('ella-who-will-use', JSON.stringify(data.whoWillUse));
-    localStorage.setItem('ella-biggest-challenge', data.biggestChallenge);
-    localStorage.setItem('ella-ai-familiarity', data.aiFamiliarity);
-    localStorage.setItem('ella-industry', data.industry);
-    localStorage.setItem('ella-target-audience', JSON.stringify(data.targetAudience));
-    localStorage.setItem('ella-first-action', data.firstAction);
-    localStorage.setItem('ella-referral-source', data.referralSource);
+    localStorage.setItem('ella-user-role', data.role || '');
+    
+    // Store selected path and mode for BrandBot setup
+    if (data.selectedPath) {
+      localStorage.setItem('ella-brandbot-selected-path', data.selectedPath);
+    }
+    if (data.mode) {
+      localStorage.setItem('ella-brandbot-mode', data.mode);
+    }
+    
+    // Mark onboarding questionnaire as complete
     localStorage.setItem('ella-onboarding-complete', 'true');
+    
+    // Set flag to open BrandBot modal in workspace
+    localStorage.setItem('ella-show-brandbot-setup', 'true');
 
     setShowQuestionnaire(false);
 
-    // Trigger Pendo tour if available
-    if (window.pendo) {
-      window.pendo.startTour({
-        tourId: 'ella-onboarding-tour',
-        onComplete: () => {
-          // Tour finished - show BrandBot Setup Modal
-          setShowBrandBotSetup(true);
-        }
-      });
-    } else {
-      // Pendo not available (dev environment) - skip directly to BrandBot Setup
-      setTimeout(() => {
-        setShowBrandBotSetup(true);
-      }, 1000);
-    }
-  };
-
-  const handleBrandBotSetupComplete = (data) => {
-    console.log('BrandBot setup completed with data:', data);
-
-    // Mark onboarding as fully complete
-    localStorage.setItem('ella-brandbot-setup-complete', 'true');
-
-    // Redirect to main workspace
+    // Navigate directly to workspace (skip Pendo tour)
     navigate('/', { replace: true });
   };
 
-  const handleBrandBotSetupClose = () => {
-    // User closed the modal - redirect to workspace anyway
-    navigate('/', { replace: true });
-  };
 
   return (
     <div className="onboarding-container">
@@ -140,25 +114,6 @@ const Onboarding = () => {
         />
       )}
 
-      {/* Pendo Tour will be rendered here by Pendo SDK */}
-      {!showQuestionnaire && !showBrandBotSetup && (
-        <div className="onboarding-tour-placeholder">
-          <div className="onboarding-tour-message">
-            <div className="onboarding-tour-spinner" />
-            <p>Preparing your tour...</p>
-          </div>
-        </div>
-      )}
-
-      {/* BrandBot Setup Modal */}
-      {showBrandBotSetup && (
-        <BrandBotSetupModal
-          isOpen={showBrandBotSetup}
-          onClose={handleBrandBotSetupClose}
-          onComplete={handleBrandBotSetupComplete}
-          persistedStateKey="brandbot-onboarding-state"
-        />
-      )}
     </div>
   );
 };

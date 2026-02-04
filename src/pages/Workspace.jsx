@@ -383,19 +383,18 @@ const Workspace = () => {
 
   // Onboarding handlers
   const handleQuestionnaireComplete = (data) => {
-    // Save all 12 fields to localStorage
+    // Save only the fields we collect (userType and role)
     localStorage.setItem('ella-user-type', data.userType || '');
-    localStorage.setItem('ella-user-role', data.role);
-    localStorage.setItem('ella-primary-goal', data.primaryGoal);
-    localStorage.setItem('ella-content-types', JSON.stringify(data.contentTypes));
-    localStorage.setItem('ella-team-size', data.teamSize);
-    localStorage.setItem('ella-who-will-use', JSON.stringify(data.whoWillUse));
-    localStorage.setItem('ella-biggest-challenge', data.biggestChallenge);
-    localStorage.setItem('ella-ai-familiarity', data.aiFamiliarity);
-    localStorage.setItem('ella-industry', data.industry);
-    localStorage.setItem('ella-target-audience', JSON.stringify(data.targetAudience));
-    localStorage.setItem('ella-first-action', data.firstAction);
-    localStorage.setItem('ella-referral-source', data.referralSource);
+    localStorage.setItem('ella-user-role', data.role || '');
+    
+    // Store selected path and mode for BrandBot setup
+    if (data.selectedPath) {
+      localStorage.setItem('ella-brandbot-selected-path', data.selectedPath);
+    }
+    if (data.mode) {
+      localStorage.setItem('ella-brandbot-mode', data.mode);
+    }
+    
     localStorage.setItem('ella-onboarding-complete', 'true');
 
     // Clear the new user flag now that questionnaire is complete
@@ -403,20 +402,11 @@ const Workspace = () => {
 
     setShowOnboardingQuestionnaire(false);
 
-    // Trigger Pendo tour if available
-    if (window.pendo) {
-      window.pendo.startTour({
-        tourId: 'ella-onboarding-tour',
-        onComplete: () => {
-          setShowBrandBotSetup(true);
-        }
-      });
-    } else {
-      // Dev environment - skip to BrandBot Setup
-      setTimeout(() => {
-        setShowBrandBotSetup(true);
-      }, 1000);
-    }
+    // Skip Pendo tour - set flag to open BrandBot modal
+    localStorage.setItem('ella-show-brandbot-setup', 'true');
+    setTimeout(() => {
+      setShowBrandBotSetup(true);
+    }, 100);
   };
 
   const handleBrandBotSetupComplete = (data) => {
@@ -441,7 +431,7 @@ const Workspace = () => {
     return () => window.removeEventListener('brandbot:run-playbook', handleBrandBotRunPlaybook);
   }, []);
 
-  // Initialize onboarding for new users
+  // Initialize onboarding for new users and check for BrandBot setup flag
   useEffect(() => {
     // Check if user is new and hasn't completed onboarding
     const isNewUser = localStorage.getItem('ella-is-new-user') === 'true';
@@ -465,6 +455,13 @@ const Workspace = () => {
       // This prevents React StrictMode double-execution issues
       console.log('Setting showOnboardingQuestionnaire to true');
       setShowOnboardingQuestionnaire(true);
+    }
+    
+    // Check for flag to show BrandBot setup modal (set after questionnaire completion)
+    const showBrandBotFlag = localStorage.getItem('ella-show-brandbot-setup') === 'true';
+    if (showBrandBotFlag) {
+      localStorage.removeItem('ella-show-brandbot-setup');
+      setShowBrandBotSetup(true);
     }
   }, []); // Empty deps - only run on mount
 

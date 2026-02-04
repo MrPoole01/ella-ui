@@ -7,7 +7,7 @@ const BrandBotSetupModal = ({
   onComplete, // (data: { mode, websiteUrl, competitorUrls, files, notes, businessCategory, location, companyDescription, targetAudience, brandFeel })
   persistedStateKey = 'brandbot-setup-state'
 }) => {
-  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Brand Type, 2: Information, 3: Review, 4: Processing
+  const [currentStep, setCurrentStep] = useState(0); // 0: Welcome, 1: Information, 2: Review, 3: Processing
   const [mode, setMode] = useState(null); // 'established' | 'new'
   const [selectedPath, setSelectedPath] = useState(null); // 'positioning' | 'auto' | 'playbook' | 'explore'
   const [websiteUrl, setWebsiteUrl] = useState('');
@@ -55,27 +55,67 @@ const BrandBotSetupModal = ({
   useEffect(() => {
     if (isOpen) {
       try {
+        // First, try to get selectedPath and mode from onboarding localStorage
+        const onboardingPath = localStorage.getItem('ella-brandbot-selected-path');
+        const onboardingMode = localStorage.getItem('ella-brandbot-mode');
+        
+        if (onboardingPath) {
+          setSelectedPath(onboardingPath);
+          // Clear after reading
+          localStorage.removeItem('ella-brandbot-selected-path');
+        }
+        if (onboardingMode) {
+          setMode(onboardingMode);
+          // Clear after reading
+          localStorage.removeItem('ella-brandbot-mode');
+        }
+        
+        // Map selectedPath to mode if not set
+        if (onboardingPath && !onboardingMode) {
+          if (onboardingPath === 'auto' || onboardingPath === 'playbook') {
+            setMode('established');
+          } else if (onboardingPath === 'positioning' || onboardingPath === 'explore') {
+            setMode('new');
+          }
+        }
+        
+        // Then restore from persisted state (if exists)
         const raw = localStorage.getItem(persistedStateKey);
         if (raw) {
           const saved = JSON.parse(raw);
-          if (saved.currentStep !== undefined) setCurrentStep(saved.currentStep);
-          if (saved.selectedPath) {
+          // Map old step indices: old step 2 -> new step 1, old step 3 -> new step 2, old step 4 -> new step 3
+          if (saved.currentStep !== undefined) {
+            if (saved.currentStep === 0) {
+              setCurrentStep(0); // Welcome stays the same
+            } else if (saved.currentStep === 1) {
+              // Old Brand Type step - skip to Information
+              setCurrentStep(1);
+            } else if (saved.currentStep >= 2) {
+              // Old steps 2-4 become new steps 1-3
+              setCurrentStep(saved.currentStep - 1);
+            }
+          }
+          
+          // Only restore selectedPath/mode from persisted state if not already set from onboarding
+          if (!onboardingPath && saved.selectedPath) {
             setSelectedPath(saved.selectedPath);
-            // Map selectedPath to mode for backward compatibility
             if (saved.selectedPath === 'auto' || saved.selectedPath === 'playbook') {
               setMode('established');
             } else if (saved.selectedPath === 'positioning' || saved.selectedPath === 'explore') {
               setMode('new');
             }
-          } else if (saved.mode) {
+          } else if (!onboardingMode && saved.mode) {
             // Backward compatibility: map old mode to default path
             setMode(saved.mode);
-            if (saved.mode === 'established') {
-              setSelectedPath('auto');
-            } else if (saved.mode === 'new') {
-              setSelectedPath('positioning');
+            if (!onboardingPath) {
+              if (saved.mode === 'established') {
+                setSelectedPath('auto');
+              } else if (saved.mode === 'new') {
+                setSelectedPath('positioning');
+              }
             }
           }
+          
           if (saved.websiteUrl) setWebsiteUrl(saved.websiteUrl);
           if (saved.businessCategory) setBusinessCategory(saved.businessCategory);
           if (saved.location) setLocation(saved.location);
@@ -246,7 +286,7 @@ const BrandBotSetupModal = ({
 
   // Processing simulation
   useEffect(() => {
-    if (currentStep === 4 && !isProcessing) {
+    if (currentStep === 3 && !isProcessing) {
       setIsProcessing(true);
       
       // Initialize tasks based on mode
@@ -350,16 +390,15 @@ const BrandBotSetupModal = ({
   // Navigation helpers
   const canProceedToNext = useMemo(() => {
     if (currentStep === 0) return true; // Welcome step always allows next
-    if (currentStep === 1) return !!selectedPath; // Brand Type step requires path selection
-    if (currentStep === 2) {
+    if (currentStep === 1) {
       // Information step - check URL validation
       if (hasInvalidUrls) return false;
       return true;
     }
-    if (currentStep === 3) return true; // Review allows next
-    if (currentStep === 4) return false; // Processing step - no navigation
+    if (currentStep === 2) return true; // Review allows next
+    if (currentStep === 3) return false; // Processing step - no navigation
     return false;
-  }, [currentStep, selectedPath, hasInvalidUrls]);
+  }, [currentStep, hasInvalidUrls]);
 
   const hasUploadingFiles = useMemo(() => {
     return files.some(f => f.status === 'uploading');
@@ -374,7 +413,7 @@ const BrandBotSetupModal = ({
 
   // Handlers
   const handleNext = () => {
-    if (currentStep < 4) {
+    if (currentStep < 3) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -453,7 +492,6 @@ const BrandBotSetupModal = ({
 
   const steps = [
     { id: 'welcome', label: 'Welcome' },
-    { id: 'brand-type', label: 'Brand Type' },
     { id: 'information', label: 'Information' },
     { id: 'review', label: 'Review' },
     { id: 'processing', label: 'Processing' }
@@ -579,123 +617,6 @@ const BrandBotSetupModal = ({
           )}
 
           {currentStep === 1 && (
-            // Brand Type Step
-            <div className="brandbot-setup-modal__step brandbot-setup-modal__step--path">
-              <h2 className="brandbot-setup-modal__step-title">What would you like to start with?</h2>
-              <p className="brandbot-setup-modal__step-subtitle">
-                Choose the path that best fits your needs.
-              </p>
-              
-              <div className="brandbot-setup-modal__mode-options">
-                <button
-                  type="button"
-                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'positioning' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handlePathSelect('positioning')}
-                >
-                  <div className="brandbot-setup-modal__mode-icon-wrapper">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"></path>
-                      <path d="M9 18h6"></path>
-                      <path d="M10 22h4"></path>
-                    </svg>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-content">
-                    <h3 className="brandbot-setup-modal__mode-title">Build a Positioning Statement</h3>
-                    <p className="brandbot-setup-modal__mode-description">
-                      Work through a guided interview to define your brand's positioning and messaging.
-                    </p>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-radio">
-                    {selectedPath === 'positioning' && (
-                      <div className="brandbot-setup-modal__mode-radio-check"></div>
-                    )}
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'auto' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handlePathSelect('auto')}
-                >
-                  <div className="brandbot-setup-modal__mode-icon-wrapper">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10 12h4"></path>
-                      <path d="M10 8h4"></path>
-                      <path d="M14 21v-3a2 2 0 0 0-4 0v3"></path>
-                      <path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"></path>
-                      <path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"></path>
-                    </svg>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-content">
-                    <h3 className="brandbot-setup-modal__mode-title">Auto Brand Bot</h3>
-                    <p className="brandbot-setup-modal__mode-description">
-                      Use your existing website and materials so Ella can learn quickly.
-                    </p>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-radio">
-                    {selectedPath === 'auto' && (
-                      <div className="brandbot-setup-modal__mode-radio-check"></div>
-                    )}
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'playbook' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handlePathSelect('playbook')}
-                >
-                  <div className="brandbot-setup-modal__mode-icon-wrapper">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path>
-                      <path d="M14 2v5a1 1 0 0 0 1 1h5"></path>
-                      <path d="M10 9H8"></path>
-                      <path d="M16 13H8"></path>
-                      <path d="M16 17H8"></path>
-                    </svg>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-content">
-                    <h3 className="brandbot-setup-modal__mode-title">Construct a Playbook</h3>
-                    <p className="brandbot-setup-modal__mode-description">
-                      Turn your current brand assets into a tailored playbook and guidance.
-                    </p>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-radio">
-                    {selectedPath === 'playbook' && (
-                      <div className="brandbot-setup-modal__mode-radio-check"></div>
-                    )}
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  className={`brandbot-setup-modal__mode-card ${selectedPath === 'explore' ? 'brandbot-setup-modal__mode-card--selected' : ''}`}
-                  onClick={() => handlePathSelect('explore')}
-                >
-                  <div className="brandbot-setup-modal__mode-icon-wrapper">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path>
-                      <path d="M20 2v4"></path>
-                      <path d="M22 4h-4"></path>
-                      <circle cx="4" cy="20" r="2"></circle>
-                    </svg>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-content">
-                    <h3 className="brandbot-setup-modal__mode-title">Explore Ella</h3>
-                    <p className="brandbot-setup-modal__mode-description">
-                      Jump in and explore Ella's tools before setting up your brand.
-                    </p>
-                  </div>
-                  <div className="brandbot-setup-modal__mode-radio">
-                    {selectedPath === 'explore' && (
-                      <div className="brandbot-setup-modal__mode-radio-check"></div>
-                    )}
-                  </div>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 2 && (
             // Information Step
             mode === 'established' ? (
             // Established Brand Intake
@@ -1090,7 +1011,7 @@ const BrandBotSetupModal = ({
             )
           )}
 
-          {currentStep === 3 && (
+          {currentStep === 2 && (
             // Review Step
             mode === 'established' ? (
             // Established Brand Review
@@ -1243,7 +1164,7 @@ const BrandBotSetupModal = ({
             )
           )}
 
-          {currentStep === 4 && (
+          {currentStep === 3 && (
             // Processing Step
             <div className="brandbot-setup-modal__step brandbot-setup-modal__step--processing">
               <h2 className="brandbot-setup-modal__step-title">Researching Your Brand</h2>
@@ -1331,7 +1252,7 @@ const BrandBotSetupModal = ({
             )}
           </button>
 
-          {currentStep < 3 && (
+          {currentStep < 2 && (
             <button
               type="button"
               className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
@@ -1339,7 +1260,7 @@ const BrandBotSetupModal = ({
               disabled={!canProceedToNext || hasUploadingFiles}
             >
               Next
-              {currentStep < 2 && (
+              {currentStep < 1 && (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14"></path>
                   <path d="m12 5 7 7-7 7"></path>
@@ -1348,7 +1269,7 @@ const BrandBotSetupModal = ({
             </button>
           )}
 
-          {currentStep === 3 && (
+          {currentStep === 2 && (
             <button
               type="button"
               className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary"
@@ -1376,7 +1297,7 @@ const BrandBotSetupModal = ({
             </button>
           )}
 
-          {currentStep === 4 && (
+          {currentStep === 3 && (
             <button
               type="button"
               className="brandbot-setup-modal__btn brandbot-setup-modal__btn--primary brandbot-setup-modal__btn--processing"

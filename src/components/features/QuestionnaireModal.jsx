@@ -42,30 +42,17 @@ const QuestionnaireModal = ({
   onComplete,
   userType = 'primary' // 'primary' or 'invited'
 }) => {
-  const [currentPage, setCurrentPage] = useState(0); // 0-5 for 6 pages
+  const [currentPage, setCurrentPage] = useState(0); // 0-2 for 3 pages: Questions, Educational, Path Selection
   const [formData, setFormData] = useState({
     // Page 1
     userType: '',
-    role: '',
-    // Page 2
-    primaryGoal: '',
-    contentTypes: [],
-    // Page 3
-    teamSize: '',
-    whoWillUse: [],
-    // Page 4
-    biggestChallenge: '',
-    aiFamiliarity: '',
-    // Page 5
-    industry: '',
-    targetAudience: [],
-    // Page 6
-    firstAction: '',
-    referralSource: ''
+    role: ''
   });
   const [errors, setErrors] = useState({});
   const [showRoleInput, setShowRoleInput] = useState(false);
   const [customRole, setCustomRole] = useState('');
+  const [selectedPath, setSelectedPath] = useState(null); // 'positioning' | 'auto' | 'playbook' | 'explore'
+  const [mode, setMode] = useState(null); // 'established' | 'new'
 
   // Question pages configuration
   const questionPages = [
@@ -99,166 +86,10 @@ const QuestionnaireModal = ({
           { value: 'Other', label: 'Other' }
         ]
       }
-    ],
-    // Page 2
-    [
-      {
-        id: 'primaryGoal',
-        label: "What's your primary goal with Ella?",
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'consistent-content', label: 'Create consistent branded content' },
-          { value: 'brand-messaging', label: 'Develop brand messaging and positioning' },
-          { value: 'manage-clients', label: 'Manage multiple client brands (agencies)' },
-          { value: 'scale-production', label: 'Scale content production' },
-          { value: 'brand-voice', label: 'Maintain brand voice across team' },
-          { value: 'other', label: 'Other' }
-        ]
-      },
-      {
-        id: 'contentTypes',
-        label: 'What type of content do you create most often?',
-        type: 'multi-select',
-        required: true,
-        options: [
-          { value: 'social-media', label: 'Social media posts' },
-          { value: 'blog', label: 'Blog articles' },
-          { value: 'email', label: 'Marketing emails' },
-          { value: 'website', label: 'Website copy' },
-          { value: 'ads', label: 'Ad copy' },
-          { value: 'sales', label: 'Sales materials' },
-          { value: 'multiple', label: 'Multiple types' }
-        ]
-      }
-    ],
-    // Page 3
-    [
-      {
-        id: 'teamSize',
-        label: 'How large is your marketing team?',
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'just-me', label: 'Just me' },
-          { value: '2-5', label: '2-5 people' },
-          { value: '6-15', label: '6-15 people' },
-          { value: '16-50', label: '16-50 people' },
-          { value: '50+', label: '50+ people' }
-        ]
-      },
-      {
-        id: 'whoWillUse',
-        label: 'Who else will be using Ella?',
-        type: 'multi-select',
-        required: true,
-        options: [
-          { value: 'just-me', label: 'Just me' },
-          { value: 'marketing', label: 'Marketing team members' },
-          { value: 'writers', label: 'Content writers' },
-          { value: 'designers', label: 'Designers' },
-          { value: 'executives', label: 'Executives/Leadership' },
-          { value: 'clients', label: 'Clients (for agencies)' },
-          { value: 'other', label: 'Other departments' }
-        ]
-      }
-    ],
-    // Page 4
-    [
-      {
-        id: 'biggestChallenge',
-        label: "What's your biggest content creation challenge?",
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'brand-voice', label: 'Maintaining consistent brand voice' },
-          { value: 'ideas', label: 'Generating ideas quickly' },
-          { value: 'volume', label: 'Keeping up with content volume' },
-          { value: 'collaboration', label: 'Collaborating with team' },
-          { value: 'resonance', label: 'Understanding what resonates with audience' },
-          { value: 'multiple-brands', label: 'Managing multiple brands' }
-        ]
-      },
-      {
-        id: 'aiFamiliarity',
-        label: 'How familiar are you with AI writing tools?',
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'first-time', label: 'First time using AI for content' },
-          { value: 'few-times', label: 'Used AI tools a few times' },
-          { value: 'regular', label: 'Regular AI tool user' },
-          { value: 'power-user', label: 'AI power user' }
-        ]
-      }
-    ],
-    // Page 5
-    [
-      {
-        id: 'industry',
-        label: 'What industry are you in?',
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'tech-saas', label: 'Technology/SaaS' },
-          { value: 'ecommerce', label: 'E-commerce/Retail' },
-          { value: 'professional-services', label: 'Professional Services' },
-          { value: 'healthcare', label: 'Healthcare' },
-          { value: 'education', label: 'Education' },
-          { value: 'nonprofit', label: 'Non-profit' },
-          { value: 'agency', label: 'Agency/Marketing' },
-          { value: 'other', label: 'Other' }
-        ]
-      },
-      {
-        id: 'targetAudience',
-        label: 'Who is your target audience?',
-        type: 'multi-select',
-        required: true,
-        options: [
-          { value: 'b2b', label: 'B2B decision makers' },
-          { value: 'smb', label: 'Small business owners' },
-          { value: 'enterprise', label: 'Enterprise clients' },
-          { value: 'b2c', label: 'Consumers (B2C)' },
-          { value: 'agencies', label: 'Other businesses/agencies' },
-          { value: 'internal', label: 'Internal teams' }
-        ]
-      }
-    ],
-    // Page 6
-    [
-      {
-        id: 'firstAction',
-        label: 'What would you like to accomplish first?',
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'brand-voice', label: 'Set up my brand voice' },
-          { value: 'create-content', label: 'Create content right away' },
-          { value: 'explore', label: "Explore Ella's features" },
-          { value: 'train-team', label: 'Train my team' },
-          { value: 'import-guidelines', label: 'Import existing brand guidelines' }
-        ]
-      },
-      {
-        id: 'referralSource',
-        label: 'How did you hear about Ella?',
-        type: 'select',
-        required: true,
-        options: [
-          { value: 'search', label: 'Search engine' },
-          { value: 'social', label: 'Social media' },
-          { value: 'referral', label: 'Referral from colleague' },
-          { value: 'blog', label: 'Blog/article' },
-          { value: 'ad', label: 'Advertisement' },
-          { value: 'conference', label: 'Conference/event' },
-          { value: 'other', label: 'Other' }
-        ]
-      }
     ]
   ];
 
-  const totalPages = questionPages.length;
+  const totalPages = 3; // Page 0: Questions, Page 1: Educational, Page 2: Path Selection
   const isLastPage = currentPage === totalPages - 1;
   const isFirstPage = currentPage === 0;
 
@@ -271,10 +102,12 @@ const QuestionnaireModal = ({
           const parsed = JSON.parse(saved);
           // Only restore if less than 24 hours old
           if (Date.now() - parsed.timestamp < 24 * 60 * 60 * 1000) {
-            setCurrentPage(parsed.currentPage);
-            setFormData(parsed.formData);
+            setCurrentPage(parsed.currentPage || 0);
+            setFormData(parsed.formData || { userType: '', role: '' });
+            if (parsed.selectedPath) setSelectedPath(parsed.selectedPath);
+            if (parsed.mode) setMode(parsed.mode);
             // Restore role input state if needed
-            if (parsed.formData.role && parsed.formData.role !== '' &&
+            if (parsed.formData?.role && parsed.formData.role !== '' &&
                 !questionPages[0][1].options.some(opt => opt.value === parsed.formData.role)) {
               setShowRoleInput(true);
               setCustomRole(parsed.formData.role);
@@ -293,6 +126,8 @@ const QuestionnaireModal = ({
       localStorage.setItem('questionnaire-progress', JSON.stringify({
         currentPage,
         formData,
+        selectedPath,
+        mode,
         timestamp: Date.now()
       }));
     } catch (_) {}
@@ -300,27 +135,42 @@ const QuestionnaireModal = ({
 
   // Validate current page
   const validateCurrentPage = () => {
-    const currentQuestions = questionPages[currentPage];
-    const newErrors = {};
+    if (currentPage === 0) {
+      // Validate first page questions
+      const currentQuestions = questionPages[currentPage];
+      const newErrors = {};
 
-    currentQuestions.forEach(q => {
-      // Skip userType validation for invited users
-      if (q.showFor === 'primary' && userType !== 'primary') return;
+      currentQuestions.forEach(q => {
+        // Skip userType validation for invited users
+        if (q.showFor === 'primary' && userType !== 'primary') return;
 
-      if (q.required) {
-        const value = formData[q.id];
-        if (q.type === 'multi-select') {
-          if (!Array.isArray(value) || value.length === 0) {
-            newErrors[q.id] = 'Please select at least one option';
+        if (q.required) {
+          const value = formData[q.id];
+          if (q.type === 'multi-select') {
+            if (!Array.isArray(value) || value.length === 0) {
+              newErrors[q.id] = 'Please select at least one option';
+            }
+          } else if (!value || value.trim() === '') {
+            newErrors[q.id] = 'This field is required';
           }
-        } else if (!value || value.trim() === '') {
-          newErrors[q.id] = 'This field is required';
         }
-      }
-    });
+      });
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    } else if (currentPage === 1) {
+      // Educational page - no validation needed, always allows next
+      return true;
+    } else if (currentPage === 2) {
+      // Validate path selection
+      if (!selectedPath) {
+        setErrors({ path: 'Please select a path to continue' });
+        return false;
+      }
+      setErrors({});
+      return true;
+    }
+    return false;
   };
 
   // Handle field change
@@ -363,7 +213,11 @@ const QuestionnaireModal = ({
   };
 
   // Navigation handlers
-  const handleNext = () => {
+  const handleNext = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (validateCurrentPage()) {
       persistProgress();
       setCurrentPage(prev => prev + 1);
@@ -380,7 +234,30 @@ const QuestionnaireModal = ({
     e.preventDefault();
     if (validateCurrentPage()) {
       localStorage.removeItem('questionnaire-progress');
-      onComplete(formData);
+      onComplete({
+        ...formData,
+        selectedPath,
+        mode
+      });
+    }
+  };
+
+  // Handle path selection
+  const handlePathSelect = (path) => {
+    setSelectedPath(path);
+    // Map path to mode: 'auto' and 'playbook' -> 'established', 'positioning' and 'explore' -> 'new'
+    if (path === 'auto' || path === 'playbook') {
+      setMode('established');
+    } else if (path === 'positioning' || path === 'explore') {
+      setMode('new');
+    }
+    // Clear path error if exists
+    if (errors.path) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors.path;
+        return newErrors;
+      });
     }
   };
 
@@ -472,27 +349,170 @@ const QuestionnaireModal = ({
 
   return createPortal(
     <div className="questionnaire-modal-overlay" onClick={handleBackdropClick}>
-      <div className="questionnaire-modal" onClick={(e) => e.stopPropagation()}>
+      <div className={`questionnaire-modal ${currentPage === 1 ? 'questionnaire-modal--wide' : ''}`} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="questionnaire-modal__header">
           <div className="questionnaire-modal__logo">
             <span>EA</span>
           </div>
           <h2 className="questionnaire-modal__title">Welcome to Ella!</h2>
-          <p className="questionnaire-modal__subtitle">
-            Help us personalize your experience
-          </p>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="questionnaire-modal__progress">
-          Page {currentPage + 1} of {totalPages}
         </div>
 
         {/* Form */}
-        <form onSubmit={handleFinish} className="questionnaire-modal__form">
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (isLastPage) {
+            handleFinish(e);
+          } else {
+            handleNext(e);
+          }
+        }} className="questionnaire-modal__form">
           {/* Render current page questions */}
-          {questionPages[currentPage].map(question => renderQuestion(question))}
+          {currentPage === 0 && questionPages[0] && questionPages[0].map(question => renderQuestion(question))}
+          
+          {/* Page 1: Educational Content */}
+          {currentPage === 1 && (
+            <div className="questionnaire-modal__educational">
+              <div className="questionnaire-modal__educational-section">
+                <h3 className="questionnaire-modal__educational-title">What is a Brand Bot?</h3>
+                <div className="questionnaire-modal__educational-content">
+                  <p>
+                    A Brand Bot is your personalized AI assistant that understands your brand's unique voice, 
+                    messaging, and goals. Think of it as a digital team member that knows your brand inside and out— 
+                    from your tone of voice to your target audience—and helps you create consistent, on-brand content.
+                  </p>
+                </div>
+              </div>
+
+              <div className="questionnaire-modal__educational-section">
+                <h3 className="questionnaire-modal__educational-title">Why it matters</h3>
+                <div className="questionnaire-modal__educational-content">
+                  <p>
+                    Your Brand Bot ensures everything you create aligns with your brand identity. It helps maintain 
+                    consistency across all your content, saves time by understanding your preferences, and scales your 
+                    brand voice across your entire team.
+                  </p>
+                </div>
+              </div>
+
+              <div className="questionnaire-modal__educational-section">
+                <h3 className="questionnaire-modal__educational-title">What are Elements?</h3>
+                <div className="questionnaire-modal__educational-content">
+                  <p>
+                    Elements are the building blocks of your brand—the essential pieces that define who you are. 
+                    These include your brand voice, messaging, positioning, target audience, values, and more. 
+                    Think of Elements as your brand's DNA: once Ella understands them, she can create content that 
+                    truly represents your brand.
+                  </p>
+                </div>
+              </div>
+
+              <div className="questionnaire-modal__educational-section">
+                <h3 className="questionnaire-modal__educational-title">What to expect</h3>
+                <div className="questionnaire-modal__educational-content">
+                  <ul className="questionnaire-modal__educational-list">
+                    <li>
+                      <strong>Ella will generate things:</strong> Based on your inputs, Ella will create content, 
+                      suggestions, and recommendations tailored to your brand.
+                    </li>
+                    <li>
+                      <strong>There will be checkpoints:</strong> You'll have opportunities to review, refine, and 
+                      approve what Ella creates before moving forward.
+                    </li>
+                    <li>
+                      <strong>You'll talk back and forth with Ella:</strong> This is a collaborative process. 
+                      You can provide feedback, ask questions, and guide Ella to better understand your brand.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Page 2: Path Selection */}
+          {currentPage === 2 && (
+            <div className="questionnaire-modal__path-selection">
+              <h2 className="questionnaire-modal__path-title">What would you like to start with?</h2>
+              
+              <div className="questionnaire-modal__path-options">
+                <button
+                  type="button"
+                  className={`questionnaire-modal__path-card ${selectedPath === 'positioning' ? 'questionnaire-modal__path-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('positioning')}
+                >
+                  <div className="questionnaire-modal__path-content">
+                    <h3 className="questionnaire-modal__path-card-title">Create a Positioning Statement</h3>
+                    <p className="questionnaire-modal__path-card-description">
+                      Work through a guided interview to define your brand's positioning and messaging.
+                    </p>
+                  </div>
+                  <div className="questionnaire-modal__path-radio">
+                    {selectedPath === 'positioning' && (
+                      <div className="questionnaire-modal__path-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`questionnaire-modal__path-card ${selectedPath === 'auto' ? 'questionnaire-modal__path-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('auto')}
+                >
+                  <div className="questionnaire-modal__path-content">
+                    <h3 className="questionnaire-modal__path-card-title">Build My Brand Bot (Autobot)</h3>
+                    <p className="questionnaire-modal__path-card-description">
+                      Use your existing website and materials so Ella can learn quickly.
+                    </p>
+                  </div>
+                  <div className="questionnaire-modal__path-radio">
+                    {selectedPath === 'auto' && (
+                      <div className="questionnaire-modal__path-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`questionnaire-modal__path-card ${selectedPath === 'playbook' ? 'questionnaire-modal__path-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('playbook')}
+                >
+                  <div className="questionnaire-modal__path-content">
+                    <h3 className="questionnaire-modal__path-card-title">Sharpen the Edge</h3>
+                    <p className="questionnaire-modal__path-card-description">
+                      Turn your current brand assets into a tailored playbook and guidance.
+                    </p>
+                  </div>
+                  <div className="questionnaire-modal__path-radio">
+                    {selectedPath === 'playbook' && (
+                      <div className="questionnaire-modal__path-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  className={`questionnaire-modal__path-card ${selectedPath === 'explore' ? 'questionnaire-modal__path-card--selected' : ''}`}
+                  onClick={() => handlePathSelect('explore')}
+                >
+                  <div className="questionnaire-modal__path-content">
+                    <h3 className="questionnaire-modal__path-card-title">Explore Ella</h3>
+                    <p className="questionnaire-modal__path-card-description">
+                      Jump in and explore Ella's tools before setting up your brand.
+                    </p>
+                  </div>
+                  <div className="questionnaire-modal__path-radio">
+                    {selectedPath === 'explore' && (
+                      <div className="questionnaire-modal__path-radio-check"></div>
+                    )}
+                  </div>
+                </button>
+              </div>
+              
+              {errors.path && (
+                <div className="questionnaire-modal__error">{errors.path}</div>
+              )}
+            </div>
+          )}
 
           {/* Navigation Buttons */}
           <div className="questionnaire-modal__navigation">
@@ -523,7 +543,7 @@ const QuestionnaireModal = ({
                 size="large"
                 fullWidth={isFirstPage}
               >
-                Finish
+                Continue
               </Button>
             )}
           </div>
