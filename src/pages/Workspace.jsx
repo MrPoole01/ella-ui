@@ -13,6 +13,7 @@ import PlaybookRunnerDrawer from '../components/features/PlaybookRunnerDrawer';
 import PlaybookPreviewDrawer from '../components/features/PlaybookPreviewDrawer';
 import QuestionnaireModal from '../components/features/QuestionnaireModal';
 import BrandBotSetupModal from '../components/features/BrandBotSetupModal';
+import BrandBotSetupModalV2 from '../components/features/BrandBotSetupModalV2';
 import {
   FolderIcon, 
   PlusIcon, 
@@ -50,6 +51,7 @@ const Workspace = () => {
   // Onboarding modal states
   const [showOnboardingQuestionnaire, setShowOnboardingQuestionnaire] = useState(false);
   const [showBrandBotSetup, setShowBrandBotSetup] = useState(false);
+  const [showBrandBotBuilder, setShowBrandBotBuilder] = useState(false);
 
   // Mic menu states for mobile
   const [showMicMenu, setShowMicMenu] = useState(false);
@@ -402,11 +404,22 @@ const Workspace = () => {
 
     setShowOnboardingQuestionnaire(false);
 
-    // Skip Pendo tour - set flag to open BrandBot modal
-    localStorage.setItem('ella-show-brandbot-setup', 'true');
-    setTimeout(() => {
-      setShowBrandBotSetup(true);
-    }, 100);
+    // Check flow flag to determine which modal to open
+    const flow = localStorage.getItem('ella-brandbot-flow') || 'old';
+    
+    if (flow === 'new') {
+      // Open new Brand Bot Builder modal
+      localStorage.setItem('ella-show-brandbot-builder', 'true');
+      setTimeout(() => {
+        setShowBrandBotBuilder(true);
+      }, 100);
+    } else {
+      // Open old BrandBot setup modal
+      localStorage.setItem('ella-show-brandbot-setup', 'true');
+      setTimeout(() => {
+        setShowBrandBotSetup(true);
+      }, 100);
+    }
   };
 
   const handleBrandBotSetupComplete = (data) => {
@@ -418,6 +431,18 @@ const Workspace = () => {
 
   const handleBrandBotSetupClose = () => {
     setShowBrandBotSetup(false);
+    // Stay in workspace - no navigation needed
+  };
+
+  const handleBrandBotBuilderComplete = (data) => {
+    console.log('Brand Bot Builder completed with data:', data);
+    localStorage.setItem('ella-brandbot-builder-complete', 'true');
+    setShowBrandBotBuilder(false);
+    // Stay in workspace - no navigation needed
+  };
+
+  const handleBrandBotBuilderClose = () => {
+    setShowBrandBotBuilder(false);
     // Stay in workspace - no navigation needed
   };
 
@@ -459,7 +484,14 @@ const Workspace = () => {
     
     // Check for flag to show BrandBot setup modal (set after questionnaire completion)
     const showBrandBotFlag = localStorage.getItem('ella-show-brandbot-setup') === 'true';
-    if (showBrandBotFlag) {
+    const showBrandBotBuilderFlag = localStorage.getItem('ella-show-brandbot-builder') === 'true';
+    const flow = localStorage.getItem('ella-brandbot-flow') || 'old';
+    
+    if (showBrandBotBuilderFlag || (showBrandBotFlag && flow === 'new')) {
+      localStorage.removeItem('ella-show-brandbot-builder');
+      localStorage.removeItem('ella-show-brandbot-setup');
+      setShowBrandBotBuilder(true);
+    } else if (showBrandBotFlag) {
       localStorage.removeItem('ella-show-brandbot-setup');
       setShowBrandBotSetup(true);
     }
@@ -1708,6 +1740,14 @@ const Workspace = () => {
           onClose={handleBrandBotSetupClose}
           onComplete={handleBrandBotSetupComplete}
           persistedStateKey="brandbot-workspace-onboarding"
+        />
+      )}
+
+      {showBrandBotBuilder && (
+        <BrandBotSetupModalV2
+          isOpen={showBrandBotBuilder}
+          onClose={handleBrandBotBuilderClose}
+          onComplete={handleBrandBotBuilderComplete}
         />
       )}
 

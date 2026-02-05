@@ -739,6 +739,132 @@
   padding: 0 4px;
 }
 
+// Brand Bots Admin Styles
+.admin-brand-bots {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-brand-bots-section {
+  background: #262626;
+  border: 1px solid #404040;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.admin-brand-bots-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.admin-brand-bots-section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.admin-brand-bots-section-description {
+  font-size: 14px;
+  color: #A3A3A3;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.admin-brand-bots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-brand-bots-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #1F1F1F;
+  border: 1px solid #404040;
+  border-radius: 8px;
+}
+
+.admin-brand-bots-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-brand-bots-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
+// Toggle Switch
+.admin-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #404040;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--on {
+    background: #FFC700;
+
+    .admin-toggle-handle {
+      transform: translateX(20px);
+    }
+  }
+
+  &--danger {
+    &--on {
+      background: #EA4444;
+    }
+  }
+}
+
+.admin-toggle-handle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.admin-toggle-label {
+  font-size: 14px;
+  color: #A3A3A3;
+  min-width: 60px;
+  text-align: right;
+}
+
 // Placeholder styles for other admin sections
 .admin-placeholder {
   display: flex;

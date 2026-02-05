@@ -4,6 +4,7 @@
   --brand-primary: #F2B340;
   --brand-primary-dark: #E5A830;
   --brand-primary-foreground: #1A1A1A;
+  --brand-primary-soft: rgba(242, 179, 64, 0.12);
   
   /* Success color */
   --color-success: #16A34A;

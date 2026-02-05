@@ -305,6 +305,28 @@ const Header = ({ onResetToStartingView, onOpenProjectMenu }) => {
   const handleOnboardingClick = (e) => {
     e.stopPropagation();
     setShowProfileDropdown(false);
+    // Default to old flow
+    localStorage.setItem('ella-brandbot-flow', 'old');
+
+    // Dispatch custom event that workspace will listen for
+    window.dispatchEvent(new CustomEvent('workspace:show-onboarding'));
+  };
+
+  // Old Bot Flow handler
+  const handleOldBotFlowClick = (e) => {
+    e.stopPropagation();
+    setShowProfileDropdown(false);
+    localStorage.setItem('ella-brandbot-flow', 'old');
+
+    // Dispatch custom event that workspace will listen for
+    window.dispatchEvent(new CustomEvent('workspace:show-onboarding'));
+  };
+
+  // New Bot Flow handler
+  const handleNewBotFlowClick = (e) => {
+    e.stopPropagation();
+    setShowProfileDropdown(false);
+    localStorage.setItem('ella-brandbot-flow', 'new');
 
     // Dispatch custom event that workspace will listen for
     window.dispatchEvent(new CustomEvent('workspace:show-onboarding'));
@@ -1391,6 +1413,12 @@ const Header = ({ onResetToStartingView, onOpenProjectMenu }) => {
                         <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                       </svg>
                       <span>Onboarding Modal</span>
+                    </button>
+                    <button className="profile-menu-item profile-menu-item--submenu" onClick={handleOldBotFlowClick}>
+                      <span>Old Bot Flow</span>
+                    </button>
+                    <button className="profile-menu-item profile-menu-item--submenu" onClick={handleNewBotFlowClick}>
+                      <span>New Bot Flow</span>
                     </button>
 
                     <button className="profile-menu-item" onClick={handleLogout}>

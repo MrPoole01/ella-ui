@@ -2722,6 +2722,16 @@
       height: 16px;
       color: currentColor;
     }
+
+    &--submenu {
+      padding-left: 32px;
+      font-size: 13px;
+      color: var(--theme-text-muted);
+
+      &:hover {
+        color: var(--theme-text-primary);
+      }
+    }
   }
 
   // Profile Menu Theme Section

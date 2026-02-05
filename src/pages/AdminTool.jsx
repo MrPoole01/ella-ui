@@ -1043,7 +1043,164 @@ const AdminPlaybooks = () => {
     </div>
   );
 };
-const AdminBrandBots = () => <div className="admin-placeholder">Brand Bots - Coming Soon</div>;
+const AdminBrandBots = () => {
+  const [orgAutobotEnabled, setOrgAutobotEnabled] = useState(true);
+  const [editions, setEditions] = useState([
+    { id: 'edition-1', name: 'Edition 1', autobotEnabled: true },
+    { id: 'edition-2', name: 'Edition 2', autobotEnabled: true },
+    { id: 'edition-3', name: 'Edition 3', autobotEnabled: false }
+  ]);
+  const [collections, setCollections] = useState([
+    { id: 'collection-1', name: 'Collection 1', autobotEnabled: true },
+    { id: 'collection-2', name: 'Collection 2', autobotEnabled: true }
+  ]);
+  const [disabledOrgs, setDisabledOrgs] = useState([]);
+  const [orgs] = useState([
+    { id: 'org-1', name: 'Organization 1' },
+    { id: 'org-2', name: 'Organization 2' },
+    { id: 'org-3', name: 'Organization 3' }
+  ]);
+
+  const handleOrgAutobotToggle = () => {
+    setOrgAutobotEnabled(prev => !prev);
+  };
+
+  const handleEditionToggle = (editionId) => {
+    setEditions(prev => prev.map(ed => 
+      ed.id === editionId ? { ...ed, autobotEnabled: !ed.autobotEnabled } : ed
+    ));
+  };
+
+  const handleCollectionToggle = (collectionId) => {
+    setCollections(prev => prev.map(col => 
+      col.id === collectionId ? { ...col, autobotEnabled: !col.autobotEnabled } : col
+    ));
+  };
+
+  const handleOrgDisableToggle = (orgId) => {
+    setDisabledOrgs(prev => 
+      prev.includes(orgId) 
+        ? prev.filter(id => id !== orgId)
+        : [...prev, orgId]
+    );
+  };
+
+  return (
+    <div className="admin-brand-bots">
+      <div className="admin-content-header">
+        <h2 className="admin-page-title">Brand Bots / Autobot Controls</h2>
+      </div>
+
+      <div className="admin-results-section">
+        {/* Org-level Autobot Toggle */}
+        <div className="admin-brand-bots-section">
+          <div className="admin-brand-bots-section-header">
+            <h3 className="admin-brand-bots-section-title">Organization-Level Autobot</h3>
+            <div className="admin-toggle-wrapper">
+              <button
+                className={`admin-toggle ${orgAutobotEnabled ? 'admin-toggle--on' : ''}`}
+                onClick={handleOrgAutobotToggle}
+              >
+                <div className="admin-toggle-handle"></div>
+              </button>
+              <span className="admin-toggle-label">
+                {orgAutobotEnabled ? 'Enabled' : 'Disabled'}
+              </span>
+            </div>
+          </div>
+          <p className="admin-brand-bots-section-description">
+            Enable or disable Autobot for the entire organization. When disabled, Autobot will not be available to any users in the organization.
+          </p>
+        </div>
+
+        {/* Edition/Collection Toggles */}
+        <div className="admin-brand-bots-section">
+          <h3 className="admin-brand-bots-section-title">Edition-Level Controls</h3>
+          <p className="admin-brand-bots-section-description">
+            Control Autobot availability for specific editions.
+          </p>
+          <div className="admin-brand-bots-list">
+            {editions.map(edition => (
+              <div key={edition.id} className="admin-brand-bots-item">
+                <div className="admin-brand-bots-item-info">
+                  <span className="admin-brand-bots-item-name">{edition.name}</span>
+                </div>
+                <div className="admin-toggle-wrapper">
+                  <button
+                    className={`admin-toggle ${edition.autobotEnabled ? 'admin-toggle--on' : ''}`}
+                    onClick={() => handleEditionToggle(edition.id)}
+                    disabled={!orgAutobotEnabled}
+                  >
+                    <div className="admin-toggle-handle"></div>
+                  </button>
+                  <span className="admin-toggle-label">
+                    {edition.autobotEnabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="admin-brand-bots-section">
+          <h3 className="admin-brand-bots-section-title">Collection-Level Controls</h3>
+          <p className="admin-brand-bots-section-description">
+            Control Autobot availability for specific collections.
+          </p>
+          <div className="admin-brand-bots-list">
+            {collections.map(collection => (
+              <div key={collection.id} className="admin-brand-bots-item">
+                <div className="admin-brand-bots-item-info">
+                  <span className="admin-brand-bots-item-name">{collection.name}</span>
+                </div>
+                <div className="admin-toggle-wrapper">
+                  <button
+                    className={`admin-toggle ${collection.autobotEnabled ? 'admin-toggle--on' : ''}`}
+                    onClick={() => handleCollectionToggle(collection.id)}
+                    disabled={!orgAutobotEnabled}
+                  >
+                    <div className="admin-toggle-handle"></div>
+                  </button>
+                  <span className="admin-toggle-label">
+                    {collection.autobotEnabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Org-Specific Disable */}
+        <div className="admin-brand-bots-section">
+          <h3 className="admin-brand-bots-section-title">Organization-Specific Controls</h3>
+          <p className="admin-brand-bots-section-description">
+            Disable Autobot for specific organizations. This overrides all other settings for the selected organizations.
+          </p>
+          <div className="admin-brand-bots-list">
+            {orgs.map(org => (
+              <div key={org.id} className="admin-brand-bots-item">
+                <div className="admin-brand-bots-item-info">
+                  <span className="admin-brand-bots-item-name">{org.name}</span>
+                </div>
+                <div className="admin-toggle-wrapper">
+                  <button
+                    className={`admin-toggle admin-toggle--danger ${disabledOrgs.includes(org.id) ? 'admin-toggle--on' : ''}`}
+                    onClick={() => handleOrgDisableToggle(org.id)}
+                  >
+                    <div className="admin-toggle-handle"></div>
+                  </button>
+                  <span className="admin-toggle-label">
+                    {disabledOrgs.includes(org.id) ? 'Disabled' : 'Enabled'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 const AdminTags = () => {
   const [editions, setEditions] = useState([
     { id: 'dtm', name: 'DTM Edition', kind: 'Edition' },

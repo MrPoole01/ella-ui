@@ -16,5 +16,6 @@ export { default as PlaybookRunnerDrawer } from './PlaybookRunnerDrawer';
 export { default as PlaybookPreviewDrawer } from './PlaybookPreviewDrawer';
 export { default as BrandBotPreviewDrawer } from './BrandBotPreviewDrawer';
 export { default as BrandBotSetupModal } from './BrandBotSetupModal';
+export { default as BrandBotSetupModalV2 } from './BrandBotSetupModalV2';
 export { default as MilestoneBanner } from './MilestoneBanner';
 export { default as MilestoneCard } from './MilestoneCard';
