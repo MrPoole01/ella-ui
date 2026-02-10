@@ -404,6 +404,14 @@ const Workspace = () => {
 
     setShowOnboardingQuestionnaire(false);
 
+    if (data.selectedPath === 'playbook') {
+      // Open the Template Drawer and skip BrandBot setup flow
+      localStorage.removeItem('ella-show-brandbot-setup');
+      localStorage.removeItem('ella-show-brandbot-builder');
+      setIsTemplateDrawerOpen(true);
+      return;
+    }
+
     // Check flow flag to determine which modal to open
     const flow = localStorage.getItem('ella-brandbot-flow') || 'old';
     
@@ -483,11 +491,17 @@ const Workspace = () => {
     }
     
     // Check for flag to show BrandBot setup modal (set after questionnaire completion)
+    const openTemplateDrawerFlag = localStorage.getItem('ella-open-template-drawer') === 'true';
     const showBrandBotFlag = localStorage.getItem('ella-show-brandbot-setup') === 'true';
     const showBrandBotBuilderFlag = localStorage.getItem('ella-show-brandbot-builder') === 'true';
     const flow = localStorage.getItem('ella-brandbot-flow') || 'old';
     
-    if (showBrandBotBuilderFlag || (showBrandBotFlag && flow === 'new')) {
+    if (openTemplateDrawerFlag) {
+      localStorage.removeItem('ella-open-template-drawer');
+      localStorage.removeItem('ella-show-brandbot-builder');
+      localStorage.removeItem('ella-show-brandbot-setup');
+      setIsTemplateDrawerOpen(true);
+    } else if (showBrandBotBuilderFlag || (showBrandBotFlag && flow === 'new')) {
       localStorage.removeItem('ella-show-brandbot-builder');
       localStorage.removeItem('ella-show-brandbot-setup');
       setShowBrandBotBuilder(true);

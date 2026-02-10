@@ -256,6 +256,22 @@ const buildSegmentFlow = () => ({
   }
 });
 
+const buildChatThreads = () => ({
+  companyContext: [],
+  positioning: [],
+  customers: [],
+  brandElements: []
+});
+
+const chatThreadKeyByStep = {
+  0: 'companyContext',
+  1: 'positioning',
+  2: 'customers',
+  3: 'brandElements'
+};
+
+const FINAL_TLDR_SUGGESTION = 'Would you like me to now revise the TLDR?';
+
 const stepKeyByIndex = {
   1: 'positioning',
   2: 'customers',
@@ -302,11 +318,12 @@ const BrandBotSetupModalV2 = ({
   
   const [segmentFlow, setSegmentFlow] = useState(buildSegmentFlow);
   const [chatInput, setChatInput] = useState('');
-  const [chatMessages, setChatMessages] = useState([]);
+  const [chatThreads, setChatThreads] = useState(buildChatThreads);
   const researchPhaseTimeoutRef = useRef({ planning: null, summary: null });
   const researchCycleRef = useRef(null);
   const companyResearchTimeoutRef = useRef({ planning: null, summary: null });
   const companyResearchCycleRef = useRef(null);
+  const chatContentRef = useRef(null);
 
   // Restore persisted state when modal opens
   useEffect(() => {
@@ -335,6 +352,12 @@ const BrandBotSetupModalV2 = ({
             const hasStepStatus = saved.segmentFlow.positioning?.status;
             setSegmentFlow(hasStepStatus ? saved.segmentFlow : buildSegmentFlow());
           }
+          if (saved.chatThreads) {
+            setChatThreads({
+              ...buildChatThreads(),
+              ...saved.chatThreads
+            });
+          }
           if (saved.showChatPanel !== undefined) setShowChatPanel(saved.showChatPanel);
           if (saved.entryPath) setEntryPath(saved.entryPath);
         }
@@ -356,6 +379,7 @@ const BrandBotSetupModalV2 = ({
         companyContext,
         companyContextFlow,
         segmentFlow,
+        chatThreads,
         showChatPanel,
         entryPath
       }));
@@ -366,7 +390,7 @@ const BrandBotSetupModalV2 = ({
     if (isOpen) {
       persist();
     }
-  }, [currentStep, companyContext, companyContextFlow, segmentFlow, showChatPanel, entryPath, isOpen]);
+  }, [currentStep, companyContext, companyContextFlow, segmentFlow, chatThreads, showChatPanel, entryPath, isOpen]);
 
   // Stepper helper
   const getStepState = (stepIndex) => {
@@ -471,25 +495,63 @@ const BrandBotSetupModalV2 = ({
     researchPhaseTimeoutRef.current = { planning: null, summary: null };
   };
 
-  const handleChatSend = () => {
-    const trimmed = chatInput.trim();
-    const stepKey = stepKeyByIndex[currentStep];
-    if (!trimmed) return;
-    if (currentStep !== 0 && !stepKey) return;
+  const buildMessageId = (prefix) => (
+    `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+  );
 
-    const timestamp = Date.now();
-    setChatMessages(prev => ([
-      ...prev,
-      { id: `user-${timestamp}`, sender: 'user', text: trimmed },
-      {
-        id: `ella-${timestamp}`,
-        sender: 'ella',
-        text: 'Thanks for your feedback. Let me update this document and I will share a summary shortly.'
-      }
-    ]));
-    setChatInput('');
+  const getFollowUpSuggestions = (chatKey) => {
+    if (chatKey === 'companyContext') {
+      return [
+        'Clarify what the company does and for whom',
+        'Emphasize the core positioning',
+        'Adjust the buyer and manufacturer value'
+      ];
+    }
 
-    if (currentStep === 0) {
+    const step = segmentFlow[chatKey];
+    if (step?.segments?.length) {
+      return step.segments.map(segment => `Refine ${segment.label}`);
+    }
+
+    return ['Refine the summary wording'];
+  };
+
+  const buildFollowUps = (chatKey) => {
+    const baseSuggestions = getFollowUpSuggestions(chatKey);
+    const suggestions = [...baseSuggestions, FINAL_TLDR_SUGGESTION];
+    return suggestions.map((label, index) => ({
+      id: `${chatKey}-followup-${index}`,
+      label,
+      action: label === FINAL_TLDR_SUGGESTION ? 'revise-tldr' : 'suggestion'
+    }));
+  };
+
+  const buildEllaMessage = (text, chatKey, includeFollowUps = true) => ({
+    id: buildMessageId('ella'),
+    sender: 'ella',
+    text,
+    ...(includeFollowUps ? { followUps: buildFollowUps(chatKey) } : {})
+  });
+
+  const appendToChatThread = (chatKey, messages) => {
+    setChatThreads(prev => {
+      const existing = prev[chatKey] || [];
+      return {
+        ...prev,
+        [chatKey]: [...existing, ...messages]
+      };
+    });
+  };
+
+  const appendUserAndElla = (chatKey, userText, ellaText, includeFollowUps = true) => {
+    appendToChatThread(chatKey, [
+      { id: buildMessageId('user'), sender: 'user', text: userText },
+      buildEllaMessage(ellaText, chatKey, includeFollowUps)
+    ]);
+  };
+
+  const handleReviseTldr = (chatKey) => {
+    if (chatKey === 'companyContext') {
       companyResearchCycleRef.current = null;
       clearCompanyResearchTimeouts();
       setCompanyContextFlow(prev => applyResearchPhase({
@@ -501,15 +563,15 @@ const BrandBotSetupModalV2 = ({
       return;
     }
 
+    if (!chatKey) return;
     researchCycleRef.current = null;
     clearResearchTimeouts();
-
     setSegmentFlow(prev => {
-      const step = prev[stepKey];
+      const step = prev[chatKey];
       if (!step) return prev;
       return {
         ...prev,
-        [stepKey]: applyResearchPhase(
+        [chatKey]: applyResearchPhase(
           {
             ...step,
             status: 'researching',
@@ -520,6 +582,44 @@ const BrandBotSetupModalV2 = ({
         )
       };
     });
+  };
+
+  const handleChatSend = () => {
+    const trimmed = chatInput.trim();
+    const stepKey = stepKeyByIndex[currentStep];
+    const chatKey = chatThreadKeyByStep[currentStep] || stepKey;
+    if (!trimmed) return;
+    if (!chatKey) return;
+
+    appendUserAndElla(
+      chatKey,
+      trimmed,
+      'Thanks for that. How would you like me to proceed?'
+    );
+    setChatInput('');
+  };
+
+  const handleFollowUpClick = (followUp) => {
+    const stepKey = stepKeyByIndex[currentStep];
+    const chatKey = chatThreadKeyByStep[currentStep] || stepKey;
+    if (!chatKey) return;
+
+    if (followUp.action === 'revise-tldr') {
+      appendUserAndElla(
+        chatKey,
+        followUp.label,
+        'Got it. I will revise the TLDR now.',
+        false
+      );
+      handleReviseTldr(chatKey);
+      return;
+    }
+
+    appendUserAndElla(
+      chatKey,
+      followUp.label,
+      'Great. How would you like me to proceed?'
+    );
   };
 
   const handleChatKeyDown = (event) => {
@@ -602,26 +702,39 @@ const BrandBotSetupModalV2 = ({
   const currentStepFlow = currentStepKey ? segmentFlow[currentStepKey] : null;
   const chatAllowed = currentStep !== 0 || companyContextFlow.status !== 'form';
   const chatVisible = chatAllowed && showChatPanel;
+  const activeChatKey = chatThreadKeyByStep[currentStep] || currentStepKey;
+  const activeChatMessages = activeChatKey ? (chatThreads[activeChatKey] || []) : [];
 
   useEffect(() => {
-    if (currentStepKey && currentStepFlow?.status === 'chat') {
-      setChatMessages([{
-        id: `ella-prompt-${currentStepKey}`,
-        sender: 'ella',
-        text: stepMetaByKey[currentStepKey]?.chatPrompt
-      }]);
-    }
-  }, [currentStepKey, currentStepFlow?.status]);
+    if (!activeChatKey) return;
+    const shouldSeed = currentStep === 0
+      ? companyContextFlow.status === 'chat'
+      : currentStepFlow?.status === 'chat';
+    if (!shouldSeed) return;
+
+    setChatThreads(prev => {
+      const existing = prev[activeChatKey] || [];
+      if (existing.length) return prev;
+      const prompt = currentStep === 0
+        ? 'What would you like to refine about the Company Context?'
+        : stepMetaByKey[currentStepKey]?.chatPrompt || 'What would you like to refine?';
+      return {
+        ...prev,
+        [activeChatKey]: [buildEllaMessage(prompt, activeChatKey, false)]
+      };
+    });
+  }, [activeChatKey, currentStep, currentStepKey, currentStepFlow?.status, companyContextFlow.status]);
 
   useEffect(() => {
-    if (currentStep === 0 && companyContextFlow.status === 'chat') {
-      setChatMessages([{
-        id: 'ella-company-context',
-        sender: 'ella',
-        text: 'What would you like to refine about the Company Context?'
-      }]);
-    }
-  }, [currentStep, companyContextFlow.status]);
+    setChatInput('');
+  }, [activeChatKey]);
+
+  useEffect(() => {
+    if (!chatVisible) return;
+    const container = chatContentRef.current;
+    if (!container) return;
+    container.scrollTop = container.scrollHeight;
+  }, [chatVisible, activeChatKey, activeChatMessages.length]);
 
   useEffect(() => {
     if (companyContextFlow.status !== 'researching') {
@@ -1219,14 +1332,33 @@ const BrandBotSetupModalV2 = ({
                 </div>
               </div>
 
-              <div className="brandbot-builder-modal__chat-content">
-                {chatMessages.length > 0 ? (
-                  chatMessages.map(message => (
+              <div className="brandbot-builder-modal__chat-content" ref={chatContentRef}>
+                {activeChatMessages.length > 0 ? (
+                  activeChatMessages.map(message => (
                     <div
                       key={message.id}
                       className={`brandbot-builder-modal__chat-message brandbot-builder-modal__chat-message--${message.sender}`}
                     >
                       <p>{message.text}</p>
+                      {message.followUps?.length > 0 && (
+                        <div className="brandbot-builder-modal__chat-followups">
+                          <div className="brandbot-builder-modal__chat-followups-title">
+                            How would you like me to proceed?
+                          </div>
+                          <div className="brandbot-builder-modal__chat-followups-list">
+                            {message.followUps.map(followUp => (
+                              <button
+                                key={followUp.id}
+                                type="button"
+                                className="brandbot-builder-modal__chat-followup"
+                                onClick={() => handleFollowUpClick(followUp)}
+                              >
+                                {followUp.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))
                 ) : (

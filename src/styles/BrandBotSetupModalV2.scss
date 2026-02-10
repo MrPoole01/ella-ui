@@ -866,6 +866,59 @@
   }
 }
 
+.brandbot-builder-modal__chat-followups {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--theme-border-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brandbot-builder-modal__chat-followups-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.brandbot-builder-modal__chat-followups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 8px;
+}
+
+.brandbot-builder-modal__chat-followup {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  text-align: left;
+  padding: 2px 0 2px 14px;
+  background: transparent;
+  border: none;
+  color: var(--theme-text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+
+  &::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    color: var(--theme-text-secondary);
+  }
+
+  &:hover {
+    transform: translateX(4px);
+    color: var(--theme-text-primary);
+  }
+}
+
 .brandbot-builder-modal__chat-message--ella {
   align-self: flex-start;
 }

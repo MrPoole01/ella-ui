@@ -88,8 +88,14 @@ const Onboarding = () => {
     // Mark onboarding questionnaire as complete
     localStorage.setItem('ella-onboarding-complete', 'true');
     
-    // Set flag to open BrandBot modal in workspace
-    localStorage.setItem('ella-show-brandbot-setup', 'true');
+    if (data.selectedPath === 'playbook') {
+      // Open Template Drawer in workspace for playbook path
+      localStorage.removeItem('ella-show-brandbot-setup');
+      localStorage.setItem('ella-open-template-drawer', 'true');
+    } else {
+      // Set flag to open BrandBot modal in workspace
+      localStorage.setItem('ella-show-brandbot-setup', 'true');
+    }
 
     setShowQuestionnaire(false);
 
