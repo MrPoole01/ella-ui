@@ -446,6 +446,7 @@ const Workspace = () => {
     console.log('Brand Bot Builder completed with data:', data);
     localStorage.setItem('ella-brandbot-builder-complete', 'true');
     setShowBrandBotBuilder(false);
+    setIsEllamentDrawerOpen(true);
     // Stay in workspace - no navigation needed
   };
 
